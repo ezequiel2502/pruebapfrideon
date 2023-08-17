@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+
+        <LinearLayout
+            android:id="@+id/linearContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="Crear Evento"
+                android:textColor="@color/lavender"
+                android:textSize="20dp"
+                android:textStyle="bold">
+
+            </TextView>
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewRuta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linearContainer"
+            android:layout_alignBottom="@+id/linearContainer"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="-76dp"
+            android:padding="16dp"
+            app:cardCornerRadius="8dp">
+
+            <!-- LinearLayout para envolver el Spinner y el TextView "Elegir Ruta" -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="67dp"
+                android:orientation="vertical">
+
+                <!-- TextView "Elegir Ruta" -->
+
+                <!-- Spinner -->
+                <TextView
+                    android:layout_width="118dp"
+                    android:layout_height="wrap_content"
+                    android:text="Elegir Ruta" />
+
+                <Spinner
+                    android:id="@+id/spnRuta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <!--            android:entries="@array/rutas"-->
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- CardView para la Fecha de Encuentro y la Hora de Encuentro -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewFechaHora"
+            android:layout_width="391dp"
+            android:layout_height="149dp"
+            android:layout_below="@+id/cardViewRuta"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="132dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp">
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="2">
+
+                <!-- Botón "Fecha de Encuentro" y campo de texto -->
+                <Button
+                    android:id="@+id/btn_FechaEncuentro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha de Encuentro" />
+
+                <EditText
+                    android:id="@+id/txt_FechaEncuentro"
+                    android:layout_width="210dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Ingresa la fecha de encuentro" />
+
+                <!-- Botón "Hora de Encuentro" y campo de texto -->
+                <Button
+                    android:id="@+id/btn_HoraEncuentro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hora de Encuentro" />
+
+                <EditText
+                    android:id="@+id/txt_HoraEncuentro"
+                    android:layout_width="208dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Ingresa la hora de encuentro" />
+
+            </GridLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!--    CardView CupoMinYMax-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewCupoMinYMax"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cardViewFechaHora"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <!-- Primer LinearLayout para el Cupo Mínimo -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- Label "Cupo Mínimo" -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cupo Mínimo" />
+
+                    <!-- Campo de texto para ingresar el Cupo Mínimo (solo números) -->
+                    <EditText
+                        android:id="@+id/editTextCupoMinimo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+
+                </LinearLayout>
+
+                <!-- Segundo LinearLayout para el Cupo Máximo -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- Label "Cupo Máximo" -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cupo Máximo" />
+
+                    <!-- Campo de texto para ingresar el Cupo Máximo (solo números) -->
+                    <EditText
+                        android:id="@+id/editTextCupoMaximo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!--    Cardview Cat y descripcion-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewCatYDesc"
+            android:layout_width="413dp"
+            android:layout_height="109dp"
+            android:layout_below="@+id/cardViewCupoMinYMax"
+            android:layout_marginTop="25dp"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <!-- LinearLayout para la Descripción -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- Label "Descripción" -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Descripción" />
+
+                    <!-- Campo de texto para ingresar la Descripción -->
+                    <EditText
+                        android:id="@+id/editTextDescripcion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+
+                </LinearLayout>
+
+                <!-- LinearLayout para la Categoría -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- Label "Categoría" -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Categoría" />
+
+                    <!-- Spinner para seleccionar la Categoría -->
+                    <Spinner
+                        android:id="@+id/spnCategoria"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!--cardview nombreEvento-->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/cardViewNombreEvento"
+            android:layout_below="@+id/cardViewCatYDesc"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Etiqueta "Ingresa nombre de evento" -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ingresa nombre de evento"
+                    android:textSize="16sp" />
+
+                <!-- Campo de entrada de texto para el nombre del evento -->
+                <EditText
+                    android:id="@+id/txt_NombreEvento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre del evento"
+                    android:inputType="text" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!--    cardViewImagen-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewImagen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cardViewNombreEvento"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Label "Subir una imagen" -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Subir una imagen" />
+
+                <!-- ImageView para seleccionar una imagen -->
+                <ImageView
+                    android:id="@+id/imvEvento"
+                    android:layout_width="363dp"
+                    android:layout_height="228dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/baseline_upload_file_24" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Label "Activar Evento" -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Activar/Desactivar"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:layout_gravity="center_horizontal"/>
+
+                    <!-- Switch "Activar Evento" -->
+                    <Switch
+                        android:id="@+id/sw_Activar_Desactivar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:layout_gravity="center_horizontal"/>
+
+                    <!-- Botón "Crear Evento" -->
+                    <Button
+                        android:id="@+id/btn_CrearEvento"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Crear Evento" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            xmlns:android="http://schemas.android.com/apk/res/android">
+
+            <!-- cardViewSwitch -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+</ScrollView>
+
+
+
+
+
+
+
+
+
+
