@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/btnAgregarEvento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="6dp"
+        android:text="Agregar evento" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewEventos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnAgregarEvento"
+        android:layout_marginTop="42dp">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="wrap_content"
+        android:layout_height="49dp"
+        android:layout_below="@+id/recyclerViewEventos"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="23dp"
+        android:layout_marginTop="321dp"
+        android:layout_marginEnd="41dp"
+        android:background="@drawable/bottom_background"
+        android:elevation="2dp"
+        app:itemIconSize="30dp"
+        app:itemIconTint="@drawable/item_selector"
+        app:itemRippleColor="@android:color/transparent"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/bottom_menu" />
+</RelativeLayout>
