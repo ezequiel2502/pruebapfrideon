@@ -94,9 +94,7 @@ private int rating;
     }
 
 
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
+
 
     public void setUserId(String userId) {
         this.userId = userId;
