@@ -3,6 +3,8 @@ package com.example.sesionconfirebase;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
@@ -41,13 +43,33 @@ public class ListaEventos extends AppCompatActivity {
         String userId = currentUser.getUid();
 
 
-
+        //Tomo los controles de la vista
         btnAgregarEvento=findViewById(R.id.btnAgregarEvento);
         recyclerViewEventos=findViewById(R.id.recyclerViewEventos);
         recycleList=new ArrayList<>();
 
+        //>>>>>>>>>>spnFiltro
+        spnFiltro=findViewById(R.id.spnFiltro);
+
+        //Lleno la lista de filtros
+        filtroList.add("Ninguno");
+        filtroList.add("Recientes");
+
+        // Crear un ArrayAdapter utilizando la lista de filtros y un diseño simple para el spinner
+        ArrayAdapter<String> filtroAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filtroList);
+
+        // Especificar el diseño para el menú desplegable
+        filtroAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        // Establecer el adaptador en el Spinner
+        spnFiltro.setAdapter(filtroAdapter);
+        //spnFiltro<<<<<<<<<<
+
+        //Creo la instancia de la base de datos
         firebaseDatabase= FirebaseDatabase.getInstance();
 
+        //Creo una instancia del adapter
         EventoAdapter recyclerAdapter=new EventoAdapter(recycleList,getApplicationContext());
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
         recyclerViewEventos.setLayoutManager(linearLayoutManager);
@@ -55,6 +77,7 @@ public class ListaEventos extends AppCompatActivity {
         recyclerViewEventos.setNestedScrollingEnabled(false);
         recyclerViewEventos.setAdapter(recyclerAdapter);
 
+        //Si hay un cambio en la base de datos lo mete en la lista de eventos
         firebaseDatabase.getReference().child("Usuarios").child(userId).child("Eventos").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -68,6 +91,24 @@ public class ListaEventos extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        //Filtros...por ahora solo fecha de encuentro
+        spnFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String opcionSeleccionada = filtroList.get(i);
+
+                if (opcionSeleccionada.equals("Recientes")) {
+                    recyclerAdapter.ordenarListaPorFecha();
+                    //Toast.makeText(ListaEventos.this, "Apretaste Recientes", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
