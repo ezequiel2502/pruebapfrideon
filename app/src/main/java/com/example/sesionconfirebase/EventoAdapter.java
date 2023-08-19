@@ -13,7 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 
 public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder> {
 
@@ -106,5 +112,24 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
 
             }
         }
+
+    public void ordenarListaPorFecha() {
+        Collections.sort(list, new Comparator<ModelEvento>() {
+            @Override
+            public int compare(ModelEvento evento1, ModelEvento evento2) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                try {
+                    Date date1 = dateFormat.parse(evento1.getFechaEncuentro());
+                    Date date2 = dateFormat.parse(evento2.getFechaEncuentro());
+                    return date1.compareTo(date2); // Compara en orden ascendente (más antiguo primero)
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                return 0;
+            }
+        });
+
+        notifyDataSetChanged();
+    }
 
 }
