@@ -55,6 +55,68 @@
 
             </LinearLayout>
 
+                <!--UserName-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="UserName:"
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  UserName"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!--UserId-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaUserId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="UserId:"
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleUserId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  UserId"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
             <!-- Ruta-->
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -269,6 +331,35 @@
                     android:layout_marginTop="10dp"
                     android:text="  Categoria"
                     android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!--RatingBar-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_etiquetaRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="RatingBar:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+                <RatingBar
+                    android:id="@+id/rb_SingleRatingEvento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:numStars="5"
+                    android:stepSize="1" />
 
             </LinearLayout>
 

@@ -369,7 +369,7 @@
 
                 <!-- RatingBar para la calificación -->
                 <RatingBar
-                    android:id="@+id/ratingBarPel"
+                    android:id="@+id/rb_calificacionEvento"
                     style="@style/Widget.AppCompat.RatingBar.Indicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -93,6 +93,9 @@ public class CrearEvento extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         String userId = currentUser.getUid();
 
+        //Obtengo el userName:
+        String userName=currentUser.getDisplayName();
+
 
         //Controles de la vista
         btn_FechaEncuentro=findViewById(R.id.btn_FechaEncuentro);
@@ -275,6 +278,9 @@ public class CrearEvento extends AppCompatActivity {
                                 evento.setFechaEncuentro(fechaEncuentro);
                                 evento.setHoraEncuentro(horaEncuentro);
                                 evento.setActivarDesactivar(activadoDesactivado);
+                                evento.setUserId(userId);
+                                evento.setUserName(userName);
+                                evento.setRating(0);
                                 evento.setImagenEvento(uri.toString());
 
                                 // Crea una referencia a la base de datos usando el ID del usuario

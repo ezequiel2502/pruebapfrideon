@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -57,6 +58,9 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
         holder.tv_CupoMinimo.setText(evento.getCupoMinimo());
         holder.tv_CupoMaximo.setText(evento.getCupoMaximo());
         holder.tv_Categoria.setText(evento.getCategoria());
+        holder.tv_UserName.setText(evento.getUserName());
+        holder.tv_UserId.setText(evento.getUserId());
+        holder.rb_calificacionEvento.setRating(evento.getRating());
 
 
         //Agrego un Listener para cuando cliquee sobre el evento(item), me lleva a los detalles de la publicacion para postularme
@@ -73,6 +77,9 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
                 intent.putExtra("singleCupoMinimo",evento.getCupoMinimo());
                 intent.putExtra("singleCupoMaximo",evento.getCupoMaximo());
                 intent.putExtra("singleCategoria",evento.getCategoria());
+                intent.putExtra("singleUserName",evento.getUserName());
+                intent.putExtra("singleUserId",evento.getUserId());
+                intent.putExtra("singleRating",evento.getRating());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
 
@@ -89,8 +96,10 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         //Son los controles del itemEvento
-        TextView tv_tituloEvento,tv_Ruta,tv_Descripcion,tv_FechaEncuentro,tv_HoraEncuentro,tv_CupoMinimo,tv_CupoMaximo,tv_Categoria;
+        TextView tv_tituloEvento,tv_Ruta,tv_Descripcion,tv_FechaEncuentro,tv_HoraEncuentro,tv_CupoMinimo,tv_CupoMaximo,tv_Categoria,tv_UserName,tv_UserId;
         ImageView imvEvento;
+
+        RatingBar rb_calificacionEvento;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -104,6 +113,9 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
                 tv_CupoMinimo=itemView.findViewById(R.id.tv_CupoMinimo);
                 tv_CupoMaximo=itemView.findViewById(R.id.tv_CupoMaximo);
                 tv_Categoria=itemView.findViewById(R.id.tv_Categoria);
+                tv_UserName=itemView.findViewById(R.id.tv_UserName);
+                tv_UserId=itemView.findViewById(R.id.tv_UserId);
+                rb_calificacionEvento=itemView.findViewById(R.id.rb_calificacionEvento);
                 imvEvento=itemView.findViewById(R.id.imvEvento);
 
 

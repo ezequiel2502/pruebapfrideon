@@ -136,6 +136,10 @@ private int rating;
         this.categoria = categoria;
     }
 
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
     public void setImagenEvento(String imagenEvento) {
         this.imagenEvento = imagenEvento;
     }
