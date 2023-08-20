@@ -77,6 +77,12 @@ public class HomeActivity extends AppCompatActivity {
                 finish();
                 return true;
             }
+            else if (itemId == R.id.btn_Rutas) {
+                startActivity(new Intent(getApplicationContext(), Rutas.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+                return true;
+            }
             return false;
         });
 

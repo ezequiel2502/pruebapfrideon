@@ -17,5 +17,10 @@
         android:icon="@drawable/baseline_directions_bike_24"
         android:title="Planificar" />
 
+    <item
+        android:id="@+id/btn_Rutas"
+        android:icon="@drawable/baseline_alt_route_24"
+        android:title="Rutas" />
+
 
 </menu>
