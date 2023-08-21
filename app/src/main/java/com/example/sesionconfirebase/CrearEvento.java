@@ -47,15 +47,18 @@ import java.util.Calendar;
 
 
 public class CrearEvento extends AppCompatActivity {
-    Spinner spnRuta,spnCategoria;
+    Spinner spnRuta,spnCategoria,spnActivarDesactivar,spnPublicoPrivado;
     EditText txt_FechaEncuentro,txt_HoraEncuentro,txt_CupoMinimo,txt_CupoMaximo,txt_Descripcion,txt_NombreEvento;
     ImageView imvEvento;
     Button btn_FechaEncuentro,btn_CrearEvento,btn_HoraEncuentro;
 
-    Switch switchActivar_Desactivar;
+    //Switch switchActivar_Desactivar;
 
     ArrayList<String> categoriasList=new ArrayList<String>();
     ArrayList<String> rutasList=new ArrayList<String>();
+
+    ArrayList<String> actDesList=new ArrayList<String>();
+    ArrayList<String> pubPrivList=new ArrayList<String>();
 
 
     private int dia,mes,ano,hora,minutos;
@@ -110,12 +113,10 @@ public class CrearEvento extends AppCompatActivity {
         txt_Descripcion=findViewById(R.id.editTextDescripcion);
         txt_NombreEvento=findViewById(R.id.txt_NombreEvento);
 
-        switchActivar_Desactivar=findViewById(R.id.sw_Activar_Desactivar);
+        //switchActivar_Desactivar=findViewById(R.id.sw_Activar_Desactivar);
 
         imvEvento=findViewById(R.id.imvEvento);
 
-        // Establecer el estado inicial del Switch como activado (true)
-        switchActivar_Desactivar.setChecked(true);
 
         //>>>>>>>>>>spnCategorias
         spnCategoria=findViewById(R.id.spnCategoria);
@@ -157,6 +158,48 @@ public class CrearEvento extends AppCompatActivity {
         // Establecer el adaptador en el Spinner
         spnRuta.setAdapter(rutasAdapter);
         //spnRutas<<<<<<<<<<
+
+
+        //******************************spnActivarDesactivar
+        spnActivarDesactivar=findViewById(R.id.spn_Activar_Desactivar);
+
+        //Lleno la lista de categorias
+        actDesList.add("Ninguno");
+        actDesList.add("Activado");
+        actDesList.add("Desactivado");
+
+
+        // Crear un ArrayAdapter utilizando la lista de categorías y un diseño simple para el spinner
+        ArrayAdapter<String> activadoDesactivadoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, actDesList);
+
+        // Especificar el diseño para el menú desplegable
+        activadoDesactivadoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        // Establecer el adaptador en el Spinner
+        spnActivarDesactivar.setAdapter(activadoDesactivadoAdapter);
+        //*******************************spnActivarDesactivar
+
+
+        //*******************************spnPublicoPrivado
+        spnPublicoPrivado=findViewById(R.id.spn_Publico_Privado);
+
+        //Lleno la lista de categorias
+        pubPrivList.add("Ninguno");
+        pubPrivList.add("Publico");
+        pubPrivList.add("Privado");
+
+
+        // Crear un ArrayAdapter utilizando la lista de categorías y un diseño simple para el spinner
+        ArrayAdapter<String> publicoPrivadoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, pubPrivList);
+
+        // Especificar el diseño para el menú desplegable
+        publicoPrivadoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        // Establecer el adaptador en el Spinner
+        spnPublicoPrivado.setAdapter(publicoPrivadoAdapter);
+        //********************************spnPublicoPrivado
 
 
         //DatePicker
@@ -204,20 +247,6 @@ public class CrearEvento extends AppCompatActivity {
 
 
 
-        // Agregar un listener para el cambio de estado del Switch
-        switchActivar_Desactivar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // Aquí puedes manejar el cambio de estado del Switch
-                if (isChecked) {
-                    activar_desactivar=true;
-                } else {
-                    // El Switch no está seleccionado, guardar "false"
-                    activar_desactivar=false;
-                }
-            }
-        });
-
         //Para elegir la imagen
         imvEvento.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,6 +270,8 @@ public class CrearEvento extends AppCompatActivity {
                 // Obtener los valores seleccionados del Spinner
                 String categoriaSeleccionada = spnCategoria.getSelectedItem().toString();
                 String rutaSeleccionada = spnRuta.getSelectedItem().toString();
+                String esActivo=spnActivarDesactivar.getSelectedItem().toString();
+                String esPublico=spnPublicoPrivado.getSelectedItem().toString();
 
                 // Obtener los valores ingresados en los EditText
                 String cupoMinimo = txt_CupoMinimo.getText().toString();
@@ -281,6 +312,8 @@ public class CrearEvento extends AppCompatActivity {
                                 evento.setUserId(userId);
                                 evento.setUserName(userName);
                                 evento.setRating(0);
+                                evento.setPublicoPrivado(esPublico);
+                                evento.setActivadoDescativado(esActivo);
                                 evento.setImagenEvento(uri.toString());
 
                                 // Crea una referencia a la base de datos usando el ID del usuario

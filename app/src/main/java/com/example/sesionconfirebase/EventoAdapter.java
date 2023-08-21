@@ -60,6 +60,8 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
         holder.tv_Categoria.setText(evento.getCategoria());
         holder.tv_UserName.setText(evento.getUserName());
         holder.tv_UserId.setText(evento.getUserId());
+        holder.tv_ActivarDescativar.setText(evento.getActivadoDescativado());
+        holder.tv_PublicoPrivado.setText(evento.getPublicoPrivado());
         holder.rb_calificacionEvento.setRating(evento.getRating());
 
 
@@ -80,6 +82,8 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
                 intent.putExtra("singleUserName",evento.getUserName());
                 intent.putExtra("singleUserId",evento.getUserId());
                 intent.putExtra("singleRating",evento.getRating());
+                intent.putExtra("singlePublicoPrivado",evento.getPublicoPrivado());
+                intent.putExtra("singleActivarDesactivar",evento.getActivadoDescativado());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
 
@@ -96,7 +100,8 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         //Son los controles del itemEvento
-        TextView tv_tituloEvento,tv_Ruta,tv_Descripcion,tv_FechaEncuentro,tv_HoraEncuentro,tv_CupoMinimo,tv_CupoMaximo,tv_Categoria,tv_UserName,tv_UserId;
+        TextView tv_tituloEvento,tv_Ruta,tv_Descripcion,tv_FechaEncuentro,tv_HoraEncuentro,
+                tv_CupoMinimo,tv_CupoMaximo,tv_Categoria,tv_UserName,tv_UserId,tv_PublicoPrivado,tv_ActivarDescativar;
         ImageView imvEvento;
 
         RatingBar rb_calificacionEvento;
@@ -116,6 +121,8 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
                 tv_UserName=itemView.findViewById(R.id.tv_UserName);
                 tv_UserId=itemView.findViewById(R.id.tv_UserId);
                 rb_calificacionEvento=itemView.findViewById(R.id.rb_calificacionEvento);
+                tv_PublicoPrivado=itemView.findViewById(R.id.tv_PublicoPrivado);
+                tv_ActivarDescativar=itemView.findViewById(R.id.tv_ActivarDescativar);
                 imvEvento=itemView.findViewById(R.id.imvEvento);
 
 

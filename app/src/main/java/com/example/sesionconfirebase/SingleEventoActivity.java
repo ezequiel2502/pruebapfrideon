@@ -10,7 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 
 public class SingleEventoActivity extends AppCompatActivity {
-    TextView tv_SingleEvento,tv_SingleRuta,tv_SingleDescripcion,tv_SingleFechaEncuentro,tv_SingleHoraEncuentro,tv_SingleCupoMinimo,tv_SingleCupoMaximo,tv_SingleCategoria,tv_SingleUserName,tv_SingleUserId;
+    TextView tv_SingleEvento,tv_SingleRuta,tv_SingleDescripcion,tv_SingleFechaEncuentro,
+            tv_SingleHoraEncuentro,tv_SingleCupoMinimo,tv_SingleCupoMaximo,
+            tv_SingleCategoria,tv_SingleUserName,tv_SingleUserId,
+            tv_SinglePublicoPrivado,tv_SingleActivadoDescativado;
     ImageView singleImage;
 
     RatingBar rb_SingleRatingEvento;
@@ -30,6 +33,8 @@ public class SingleEventoActivity extends AppCompatActivity {
         tv_SingleCategoria=findViewById(R.id.tv_SingleCategoria);
         tv_SingleUserName=findViewById(R.id.tv_SingleUserName);
         tv_SingleUserId=findViewById(R.id.tv_SingleUserId);
+        tv_SinglePublicoPrivado=findViewById(R.id.tv_SinglePublicoPrivado);
+        tv_SingleActivadoDescativado=findViewById(R.id.tv_SingleActivadoDescativado);
         rb_SingleRatingEvento=findViewById(R.id.rb_SingleRatingEvento);
 
 
@@ -53,6 +58,8 @@ public class SingleEventoActivity extends AppCompatActivity {
         String singleCategoria = getIntent().getStringExtra("singleCategoria");
         String singleUserName=getIntent().getStringExtra("singleUserName");
         String singleUserId=getIntent().getStringExtra("singleUserId");
+        String singleActivarDesactivar=getIntent().getStringExtra("singleActivarDesactivar");
+        String singlePublicoPrivado=getIntent().getStringExtra("singlePublicoPrivado");
         Integer singleRating=getIntent().getIntExtra("singleRating",0);
 
         // Establece los datos en los TextViews
@@ -67,6 +74,8 @@ public class SingleEventoActivity extends AppCompatActivity {
         tv_SingleUserName.setText(singleUserName);
         tv_SingleUserId.setText(singleUserId);
         rb_SingleRatingEvento.setRating(singleRating);
+        tv_SinglePublicoPrivado.setText(singlePublicoPrivado);
+        tv_SingleActivadoDescativado.setText(singleActivarDesactivar);
 
 
 

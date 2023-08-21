@@ -56,7 +56,7 @@
 
                     <!-- Título "Evento" -->
                     <TextView
-                        android:id="@+id/tv_tituloEvento"
+                        android:id="@+id/tv_tituloEventoPublicoVigente"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -78,7 +78,7 @@
 
                     <!-- Título "Evento" -->
                     <TextView
-                        android:id="@+id/tv_UserName"
+                        android:id="@+id/tv_UserNamePublicoVigente"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -89,7 +89,7 @@
 
                     <!-- ImageView -->
                     <ImageView
-                        android:id="@+id/imvEvento"
+                        android:id="@+id/imvEventoPublicoVigente"
                         android:layout_width="182dp"
                         android:layout_height="222dp"
                         android:layout_gravity="center_horizontal"
@@ -119,7 +119,7 @@
 
                     <!-- Título "Ruta" -->
                     <TextView
-                        android:id="@+id/tv_Ruta"
+                        android:id="@+id/tv_RutaPublicoVigente"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -147,7 +147,7 @@
 
                         <!-- Título "Descripcion" subrayado -->
                         <TextView
-                            android:id="@+id/tv_UserId"
+                            android:id="@+id/tv_UserIdPublicoVigente"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
@@ -177,7 +177,7 @@
 
                         <!-- Título "Descripcion" subrayado -->
                         <TextView
-                            android:id="@+id/tv_Descripcion"
+                            android:id="@+id/tv_DescripcionPublicoVigente"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
@@ -207,7 +207,7 @@
 
                         <!-- Subtítulos "Fecha Encuentro" -->
                         <TextView
-                            android:id="@+id/tv_FechaEncuentro"
+                            android:id="@+id/tv_FechaEncuentroPublicoVigente"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
@@ -237,7 +237,7 @@
 
                         <!-- Subtítulo "Hora Encuentro" -->
                         <TextView
-                            android:id="@+id/tv_HoraEncuentro"
+                            android:id="@+id/tv_HoraEncuentroPublicoVigente"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
@@ -267,7 +267,7 @@
 
                         <!-- Subtítulo "Cupo Mínimo" -->
                         <TextView
-                            android:id="@+id/tv_CupoMinimo"
+                            android:id="@+id/tv_CupoMinimoPublicoVigente"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
@@ -297,7 +297,7 @@
 
                         <!-- Subtítulo "Cupo Máximo" -->
                         <TextView
-                            android:id="@+id/tv_CupoMaximo"
+                            android:id="@+id/tv_CupoMaximoPublicoVigente"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
@@ -327,7 +327,7 @@
 
                         <!-- Subtítulo "Categoría" -->
                         <TextView
-                            android:id="@+id/tv_Categoria"
+                            android:id="@+id/tv_CategoriaPublicoVigente"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
@@ -336,68 +336,6 @@
                             android:textSize="8sp" />
 
                     </LinearLayout>
-
-                    <!--Activar/Descativar-->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- TextView adicional "Categoría" en negro -->
-                        <TextView
-                            android:id="@+id/tv_etiquetaActivar_Descativar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginTop="4dp"
-                            android:text="Activar/Descativar:  "
-                            android:textColor="@android:color/black"
-                            android:textSize="10dp"
-                            android:textStyle="bold" />
-
-                        <!-- Subtítulo "Categoría" -->
-                        <TextView
-                            android:id="@+id/tv_ActivarDescativar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginTop="10dp"
-                            android:text="Act/Desact"
-                            android:textSize="8sp" />
-
-                    </LinearLayout>
-
-                    <!--Publico/Privado-->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- TextView adicional "Categoría" en negro -->
-                        <TextView
-                            android:id="@+id/tv_etiquetaPublicoPrivado"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginTop="4dp"
-                            android:text="Publico/Privado:  "
-                            android:textColor="@android:color/black"
-                            android:textSize="10dp"
-                            android:textStyle="bold" />
-
-                        <!-- Subtítulo "Categoría" -->
-                        <TextView
-                            android:id="@+id/tv_PublicoPrivado"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginTop="10dp"
-                            android:text="Publico/Privado"
-                            android:textSize="8sp" />
-
-                    </LinearLayout>
-
-
 
 
                 </LinearLayout>
@@ -425,12 +363,11 @@
                     android:layout_gravity="center_vertical"
                     android:text="Calificación:"
                     android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:textSize="14dp" />
+                    android:textSize="16dp" />
 
                 <!-- RatingBar para la calificación -->
                 <RatingBar
-                    android:id="@+id/rb_calificacionEvento"
+                    android:id="@+id/rb_calificacionEventoPublicoVigente"
                     style="@style/Widget.AppCompat.RatingBar.Indicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

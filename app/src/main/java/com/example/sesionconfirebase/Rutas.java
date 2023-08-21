@@ -38,7 +38,7 @@ public class Rutas extends AppCompatActivity {
                 return true;
             }
             else if (itemId == R.id.btn_inicio) {
-                startActivity(new Intent(getApplicationContext(), Inicio.class));
+                startActivity(new Intent(getApplicationContext(), ListaEventosPublicosVigentes.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
                 return true;

@@ -10,6 +10,9 @@ private boolean activarDesactivar;
 private String userId;
 private String userName;
 
+private String publicoPrivado;
+private  String activadoDescativado;
+
 private int rating;
 
     public ModelEvento() {
@@ -18,7 +21,8 @@ private int rating;
     public ModelEvento(String nombreEvento, String ruta, String descripcion,
                        String fechaEncuentro, String horaEncuentro, String cupoMinimo,
                        String cupoMaximo, String categoria, String imagenEvento,
-                       boolean activarDesactivar, String userId, String userName, int rating) {
+                       boolean activarDesactivar, String userId, String userName,
+                       String publicoPrivado, String activadoDescativado, int rating) {
         this.nombreEvento = nombreEvento;
         Ruta = ruta;
         this.descripcion = descripcion;
@@ -31,9 +35,18 @@ private int rating;
         this.activarDesactivar = activarDesactivar;
         this.userId = userId;
         this.userName = userName;
+        this.publicoPrivado = publicoPrivado;
+        this.activadoDescativado = activadoDescativado;
         this.rating = rating;
     }
 
+    public String getPublicoPrivado() {
+        return publicoPrivado;
+    }
+
+    public String getActivadoDescativado() {
+        return activadoDescativado;
+    }
 
     public int getRating() {
         return rating;
@@ -143,4 +156,14 @@ private int rating;
     public void setImagenEvento(String imagenEvento) {
         this.imagenEvento = imagenEvento;
     }
+
+    public void setPublicoPrivado(String publicoPrivado) {
+        this.publicoPrivado = publicoPrivado;
+    }
+
+    public void setActivadoDescativado(String activadoDescativado) {
+        this.activadoDescativado = activadoDescativado;
+    }
 }
+
+
