@@ -81,8 +81,8 @@ public class ListaEventos extends AppCompatActivity {
         recyclerViewEventos.setNestedScrollingEnabled(false);
         recyclerViewEventos.setAdapter(recyclerAdapter);
 
-        //Si hay un cambio en la base de datos lo mete en la lista de eventos
-        firebaseDatabase.getReference().child("Usuarios").child(userId).child("Eventos").addListenerForSingleValueEvent(new ValueEventListener() {
+        //Reviso cambios en los eventos privados, si hubo alguno lo meto en la lista
+        firebaseDatabase.getReference().child("Eventos").child(userId).child("Eventos Privados").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()) {

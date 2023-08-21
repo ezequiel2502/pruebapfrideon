@@ -266,12 +266,11 @@ public class CrearEvento extends AppCompatActivity {
                 dialog.show();
 
 
-
                 // Obtener los valores seleccionados del Spinner
                 String categoriaSeleccionada = spnCategoria.getSelectedItem().toString();
                 String rutaSeleccionada = spnRuta.getSelectedItem().toString();
-                String esActivo=spnActivarDesactivar.getSelectedItem().toString();
-                String esPublico=spnPublicoPrivado.getSelectedItem().toString();
+                String esActivo = spnActivarDesactivar.getSelectedItem().toString();
+                String esPublico = spnPublicoPrivado.getSelectedItem().toString();
 
                 // Obtener los valores ingresados en los EditText
                 String cupoMinimo = txt_CupoMinimo.getText().toString();
@@ -295,7 +294,7 @@ public class CrearEvento extends AppCompatActivity {
                 imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Aca obtengo la Uri del storage
+                        // Obtiene la Uri del storage
                         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
@@ -316,35 +315,58 @@ public class CrearEvento extends AppCompatActivity {
                                 evento.setActivadoDescativado(esActivo);
                                 evento.setImagenEvento(uri.toString());
 
-                                // Crea una referencia a la base de datos usando el ID del usuario
-                                DatabaseReference userEventosRef = database.getReference().child("Usuarios").child(userId).child("Eventos");
+                                // Crea una referencia a la base de datos
+                                DatabaseReference eventosRef = database.getReference().child("Eventos");
 
-                                // Crea un nuevo nodo para el evento
-                                DatabaseReference nuevoEventoRef = userEventosRef.push();
+                                if (esPublico.equals("Publico")) {
+                                    DatabaseReference eventosPublicosRef = eventosRef.child("Eventos Publicos");
+                                    DatabaseReference nuevoEventoRef = eventosPublicosRef.push();
+                                    String nuevoEventoId = nuevoEventoRef.getKey();
+                                    evento.setIdEvento(nuevoEventoId);
+                                    nuevoEventoRef.setValue(evento).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // La inserción fue exitosa
+                                            Toast.makeText(CrearEvento.this, "Evento público registrado exitosamente", Toast.LENGTH_SHORT).show();
 
-                                // Guardar los datos en Firebase Realtime Database
-                                nuevoEventoRef.setValue(evento).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
+                                            // ProgressDialog
+                                            dialog.dismiss();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // ProgressDialog
+                                            dialog.dismiss();
 
-                                        // La inserción fue exitosa
-                                        Toast.makeText(CrearEvento.this, "Evento registrado exitosamente", Toast.LENGTH_SHORT).show();
+                                            // La inserción falló
+                                            Toast.makeText(CrearEvento.this, "Error al registrar el evento público en la base de datos", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else if (esPublico.equals("Privado")) {
+                                    DatabaseReference eventosPrivadosRef = eventosRef.child(userId).child("Eventos Privados");
+                                    DatabaseReference nuevoEventoRef = eventosPrivadosRef.push();
+                                    String nuevoEventoId = nuevoEventoRef.getKey();
+                                    evento.setIdEvento(nuevoEventoId);
+                                    nuevoEventoRef.setValue(evento).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // La inserción fue exitosa
+                                            Toast.makeText(CrearEvento.this, "Evento privado registrado exitosamente", Toast.LENGTH_SHORT).show();
 
-                                        //ProgressDialog
-                                        dialog.dismiss();
+                                            // ProgressDialog
+                                            dialog.dismiss();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // ProgressDialog
+                                            dialog.dismiss();
 
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-
-                                        //ProgressDialog
-                                        dialog.dismiss();
-
-                                        // La inserción falló
-                                        Toast.makeText(CrearEvento.this, "Error al registrar el evento en la base de datos", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                            // La inserción falló
+                                            Toast.makeText(CrearEvento.this, "Error al registrar el evento privado en la base de datos", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
                             }
                         });
                     }
@@ -353,48 +375,50 @@ public class CrearEvento extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         // La subida de la imagen falló
                         Toast.makeText(CrearEvento.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 });
             }
         });
 
-    }//fin onCreate()
+            }//fin onCreate()
 
-    private void requestStoragePermission() {
-        Dexter.withContext(this)
-                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        openImagePicker();
-                    }
+            private void requestStoragePermission() {
+                Dexter.withContext(this)
+                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                                openImagePicker();
+                            }
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        // Handle permission denied
-                        Toast.makeText(CrearEvento.this, "Permiso denegado", Toast.LENGTH_SHORT).show();
-                    }
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                                // Handle permission denied
+                                Toast.makeText(CrearEvento.this, "Permiso denegado", Toast.LENGTH_SHORT).show();
+                            }
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                }).check();
-    }
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                                permissionToken.continuePermissionRequest();
+                            }
+                        }).check();
+            }
 
-    private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
+            private void openImagePicker() {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, PICK_IMAGE_REQUEST);
+            }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+            @Override
+            protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+                super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            Glide.with(this).load(imageUri).into(imvEvento); // Usar Glide o cualquier otra librería de carga de imágenes
-        }
-    }
+                if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+                    imageUri = data.getData();
+                    Glide.with(this).load(imageUri).into(imvEvento); // Usar Glide o cualquier otra librería de carga de imágenes
+                }
+            }
+
 
 }//fin App
