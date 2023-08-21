@@ -23,6 +23,13 @@
         <activity
             android:name=".SingleEventoActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".SingleEventoPublicoActivity"
+            android:label="Detalles del Evento Público"
+            android:exported="false" >
+        </activity>
+
         <activity
             android:name=".CrearEvento"
             android:exported="false" />

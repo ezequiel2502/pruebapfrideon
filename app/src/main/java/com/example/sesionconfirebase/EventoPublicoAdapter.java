@@ -1,6 +1,7 @@
 package com.example.sesionconfirebase;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,8 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
     public void onBindViewHolder(@NonNull EventoPublicoAdapter.ViewHolder holder, int position) {
         ModelEvento evento = list.get(position);
 
+        //Cargo el itemEventoPublicoVigente
+
         // Cargar la imagen usando Glide
         Glide.with(context)
                 .load(evento.getImagenEvento()) // ModelEvento tiene un método para obtener la URL de la imagen
@@ -55,6 +58,33 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
         holder.tv_ActivarDescativar.setText(evento.getActivadoDescativado());
         holder.tv_PublicoPrivado.setText(evento.getPublicoPrivado());
         holder.rb_calificacionEvento.setRating(evento.getRating());
+
+
+        //Agrego un Listener para cuando cliquee sobre el evento(item), me lleva a los detalles de la publicacion para postularme
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(context, SingleEventoPublicoActivity.class);
+                intent.putExtra("singleImage",evento.getImagenEvento());
+                intent.putExtra("singleEvento",evento.getNombreEvento());
+                intent.putExtra("singleRuta",evento.getRuta());
+                intent.putExtra("singleDescripcion",evento.getDescripcion());
+                intent.putExtra("singleFechaEncuentro",evento.getFechaEncuentro());
+                intent.putExtra("singleHoraEncuentro",evento.getHoraEncuentro());
+                intent.putExtra("singleCupoMinimo",evento.getCupoMinimo());
+                intent.putExtra("singleCupoMaximo",evento.getCupoMaximo());
+                intent.putExtra("singleCategoria",evento.getCategoria());
+                intent.putExtra("singleUserName",evento.getUserName());
+                intent.putExtra("singleUserId",evento.getUserId());
+                intent.putExtra("singleRating",evento.getRating());
+                intent.putExtra("singlePublicoPrivado",evento.getPublicoPrivado());
+                intent.putExtra("singleActivarDesactivar",evento.getActivadoDescativado());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+
+            }
+        });
+
 
 
     }
