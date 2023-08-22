@@ -84,6 +84,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
                 intent.putExtra("singleRating",evento.getRating());
                 intent.putExtra("singlePublicoPrivado",evento.getPublicoPrivado());
                 intent.putExtra("singleActivarDesactivar",evento.getActivadoDescativado());
+                intent.putExtra("EventoId",evento.getIdEvento());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
 
