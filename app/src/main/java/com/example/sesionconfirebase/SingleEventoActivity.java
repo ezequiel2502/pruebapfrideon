@@ -2,6 +2,7 @@ package com.example.sesionconfirebase;
 
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,8 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 
 public class SingleEventoActivity extends AppCompatActivity {
-    TextView tv_SingleEvento,tv_SingleRuta,tv_SingleDescripcion,tv_SingleFechaEncuentro,tv_SingleHoraEncuentro,tv_SingleCupoMinimo,tv_SingleCupoMaximo,tv_SingleCategoria;
+    TextView tv_SingleEvento,tv_SingleRuta,tv_SingleDescripcion,tv_SingleFechaEncuentro,
+            tv_SingleHoraEncuentro,tv_SingleCupoMinimo,tv_SingleCupoMaximo,
+            tv_SingleCategoria,tv_SingleUserName,tv_SingleUserId,
+            tv_SinglePublicoPrivado,tv_SingleActivadoDescativado;
     ImageView singleImage;
+
+    RatingBar rb_SingleRatingEvento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +31,12 @@ public class SingleEventoActivity extends AppCompatActivity {
         tv_SingleCupoMinimo=findViewById(R.id.tv_SingleCupoMinimo);
         tv_SingleCupoMaximo=findViewById(R.id.tv_SingleCupoMaximo);
         tv_SingleCategoria=findViewById(R.id.tv_SingleCategoria);
+        tv_SingleUserName=findViewById(R.id.tv_SingleUserName);
+        tv_SingleUserId=findViewById(R.id.tv_SingleUserId);
+        tv_SinglePublicoPrivado=findViewById(R.id.tv_SinglePublicoPrivado);
+        tv_SingleActivadoDescativado=findViewById(R.id.tv_SingleActivadoDescativado);
+        rb_SingleRatingEvento=findViewById(R.id.rb_SingleRatingEvento);
+
 
         //Obtengo los datos de los intents
 
@@ -44,6 +56,11 @@ public class SingleEventoActivity extends AppCompatActivity {
         String singleCupoMinimo = getIntent().getStringExtra("singleCupoMinimo");
         String singleCupoMaximo = getIntent().getStringExtra("singleCupoMaximo");
         String singleCategoria = getIntent().getStringExtra("singleCategoria");
+        String singleUserName=getIntent().getStringExtra("singleUserName");
+        String singleUserId=getIntent().getStringExtra("singleUserId");
+        String singleActivarDesactivar=getIntent().getStringExtra("singleActivarDesactivar");
+        String singlePublicoPrivado=getIntent().getStringExtra("singlePublicoPrivado");
+        Integer singleRating=getIntent().getIntExtra("singleRating",0);
 
         // Establece los datos en los TextViews
         tv_SingleEvento.setText(singleEvento);
@@ -54,6 +71,11 @@ public class SingleEventoActivity extends AppCompatActivity {
         tv_SingleCupoMinimo.setText(singleCupoMinimo);
         tv_SingleCupoMaximo.setText(singleCupoMaximo);
         tv_SingleCategoria.setText(singleCategoria);
+        tv_SingleUserName.setText(singleUserName);
+        tv_SingleUserId.setText(singleUserId);
+        rb_SingleRatingEvento.setRating(singleRating);
+        tv_SinglePublicoPrivado.setText(singlePublicoPrivado);
+        tv_SingleActivadoDescativado.setText(singleActivarDesactivar);
 
 
 

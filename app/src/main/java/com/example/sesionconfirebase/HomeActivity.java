@@ -30,9 +30,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 public class HomeActivity extends AppCompatActivity {
 
     Button mButtonCerrarSesion;
@@ -67,12 +64,18 @@ public class HomeActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.btn_inicio) {
-                startActivity(new Intent(getApplicationContext(), Inicio.class));
+                startActivity(new Intent(getApplicationContext(), ListaEventosPublicosVigentes.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
                 return true;
             } else if (itemId == R.id.btn_planificar) {
                 startActivity(new Intent(getApplicationContext(), ListaEventos.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+                return true;
+            }
+            else if (itemId == R.id.btn_Rutas) {
+                startActivity(new Intent(getApplicationContext(), Rutas.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
                 return true;

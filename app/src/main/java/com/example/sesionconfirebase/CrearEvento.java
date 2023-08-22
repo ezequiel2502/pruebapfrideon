@@ -47,15 +47,18 @@ import java.util.Calendar;
 
 
 public class CrearEvento extends AppCompatActivity {
-    Spinner spnRuta,spnCategoria;
+    Spinner spnRuta,spnCategoria,spnActivarDesactivar,spnPublicoPrivado;
     EditText txt_FechaEncuentro,txt_HoraEncuentro,txt_CupoMinimo,txt_CupoMaximo,txt_Descripcion,txt_NombreEvento;
     ImageView imvEvento;
     Button btn_FechaEncuentro,btn_CrearEvento,btn_HoraEncuentro;
 
-    Switch switchActivar_Desactivar;
+    //Switch switchActivar_Desactivar;
 
     ArrayList<String> categoriasList=new ArrayList<String>();
     ArrayList<String> rutasList=new ArrayList<String>();
+
+    ArrayList<String> actDesList=new ArrayList<String>();
+    ArrayList<String> pubPrivList=new ArrayList<String>();
 
 
     private int dia,mes,ano,hora,minutos;
@@ -93,6 +96,9 @@ public class CrearEvento extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         String userId = currentUser.getUid();
 
+        //Obtengo el userName:
+        String userName=currentUser.getDisplayName();
+
 
         //Controles de la vista
         btn_FechaEncuentro=findViewById(R.id.btn_FechaEncuentro);
@@ -107,12 +113,10 @@ public class CrearEvento extends AppCompatActivity {
         txt_Descripcion=findViewById(R.id.editTextDescripcion);
         txt_NombreEvento=findViewById(R.id.txt_NombreEvento);
 
-        switchActivar_Desactivar=findViewById(R.id.sw_Activar_Desactivar);
+        //switchActivar_Desactivar=findViewById(R.id.sw_Activar_Desactivar);
 
         imvEvento=findViewById(R.id.imvEvento);
 
-        // Establecer el estado inicial del Switch como activado (true)
-        switchActivar_Desactivar.setChecked(true);
 
         //>>>>>>>>>>spnCategorias
         spnCategoria=findViewById(R.id.spnCategoria);
@@ -154,6 +158,48 @@ public class CrearEvento extends AppCompatActivity {
         // Establecer el adaptador en el Spinner
         spnRuta.setAdapter(rutasAdapter);
         //spnRutas<<<<<<<<<<
+
+
+        //******************************spnActivarDesactivar
+        spnActivarDesactivar=findViewById(R.id.spn_Activar_Desactivar);
+
+        //Lleno la lista de categorias
+        actDesList.add("Ninguno");
+        actDesList.add("Activado");
+        actDesList.add("Desactivado");
+
+
+        // Crear un ArrayAdapter utilizando la lista de categorías y un diseño simple para el spinner
+        ArrayAdapter<String> activadoDesactivadoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, actDesList);
+
+        // Especificar el diseño para el menú desplegable
+        activadoDesactivadoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        // Establecer el adaptador en el Spinner
+        spnActivarDesactivar.setAdapter(activadoDesactivadoAdapter);
+        //*******************************spnActivarDesactivar
+
+
+        //*******************************spnPublicoPrivado
+        spnPublicoPrivado=findViewById(R.id.spn_Publico_Privado);
+
+        //Lleno la lista de categorias
+        pubPrivList.add("Ninguno");
+        pubPrivList.add("Publico");
+        pubPrivList.add("Privado");
+
+
+        // Crear un ArrayAdapter utilizando la lista de categorías y un diseño simple para el spinner
+        ArrayAdapter<String> publicoPrivadoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, pubPrivList);
+
+        // Especificar el diseño para el menú desplegable
+        publicoPrivadoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        // Establecer el adaptador en el Spinner
+        spnPublicoPrivado.setAdapter(publicoPrivadoAdapter);
+        //********************************spnPublicoPrivado
 
 
         //DatePicker
@@ -201,20 +247,6 @@ public class CrearEvento extends AppCompatActivity {
 
 
 
-        // Agregar un listener para el cambio de estado del Switch
-        switchActivar_Desactivar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // Aquí puedes manejar el cambio de estado del Switch
-                if (isChecked) {
-                    activar_desactivar=true;
-                } else {
-                    // El Switch no está seleccionado, guardar "false"
-                    activar_desactivar=false;
-                }
-            }
-        });
-
         //Para elegir la imagen
         imvEvento.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,10 +266,11 @@ public class CrearEvento extends AppCompatActivity {
                 dialog.show();
 
 
-
                 // Obtener los valores seleccionados del Spinner
                 String categoriaSeleccionada = spnCategoria.getSelectedItem().toString();
                 String rutaSeleccionada = spnRuta.getSelectedItem().toString();
+                String esActivo = spnActivarDesactivar.getSelectedItem().toString();
+                String esPublico = spnPublicoPrivado.getSelectedItem().toString();
 
                 // Obtener los valores ingresados en los EditText
                 String cupoMinimo = txt_CupoMinimo.getText().toString();
@@ -261,7 +294,7 @@ public class CrearEvento extends AppCompatActivity {
                 imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Aca obtengo la Uri del storage
+                        // Obtiene la Uri del storage
                         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
@@ -275,37 +308,65 @@ public class CrearEvento extends AppCompatActivity {
                                 evento.setFechaEncuentro(fechaEncuentro);
                                 evento.setHoraEncuentro(horaEncuentro);
                                 evento.setActivarDesactivar(activadoDesactivado);
+                                evento.setUserId(userId);
+                                evento.setUserName(userName);
+                                evento.setRating(0);
+                                evento.setPublicoPrivado(esPublico);
+                                evento.setActivadoDescativado(esActivo);
                                 evento.setImagenEvento(uri.toString());
 
-                                // Crea una referencia a la base de datos usando el ID del usuario
-                                DatabaseReference userEventosRef = database.getReference().child("Usuarios").child(userId).child("Eventos");
+                                // Crea una referencia a la base de datos
+                                DatabaseReference eventosRef = database.getReference().child("Eventos");
 
-                                // Crea un nuevo nodo para el evento
-                                DatabaseReference nuevoEventoRef = userEventosRef.push();
+                                if (esPublico.equals("Publico")) {
+                                    DatabaseReference eventosPublicosRef = eventosRef.child("Eventos Publicos");
+                                    DatabaseReference nuevoEventoRef = eventosPublicosRef.push();
+                                    String nuevoEventoId = nuevoEventoRef.getKey();
+                                    evento.setIdEvento(nuevoEventoId);
+                                    nuevoEventoRef.setValue(evento).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // La inserción fue exitosa
+                                            Toast.makeText(CrearEvento.this, "Evento público registrado exitosamente", Toast.LENGTH_SHORT).show();
 
-                                // Guardar los datos en Firebase Realtime Database
-                                nuevoEventoRef.setValue(evento).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
+                                            // ProgressDialog
+                                            dialog.dismiss();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // ProgressDialog
+                                            dialog.dismiss();
 
-                                        // La inserción fue exitosa
-                                        Toast.makeText(CrearEvento.this, "Evento registrado exitosamente", Toast.LENGTH_SHORT).show();
+                                            // La inserción falló
+                                            Toast.makeText(CrearEvento.this, "Error al registrar el evento público en la base de datos", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else if (esPublico.equals("Privado")) {
+                                    DatabaseReference eventosPrivadosRef = eventosRef.child(userId).child("Eventos Privados");
+                                    DatabaseReference nuevoEventoRef = eventosPrivadosRef.push();
+                                    String nuevoEventoId = nuevoEventoRef.getKey();
+                                    evento.setIdEvento(nuevoEventoId);
+                                    nuevoEventoRef.setValue(evento).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // La inserción fue exitosa
+                                            Toast.makeText(CrearEvento.this, "Evento privado registrado exitosamente", Toast.LENGTH_SHORT).show();
 
-                                        //ProgressDialog
-                                        dialog.dismiss();
+                                            // ProgressDialog
+                                            dialog.dismiss();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // ProgressDialog
+                                            dialog.dismiss();
 
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-
-                                        //ProgressDialog
-                                        dialog.dismiss();
-
-                                        // La inserción falló
-                                        Toast.makeText(CrearEvento.this, "Error al registrar el evento en la base de datos", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                            // La inserción falló
+                                            Toast.makeText(CrearEvento.this, "Error al registrar el evento privado en la base de datos", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
                             }
                         });
                     }
@@ -314,48 +375,50 @@ public class CrearEvento extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         // La subida de la imagen falló
                         Toast.makeText(CrearEvento.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 });
             }
         });
 
-    }//fin onCreate()
+            }//fin onCreate()
 
-    private void requestStoragePermission() {
-        Dexter.withContext(this)
-                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        openImagePicker();
-                    }
+            private void requestStoragePermission() {
+                Dexter.withContext(this)
+                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                                openImagePicker();
+                            }
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        // Handle permission denied
-                        Toast.makeText(CrearEvento.this, "Permiso denegado", Toast.LENGTH_SHORT).show();
-                    }
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                                // Handle permission denied
+                                Toast.makeText(CrearEvento.this, "Permiso denegado", Toast.LENGTH_SHORT).show();
+                            }
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                }).check();
-    }
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                                permissionToken.continuePermissionRequest();
+                            }
+                        }).check();
+            }
 
-    private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
+            private void openImagePicker() {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, PICK_IMAGE_REQUEST);
+            }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+            @Override
+            protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+                super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            Glide.with(this).load(imageUri).into(imvEvento); // Usar Glide o cualquier otra librería de carga de imágenes
-        }
-    }
+                if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+                    imageUri = data.getData();
+                    Glide.with(this).load(imageUri).into(imvEvento); // Usar Glide o cualquier otra librería de carga de imágenes
+                }
+            }
+
 
 }//fin App

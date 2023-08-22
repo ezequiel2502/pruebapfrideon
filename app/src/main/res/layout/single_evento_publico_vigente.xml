@@ -55,7 +55,7 @@
 
             </LinearLayout>
 
-                <!--UserName-->
+            <!--UserName-->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -360,7 +360,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginTop="10dp"
-                    android:text="  PublicoPrivado"
+                    android:text="  Pub/Priv"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -379,7 +379,7 @@
                     android:layout_gravity="bottom"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="Publico/Privado:  "
+                    android:text="Activado/Desactivado:  "
                     android:textColor="@android:color/black"
                     android:textSize="22dp"
                     android:textStyle="bold" />
@@ -391,7 +391,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginTop="10dp"
-                    android:text="  ActivadoDescativado"
+                    android:text="  A/D"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -437,7 +437,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Modificar"
+                    android:text="Postularse"
                     android:textSize="18sp" />
 
             </LinearLayout>

@@ -7,10 +7,23 @@ private String imagenEvento;
 
 private boolean activarDesactivar;
 
+private String userId;
+private String userName;
+
+private String publicoPrivado;
+private  String activadoDescativado;
+
+private String idEvento;
+private int rating;
+
     public ModelEvento() {
     }
 
-    public ModelEvento(String nombreEvento, String ruta, String descripcion, String fechaEncuentro, String horaEncuentro, String cupoMinimo, String cupoMaximo, String categoria, String imagenEvento, boolean activarDesactivar) {
+    public ModelEvento(String nombreEvento, String ruta, String descripcion,
+                       String fechaEncuentro, String horaEncuentro, String cupoMinimo,
+                       String cupoMaximo, String categoria, String imagenEvento,
+                       boolean activarDesactivar,String userId, String userName,
+                       String publicoPrivado, String activadoDescativado, String idEvento, int rating) {
         this.nombreEvento = nombreEvento;
         Ruta = ruta;
         this.descripcion = descripcion;
@@ -21,7 +34,39 @@ private boolean activarDesactivar;
         this.categoria = categoria;
         this.imagenEvento = imagenEvento;
         this.activarDesactivar = activarDesactivar;
+        this.userId = userId;
+        this.userName = userName;
+        this.publicoPrivado = publicoPrivado;
+        this.activadoDescativado = activadoDescativado;
+        this.idEvento = idEvento;
+        this.rating = rating;
     }
+
+    public String getIdEvento() {
+        return idEvento;
+    }
+
+    public String getPublicoPrivado() {
+        return publicoPrivado;
+    }
+
+    public String getActivadoDescativado() {
+        return activadoDescativado;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+
 
     public boolean isActivarDesactivar() {
         return activarDesactivar;
@@ -68,6 +113,16 @@ private boolean activarDesactivar;
     }
 
 
+
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public void setNombreEvento(String nombreEvento) {
         this.nombreEvento = nombreEvento;
     }
@@ -100,7 +155,25 @@ private boolean activarDesactivar;
         this.categoria = categoria;
     }
 
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
     public void setImagenEvento(String imagenEvento) {
         this.imagenEvento = imagenEvento;
     }
+
+    public void setPublicoPrivado(String publicoPrivado) {
+        this.publicoPrivado = publicoPrivado;
+    }
+
+    public void setActivadoDescativado(String activadoDescativado) {
+        this.activadoDescativado = activadoDescativado;
+    }
+
+    public void setIdEvento(String idEvento) {
+        this.idEvento = idEvento;
+    }
 }
+
+

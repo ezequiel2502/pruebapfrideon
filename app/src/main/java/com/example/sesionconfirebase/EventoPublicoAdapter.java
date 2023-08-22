@@ -14,36 +14,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Locale;
 
-public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder> {
+public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdapter.ViewHolder> {
 
-    ArrayList<ModelEvento> list;
+    ArrayList <ModelEvento> list;
+
     Context context;
 
-    public EventoAdapter(ArrayList<ModelEvento> list, Context context) {
+    public EventoPublicoAdapter(ArrayList<ModelEvento> list, Context context) {
         this.list = list;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
+    public EventoPublicoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(context).inflate(R.layout.item_evento,parent,false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
+    public void onBindViewHolder(@NonNull EventoPublicoAdapter.ViewHolder holder, int position) {
         ModelEvento evento = list.get(position);
+
+        //Cargo el itemEventoPublicoVigente
 
         // Cargar la imagen usando Glide
         Glide.with(context)
@@ -69,7 +64,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context, SingleEventoActivity.class);
+                Intent intent=new Intent(context, SingleEventoPublicoActivity.class);
                 intent.putExtra("singleImage",evento.getImagenEvento());
                 intent.putExtra("singleEvento",evento.getNombreEvento());
                 intent.putExtra("singleRuta",evento.getRuta());
@@ -91,6 +86,8 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
             }
         });
 
+
+
     }
 
     @Override
@@ -98,7 +95,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         //Son los controles del itemEvento
         TextView tv_tituloEvento,tv_Ruta,tv_Descripcion,tv_FechaEncuentro,tv_HoraEncuentro,
@@ -106,50 +103,25 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.ViewHolder
         ImageView imvEvento;
 
         RatingBar rb_calificacionEvento;
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
+            //Son los controles del itemEvento
+            tv_tituloEvento=itemView.findViewById(R.id.tv_tituloEvento);
+            tv_Ruta=itemView.findViewById(R.id.tv_Ruta);
+            tv_Descripcion=itemView.findViewById(R.id.tv_Descripcion);
+            tv_FechaEncuentro=itemView.findViewById(R.id.tv_FechaEncuentro);
+            tv_HoraEncuentro=itemView.findViewById(R.id.tv_HoraEncuentro);
+            tv_CupoMinimo=itemView.findViewById(R.id.tv_CupoMinimo);
+            tv_CupoMaximo=itemView.findViewById(R.id.tv_CupoMaximo);
+            tv_Categoria=itemView.findViewById(R.id.tv_Categoria);
+            tv_UserName=itemView.findViewById(R.id.tv_UserName);
+            tv_UserId=itemView.findViewById(R.id.tv_UserId);
+            rb_calificacionEvento=itemView.findViewById(R.id.rb_calificacionEvento);
+            tv_PublicoPrivado=itemView.findViewById(R.id.tv_PublicoPrivado);
+            tv_ActivarDescativar=itemView.findViewById(R.id.tv_ActivarDescativar);
+            imvEvento=itemView.findViewById(R.id.imvEvento);
 
-                //Son los controles del itemEvento
-                tv_tituloEvento=itemView.findViewById(R.id.tv_tituloEvento);
-                tv_Ruta=itemView.findViewById(R.id.tv_Ruta);
-                tv_Descripcion=itemView.findViewById(R.id.tv_Descripcion);
-                tv_FechaEncuentro=itemView.findViewById(R.id.tv_FechaEncuentro);
-                tv_HoraEncuentro=itemView.findViewById(R.id.tv_HoraEncuentro);
-                tv_CupoMinimo=itemView.findViewById(R.id.tv_CupoMinimo);
-                tv_CupoMaximo=itemView.findViewById(R.id.tv_CupoMaximo);
-                tv_Categoria=itemView.findViewById(R.id.tv_Categoria);
-                tv_UserName=itemView.findViewById(R.id.tv_UserName);
-                tv_UserId=itemView.findViewById(R.id.tv_UserId);
-                rb_calificacionEvento=itemView.findViewById(R.id.rb_calificacionEvento);
-                tv_PublicoPrivado=itemView.findViewById(R.id.tv_PublicoPrivado);
-                tv_ActivarDescativar=itemView.findViewById(R.id.tv_ActivarDescativar);
-                imvEvento=itemView.findViewById(R.id.imvEvento);
-
-
-
-
-
-            }
         }
-
-    public void ordenarListaPorFecha() {
-        Collections.sort(list, new Comparator<ModelEvento>() {
-            @Override
-            public int compare(ModelEvento evento1, ModelEvento evento2) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                try {
-                    Date date1 = dateFormat.parse(evento1.getFechaEncuentro());
-                    Date date2 = dateFormat.parse(evento2.getFechaEncuentro());
-                    return date1.compareTo(date2); // Compara en orden ascendente (más antiguo primero)
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        });
-
-        notifyDataSetChanged();
     }
-
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,9 @@ public class ListaEventos extends AppCompatActivity {
     ArrayList<ModelEvento> recycleList;
 
     FirebaseDatabase firebaseDatabase;
+
+    Spinner spnFiltro;
+    ArrayList<String> filtroList=new ArrayList<String>();
 
 
     @Override
@@ -77,8 +81,8 @@ public class ListaEventos extends AppCompatActivity {
         recyclerViewEventos.setNestedScrollingEnabled(false);
         recyclerViewEventos.setAdapter(recyclerAdapter);
 
-        //Si hay un cambio en la base de datos lo mete en la lista de eventos
-        firebaseDatabase.getReference().child("Usuarios").child(userId).child("Eventos").addListenerForSingleValueEvent(new ValueEventListener() {
+        //Reviso cambios en los eventos privados, si hubo alguno lo meto en la lista
+        firebaseDatabase.getReference().child("Eventos").child(userId).child("Eventos Privados").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
@@ -140,7 +144,13 @@ public class ListaEventos extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.btn_inicio) {
-                startActivity(new Intent(getApplicationContext(), Inicio.class));
+                startActivity(new Intent(getApplicationContext(), ListaEventosPublicosVigentes.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+                return true;
+            }
+            else if (itemId == R.id.btn_Rutas) {
+                startActivity(new Intent(getApplicationContext(), Rutas.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
                 return true;
