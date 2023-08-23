@@ -106,8 +106,8 @@ public class ListaEventosPublicosVigentes extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
                 return true;
-            } else if (itemId == R.id.btn_Rutas) {
-                startActivity(new Intent(getApplicationContext(), Rutas.class));
+            } else if (itemId == R.id.btn_lista_postulados) {
+                startActivity(new Intent(getApplicationContext(), ListaEventoPostulados.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
                 return true;

@@ -360,7 +360,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginTop="10dp"
-                    android:text="  Pub/Priv"
+                    android:text="  PublicoPrivado"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -379,7 +379,7 @@
                     android:layout_gravity="bottom"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="Activado/Desactivado:  "
+                    android:text="Publico/Privado:  "
                     android:textColor="@android:color/black"
                     android:textSize="22dp"
                     android:textStyle="bold" />
@@ -391,7 +391,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginTop="10dp"
-                    android:text="  A/D"
+                    android:text="  ActivadoDescativado"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -433,15 +433,14 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_postularse"
+                    android:id="@+id/btn_CancelarPostulacion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Postularse"
+                    android:text="Cancelar Postulacion"
                     android:textSize="18sp" />
 
             </LinearLayout>
-
 
 
         </LinearLayout>

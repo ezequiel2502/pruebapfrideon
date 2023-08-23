@@ -22,29 +22,29 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
-public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdapter.ViewHolder> {
+public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostuladoAdapter.ViewHolder> {
 
-    ArrayList <ModelEvento> list;
-
+    ArrayList<ModelEvento> list;
     Context context;
 
-    public EventoPublicoAdapter(ArrayList<ModelEvento> list, Context context) {
+    public EventoPostuladoAdapter(ArrayList<ModelEvento> list, Context context) {
         this.list = list;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public EventoPublicoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public EventoPostuladoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(context).inflate(R.layout.item_evento,parent,false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventoPublicoAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull EventoPostuladoAdapter.ViewHolder holder, int position) {
+
         ModelEvento evento = list.get(position);
 
-        //Cargo el itemEventoPublicoVigente
+        //Cargo el itemEvento
 
         // Cargar la imagen usando Glide
         Glide.with(context)
@@ -64,7 +64,6 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
         holder.tv_ActivarDescativar.setText(evento.getActivadoDescativado());
         holder.tv_PublicoPrivado.setText(evento.getPublicoPrivado());
         holder.rb_calificacionEvento.setRating(evento.getRating());
-
 
         //Agrego un Listener para cuando cliquee sobre el evento(item), me lleva a los detalles de la publicacion para postularme
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -92,8 +91,6 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
             }
         });
 
-
-
     }
 
     @Override
@@ -101,7 +98,7 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
         //Son los controles del itemEvento
         TextView tv_tituloEvento,tv_Ruta,tv_Descripcion,tv_FechaEncuentro,tv_HoraEncuentro,
@@ -127,6 +124,7 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
             tv_PublicoPrivado=itemView.findViewById(R.id.tv_PublicoPrivado);
             tv_ActivarDescativar=itemView.findViewById(R.id.tv_ActivarDescativar);
             imvEvento=itemView.findViewById(R.id.imvEvento);
+
 
         }
     }

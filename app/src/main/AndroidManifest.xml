@@ -18,18 +18,18 @@
         tools:replace="android:allowBackup"
         tools:targetApi="31">
         <activity
-            android:name=".Rutas"
+            android:name=".ListaEventoPostulados"
+            android:exported="false" />
+        <activity
+            android:name=".SingleEventoPostuladosActivity"
             android:exported="false" />
         <activity
             android:name=".SingleEventoActivity"
             android:exported="false" />
-
         <activity
             android:name=".SingleEventoPublicoActivity"
-            android:label="Detalles del Evento Público"
-            android:exported="false" >
-        </activity>
-
+            android:exported="false"
+            android:label="Detalles del Evento Público" />
         <activity
             android:name=".CrearEvento"
             android:exported="false" />
