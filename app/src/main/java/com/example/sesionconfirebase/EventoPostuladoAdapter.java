@@ -69,7 +69,7 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context, SingleEventoPublicoActivity.class);
+                Intent intent=new Intent(context, SingleEventoPostuladosActivity.class);
                 intent.putExtra("singleImage",evento.getImagenEvento());
                 intent.putExtra("singleEvento",evento.getNombreEvento());
                 intent.putExtra("singleRuta",evento.getRuta());

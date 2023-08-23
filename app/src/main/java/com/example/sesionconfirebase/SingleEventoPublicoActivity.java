@@ -32,7 +32,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
     Button btn_postularse;
 
-    Button btn_cancelar_postulacion;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,17 +166,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                 });
             }
         });
-
-
-        //Boton Cancelar Postulacion
-        btn_cancelar_postulacion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-
 
 
 
