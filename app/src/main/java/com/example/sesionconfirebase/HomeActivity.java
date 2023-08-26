@@ -35,6 +35,8 @@ public class HomeActivity extends AppCompatActivity {
     Button mButtonCerrarSesion;
     Button mButtonEliminarCuenta;
 
+    Button btnIrANotificaciones;
+
     FirebaseAuth mAuth;
 
 
@@ -90,6 +92,7 @@ public class HomeActivity extends AppCompatActivity {
         txtemail = findViewById(R.id.txtEmail);
         mButtonCerrarSesion = findViewById(R.id.btnCerrarSesion);
         mButtonEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
+        btnIrANotificaciones=findViewById(R.id.btnIrANotificaciones);
 
         //Creamos el objeto de Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -224,6 +227,14 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });//fin onClick
+
+        btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, MainActivity2.class);
+                startActivity(intent);
+            }
+        });
 
 
     }//fin onCreate()

@@ -1,13 +1,14 @@
 {
   "project_info": {
     "project_number": "930502610467",
+    "firebase_url": "https://tutorial-sesion-firebase-default-rtdb.firebaseio.com",
     "project_id": "tutorial-sesion-firebase",
     "storage_bucket": "tutorial-sesion-firebase.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:930502610467:android:1b240824fc98e261eeab96",
+        "mobilesdk_app_id": "1:930502610467:android:a2ff399aa96c5c04eeab96",
         "android_client_info": {
           "package_name": "com.example.sesionconfirebase"
         }
