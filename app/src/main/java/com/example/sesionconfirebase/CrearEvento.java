@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -63,6 +64,8 @@ public class CrearEvento extends AppCompatActivity {
 
     private int dia,mes,ano,hora,minutos;
     private static final int PICK_IMAGE_REQUEST = 1;
+
+    private String tokenFCM;
 
     private Uri imageUri;
 
@@ -98,6 +101,16 @@ public class CrearEvento extends AppCompatActivity {
 
         //Obtengo el userName:
         String userName=currentUser.getDisplayName();
+
+        // Obtiene el token de registro de FCM
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                tokenFCM = task.getResult();
+
+            }else {
+                tokenFCM="sin token";
+            }
+        });
 
 
         //Controles de la vista
@@ -313,7 +326,9 @@ public class CrearEvento extends AppCompatActivity {
                                 evento.setRating(0);
                                 evento.setPublicoPrivado(esPublico);
                                 evento.setActivadoDescativado(esActivo);
+                                evento.setTokenFCM(tokenFCM);
                                 evento.setImagenEvento(uri.toString());
+
 
                                 // Crea una referencia a la base de datos
                                 DatabaseReference eventosRef = database.getReference().child("Eventos");

@@ -14,6 +14,8 @@ private String publicoPrivado;
 private  String activadoDescativado;
 
 private String idEvento;
+
+private String tokenFCM;
 private int rating;
 
     public ModelEvento() {
@@ -22,8 +24,9 @@ private int rating;
     public ModelEvento(String nombreEvento, String ruta, String descripcion,
                        String fechaEncuentro, String horaEncuentro, String cupoMinimo,
                        String cupoMaximo, String categoria, String imagenEvento,
-                       boolean activarDesactivar,String userId, String userName,
-                       String publicoPrivado, String activadoDescativado, String idEvento, int rating) {
+                       boolean activarDesactivar, String userId, String userName,
+                       String publicoPrivado, String activadoDescativado, String idEvento,
+                       String tokenFCM, int rating) {
         this.nombreEvento = nombreEvento;
         Ruta = ruta;
         this.descripcion = descripcion;
@@ -39,7 +42,12 @@ private int rating;
         this.publicoPrivado = publicoPrivado;
         this.activadoDescativado = activadoDescativado;
         this.idEvento = idEvento;
+        this.tokenFCM = tokenFCM;
         this.rating = rating;
+    }
+
+    public String getTokenFCM() {
+        return tokenFCM;
     }
 
     public String getIdEvento() {
@@ -172,7 +180,12 @@ private int rating;
     }
 
     public void setIdEvento(String idEvento) {
+
         this.idEvento = idEvento;
+    }
+
+    public void setTokenFCM(String tokenFCM) {
+        this.tokenFCM = tokenFCM;
     }
 }
 
