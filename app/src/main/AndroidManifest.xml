@@ -32,6 +32,20 @@
             android:exported="false">
         </receiver>
 
+<!--        <receiver android:name=".NotificationActionReceiver1"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.example.sesionconfirebase.ACTION_BUTTON_1" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+
+<!--        <receiver android:name=".NotificationActionReceiver2"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.example.sesionconfirebase.ACTION_BUTTON_2" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+
 
         <service
             android:name=".Fcm"

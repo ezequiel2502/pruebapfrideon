@@ -3,18 +3,15 @@ package com.example.sesionconfirebase;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import java.util.Map;
 import java.util.Random;
 
 public class Fcm extends FirebaseMessagingService {
@@ -41,7 +38,7 @@ public class Fcm extends FirebaseMessagingService {
             // Crear una acción para el segundo botón
             Intent actionIntent2 = new Intent(this, NotificationActionReceiver.class);
             actionIntent2.putExtra("ACTION", "Botón 2");
-            PendingIntent pendingIntent2 = PendingIntent.getBroadcast(this, 0, actionIntent2, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent pendingIntent2 = PendingIntent.getBroadcast(this, 0, actionIntent2, PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Action action2 = new NotificationCompat.Action.Builder(
                     R.drawable.btn_denied, "Denegar", pendingIntent2).build();
 
@@ -61,7 +58,12 @@ public class Fcm extends FirebaseMessagingService {
                     NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
                     notificationManager.createNotificationChannel(channel);
                 }
-                notificationManager.notify(0, builder.build());
+                // Generar un ID único para la notificación
+                Random random = new Random();
+                int uniqueNotificationId = random.nextInt(10000);
+
+                // Notificar utilizando el ID único
+                notificationManager.notify(uniqueNotificationId, builder.build());
             }
 
         } else if ("postulante_evento".equals(tipoNotificacion)) {
@@ -83,7 +85,12 @@ public class Fcm extends FirebaseMessagingService {
                     NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
                     notificationManager.createNotificationChannel(channel);
                 }
-                notificationManager.notify(0, builder.build());
+                // Generar un ID único para la notificación
+                Random random = new Random();
+                int uniqueNotificationId = random.nextInt(10000);
+
+                // Notificar utilizando el ID único
+                notificationManager.notify(uniqueNotificationId, builder.build());
             }
 
 
