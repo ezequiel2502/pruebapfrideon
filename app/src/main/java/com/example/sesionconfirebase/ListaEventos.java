@@ -31,11 +31,9 @@ public class ListaEventos extends AppCompatActivity {
     RecyclerView recyclerViewEventos;
     ArrayList<ModelEvento> recycleList;
     Spinner spnFiltro;
-    List<String> filtroList = new ArrayList<String>();
 
     FirebaseDatabase firebaseDatabase;
 
-    Spinner spnFiltro;
     ArrayList<String> filtroList=new ArrayList<String>();
 
 
