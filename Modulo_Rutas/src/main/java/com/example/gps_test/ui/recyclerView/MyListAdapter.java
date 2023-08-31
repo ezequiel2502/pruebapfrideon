@@ -27,6 +27,11 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
       return listdata;
     }
 
+    public void clearData()
+    {
+        this.listdata = new MyListData[]{};
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());

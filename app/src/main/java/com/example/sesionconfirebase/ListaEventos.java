@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,12 +23,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListaEventos extends AppCompatActivity {
 
     Button btnAgregarEvento;
     RecyclerView recyclerViewEventos;
     ArrayList<ModelEvento> recycleList;
+    Spinner spnFiltro;
+    List<String> filtroList = new ArrayList<String>();
 
     FirebaseDatabase firebaseDatabase;
 

@@ -57,12 +57,19 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //Creamos el objeto de Firebase
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.btn_perfil);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.btn_perfil) {
-                startActivity(new Intent(getApplicationContext(), PlanificarRuta.class));
+                Intent intent = new Intent(getApplicationContext(), PlanificarRuta.class);
+                intent.putExtra("Close_On_Enter", "False");
+                intent.putExtra("User_ID", currentUser.getUid());
+                startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
                 return true;
@@ -88,9 +95,7 @@ public class HomeActivity extends AppCompatActivity {
         mButtonCerrarSesion = findViewById(R.id.btnCerrarSesion);
         mButtonEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
 
-        //Creamos el objeto de Firebase
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+
 
 
         //set datos:

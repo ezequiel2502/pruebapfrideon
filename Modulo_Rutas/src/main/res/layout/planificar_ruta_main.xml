@@ -63,6 +63,7 @@
 
         android:descendantFocusability="beforeDescendants"
 
+        android:translationZ="20dp"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
 
@@ -114,6 +115,20 @@
         android:layout_marginTop="344dp"
         android:src="@drawable/outline_add_location_alt_24"
         app:backgroundTint="@color/white"
+        app:elevation="12dp"
+        app:layout_constraintHorizontal_bias="0.044"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@null" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/deleteRoutePoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="412dp"
+        android:src="@drawable/baseline_cancel_24"
+        app:backgroundTint="@color/design_default_color_error"
         app:elevation="12dp"
         app:layout_constraintHorizontal_bias="0.044"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -6,12 +6,30 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
+import android.graphics.PixelFormat;
+import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.hardware.display.DisplayManager;
+import android.media.Image;
+import android.media.ImageReader;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.ContextThemeWrapper;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -32,11 +50,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.gps_test.ui.ImageUploaders.ImageUploader;
 import com.example.gps_test.ui.map.Curvaturas;
 import com.example.gps_test.ui.map.Routing_Variables;
+import com.example.gps_test.ui.map.TupleDouble;
 import com.example.gps_test.ui.recyclerView.MyListAdapter;
 import com.example.gps_test.ui.recyclerView.MyListData;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,6 +75,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tarek360.instacapture.Instacapture;
+import com.tarek360.instacapture.listener.SimpleScreenCapturingListener;
 import com.tomtom.sdk.location.GeoLocation;
 import com.tomtom.sdk.location.GeoPoint;
 import com.tomtom.sdk.location.LocationProvider;
@@ -93,6 +119,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -148,7 +175,50 @@ public class PlanificarRuta extends AppCompatActivity {
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference().child("Route");
+    private Thread secondary_Thread_Reverse_Geocoding;
+    private boolean stopThread = false;
+    private MediaProjectionManager mProjectionManager;
+    private MediaProjection mMediaProjection;
+    private ImageReader mImageReader;
+    private Bitmap screenshot;
+    private ActivityResultLauncher<Intent> takeScreenshotLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // Get the MediaProjection
+                        mMediaProjection = mProjectionManager.getMediaProjection(result.getResultCode(), result.getData());
 
+                        DisplayMetrics displayMetrics = new DisplayMetrics();
+                        PlanificarRuta.this.getWindowManager()
+                                .getDefaultDisplay()
+                                .getMetrics(displayMetrics);
+                        // Create an ImageReader for capturing the screen
+                        mImageReader = ImageReader.newInstance(
+                                displayMetrics.widthPixels, displayMetrics.heightPixels, ImageFormat.JPEG, 2
+                        );
+
+                        // Start capturing
+                        mMediaProjection.createVirtualDisplay(
+                                "ScreenCapture", displayMetrics.widthPixels, displayMetrics.heightPixels,
+                                getResources().getDisplayMetrics().densityDpi,
+                                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                                mImageReader.getSurface(), null, null
+                        );
+
+                        Image image = mImageReader.acquireLatestImage();
+                        if (image != null) {
+                            // Convert the Image to a Bitmap
+                            Bitmap bitmap = imageToBitmap(image);
+                            ImageUploader uploadMapScreenShot = new ImageUploader();
+                            uploadMapScreenShot.cargar_bytes(getIntent().getStringExtra("User_ID"), bitmap,getIntent().getStringExtra("Route_ID"));
+                            //screenshot = bitmap;
+                            image.close();
+                        }
+                    }
+                }
+            });
 
 
 
@@ -183,7 +253,9 @@ public class PlanificarRuta extends AppCompatActivity {
             @SuppressLint("UnsafeOptInUsageError")
             public void onClick(View v) {
                 Routing_Variables route = new Routing_Variables();
-                if (online_Route_Points.size() >= 2) {
+                if (online_Route_Points.size() >= 2 && tomtomMap.getRoutes().size() == 0 ) {
+                    stopThread = false;
+                    hashListRequestsCounter = new ArrayList<>();
                     routePlanner(online_Route_Points);
                     tomtomMap.removeMarkers("Route Marker");
                 }
@@ -234,6 +306,26 @@ public class PlanificarRuta extends AppCompatActivity {
             }
         });
 
+        FloatingActionButton DeletePoints = findViewById(R.id.deleteRoutePoints);
+        DeletePoints.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                secondary_Thread_Reverse_Geocoding.interrupt();
+                stopThread = true;
+                hashListRequestsCounter.clear();
+                route_Points.clear();
+                online_Route_Points.clear();
+                tomtomMap.removeRoutes();
+                tomtomMap.clear();
+                route_Summary = null;
+                summaryReferences.clear();
+                summaryAdapter.clearData();
+                tomtomMap.removeMarkers("Route Marker");
+                tomtomMap.removeMarkers("Free Marker");
+            }
+        });
+
+
         FloatingActionButton SavePoints = findViewById(R.id.saveRoutePoints);
         Dialog dialog = new Dialog(PlanificarRuta.this);
         ref.addValueEventListener(new ValueEventListener() {
@@ -268,13 +360,89 @@ public class PlanificarRuta extends AppCompatActivity {
                         EditText name = (EditText)dialog.findViewById(R.id.editTextText);
                         if (!name.getText().toString().equals("") & current_Route_Points.size() > 0)
                         {
-                            Ruta ruta = new Ruta(name.getText().toString(), 0,
-                                    current_Route_Points,
-                                    route_Summary.getSummary().getLength().inMeters(), curvesAmount,
-                                    startLocation, finishLocation, currentApiDrawRoad,
-                                    Arrays.asList(summaryAdapter.getCurrentList()));
+                            Intent intent = getIntent();
+                            String close = intent.getStringExtra("Close_On_Enter");
+                            String id = intent.getStringExtra("User_ID");
 
-                            ref.child(String.valueOf(current_Route_Points.hashCode() + java.util.Calendar.getInstance().getTime().hashCode())).setValue(ruta);
+
+                            if (close.equals("False")) {
+                                Ruta ruta = new Ruta(id, name.getText().toString(), 0,
+                                        listGeoTolistPair(current_Route_Points),
+                                        route_Summary.getSummary().getLength().inMeters(), curvesAmount,
+                                        startLocation, finishLocation, "Imagén Pendiente",
+                                        Arrays.asList(summaryAdapter.getCurrentList()));
+
+                                String baseID = String.valueOf(current_Route_Points.hashCode() + java.util.Calendar.getInstance().getTime().hashCode());
+                                ref.child(baseID).setValue(ruta);
+
+                                mapFragment.getScaleView().setVisible(false);
+                                mapFragment.getZoomControlsView().setVisible(false);
+                                Instacapture.INSTANCE.capture(PlanificarRuta.this, new SimpleScreenCapturingListener() {
+                                    @Override
+                                    public void onCaptureComplete(Bitmap bitmap) {
+                                        ImageUploader uploadMapScreenShot = new ImageUploader();
+                                        uploadMapScreenShot.cargar_bytes(id, bitmap,baseID);
+                                        mapFragment.getScaleView().setVisible(true);
+                                        mapFragment.getZoomControlsView().setVisible(true);
+                                    }
+                                },button,button2,SavePoints,DeletePoints,OpenBottomSheet, searcher.getView());
+
+                                Instacapture.INSTANCE.enableLogging(true);
+                                //ImageUploader uploadMapScreenShot = new ImageUploader();
+
+                                // Initialize the MediaProjectionManager
+                                // mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+                                // Start a screen capture session
+                                //Intent captureIntent = mProjectionManager.createScreenCaptureIntent();
+                                //captureIntent.putExtra("User_ID", id);
+                                //captureIntent.putExtra("Route_ID", baseID);
+                                //takeScreenshotLauncher.launch(captureIntent);
+                                //uploadMapScreenShot.cargar_bytes(id, captureScreen(),baseID);
+                                //uploadMapScreenShot.cargar_bytes(id, takeScreenshot(findViewById(R.id.map_fragment)),baseID);
+                            }
+                            else
+                            {
+                                Ruta ruta = new Ruta(id, name.getText().toString(), 0,
+                                        listGeoTolistPair(current_Route_Points),
+                                        route_Summary.getSummary().getLength().inMeters(), curvesAmount,
+                                        startLocation, finishLocation, "Imagén Pendiente",
+                                        Arrays.asList(summaryAdapter.getCurrentList()));
+
+                                String baseID = String.valueOf(current_Route_Points.hashCode() + java.util.Calendar.getInstance().getTime().hashCode());
+                                ref.child(baseID).setValue(ruta);
+
+                                mapFragment.getScaleView().setVisible(false);
+                                mapFragment.getZoomControlsView().setVisible(false);
+                                Instacapture.INSTANCE.capture(PlanificarRuta.this, new SimpleScreenCapturingListener() {
+                                    @Override
+                                    public void onCaptureComplete(Bitmap bitmap) {
+                                        ImageUploader uploadMapScreenShot = new ImageUploader();
+                                        uploadMapScreenShot.cargar_bytes(id, bitmap,baseID);
+                                        mapFragment.getScaleView().setVisible(true);
+                                        mapFragment.getZoomControlsView().setVisible(true);
+                                    }
+                                },button,button2,SavePoints,DeletePoints,OpenBottomSheet, searcher.getView());
+
+
+                                Instacapture.INSTANCE.enableLogging(true);
+
+                                //ImageUploader uploadMapScreenShot = new ImageUploader();
+                                // Initialize the MediaProjectionManager
+                                //mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+                                // Start a screen capture session
+                                //Intent captureIntent = mProjectionManager.createScreenCaptureIntent();
+                                //captureIntent.putExtra("User_ID", id);
+                                //captureIntent.putExtra("Route_ID", baseID);
+                                //takeScreenshotLauncher.launch(captureIntent);
+                                //uploadMapScreenShot.cargar_bytes(id, takeScreenshotLauncher.launch(captureIntent),baseID);
+                                //uploadMapScreenShot.cargar_bytes(id, takeScreenshot(findViewById(R.id.map_fragment)),baseID);
+
+                                //Si queremos retornar resultados
+                                //Intent data = new Intent();
+                                //data.putExtra("key","any_value");
+                                //setResult(RESULT_OK,data);
+                                finish();
+                            }
 
                         }
                     }
@@ -294,7 +462,111 @@ public class PlanificarRuta extends AppCompatActivity {
 
 
 
+        Intent intent = getIntent();
+        String removeControls = intent.getStringExtra("Invalidate_Controls");
+        if (removeControls != null && removeControls.equals("True"))
+        {
+            button.setVisibility(View.GONE);
+            button2.setVisibility(View.GONE);
+            SavePoints.setVisibility(View.GONE);
+            DeletePoints.setVisibility(View.GONE);
+        }
 
+
+    }
+
+
+
+    private void captureScreen() {
+        // Initialize the MediaProjectionManager
+        mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        // Start a screen capture session
+        Intent captureIntent = mProjectionManager.createScreenCaptureIntent();
+        takeScreenshotLauncher.launch(captureIntent);
+    }
+
+    private Bitmap imageToBitmap(Image image) {
+        Image.Plane[] planes = image.getPlanes();
+        ByteBuffer buffer = planes[0].getBuffer();
+        int pixelStride = planes[0].getPixelStride();
+        int rowStride = planes[0].getRowStride();
+        int rowPadding = rowStride - pixelStride * image.getWidth();
+
+        Bitmap bitmap = Bitmap.createBitmap(
+                image.getWidth() + rowPadding / pixelStride,
+                image.getHeight(),
+                Bitmap.Config.ARGB_8888
+        );
+        bitmap.copyPixelsFromBuffer(buffer);
+
+        return bitmap;
+    }
+
+
+    public Bitmap takeScreenshot(View view)
+    {
+        view.setDrawingCacheEnabled(true);
+        view.setBackgroundColor(Color.TRANSPARENT);
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        view.draw(canvas);
+
+        //mapFragment.getScaleView().setVisible(false);
+        //mapFragment.getZoomControlsView().setVisible(false);
+        //findViewById(R.id.search_fragment_container).setVisibility(View.GONE);
+
+        return view.getDrawingCache();
+    }
+
+    public Bitmap takeScreen()
+    {
+        // Get device dimmensions
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        // Get root view
+        View view = findViewById(R.id.map_fragment);
+        // Create the bitmap to use to draw the screenshot
+        final Bitmap bitmap = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_4444);
+        final Canvas canvas = new Canvas(bitmap);
+
+        // Get current theme to know which background to use
+        final Activity activity = PlanificarRuta.this;
+        final Resources.Theme theme = activity.getTheme();
+        final TypedArray ta = theme
+                .obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
+        final int res = ta.getResourceId(0, 0);
+        final Drawable background = activity.getResources().getDrawable(res);
+
+        // Draw background
+        background.draw(canvas);
+
+        // Draw views
+        view.draw(canvas);
+
+        return bitmap;
+
+    }
+    public List<GeoPoint> listPairTolistGeo(List<TupleDouble> ev) {
+
+        List<GeoPoint> a = new ArrayList<>();
+
+        for (int i = 0; i < ev.size(); i++) {
+            a.add(new GeoPoint(ev.get(i).getLatitude(), ev.get(i).getLongitude()));
+        }
+        return a;
+    }
+
+    public List<TupleDouble> listGeoTolistPair(List<GeoPoint> ev) {
+
+        List<TupleDouble> a = new ArrayList<>();
+
+        for (int i = 0; i < ev.size(); i++) {
+            a.add(new TupleDouble(ev.get(i).getLatitude(), ev.get(i).getLongitude()));
+        }
+        return a;
     }
 
 
@@ -335,6 +607,13 @@ public class PlanificarRuta extends AppCompatActivity {
             tomtomMap.addRouteClickListener(routeListener);
             geoPosition = locationProvider;
             geoPosition.addOnLocationUpdateListener(locationUpdateListener);
+
+            Intent intent = getIntent();
+            String removeControls = intent.getStringExtra("Invalidate_Controls");
+            if (removeControls != null && removeControls.equals("True"))
+            {
+                loadRouteOnMap((List<TupleDouble>) intent.getSerializableExtra("List_Of_Points"));
+            }
         }
     };
 
@@ -382,6 +661,7 @@ public class PlanificarRuta extends AppCompatActivity {
                         markerLocationDataAPI2(data);
                     }
                 });
+                secondary_Thread_Reverse_Geocoding = t1;
                 t1.start();
 
 
@@ -534,6 +814,7 @@ public class PlanificarRuta extends AppCompatActivity {
             if (app_Start = true) {
                 tomtomMap.moveCamera(searchVar.setCamera(geoPosition.getLastKnownLocation().getPosition(), 15, 0, 0));
                 searcher = searchBar(geoPosition.getLastKnownLocation().getPosition());
+                searcher.getView().bringToFront();
                 //Esto que parece no tener sentido es para que no se abrá solo el teclado en pantalla cuando carga la aplicación, porque tenemos el buscador que hace un trigger automático al inicio
                 InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(findViewById(R.id.search_fragment_container).getWindowToken(), 0);
@@ -554,6 +835,45 @@ public class PlanificarRuta extends AppCompatActivity {
         routeSummaryDialog.dismiss();
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
+    public void loadRouteOnMap(List<TupleDouble> points) {
+        Routing_Variables helper = new Routing_Variables();
+        RoutePlanner routePlanner = OnlineRoutePlanner.create(getApplicationContext(), BuildConfig.CREDENTIALS_KEY, null);
+        List<GeoPoint> geometry = listPairTolistGeo(points);
+        current_Route_Points = geometry;
+        displayed_Route = tomtomMap.addRoute(helper.setRoute(geometry));
+        //tomtomMap.setLocationProvider(helper.simulateRoute(route_Summary));
+        Marker_Variables m = new Marker_Variables();
+        tomtomMap.addMarkerClickListener(new MarkerClickListener() {
+            @Override
+            public void onMarkerClicked(@NonNull Marker marker) {
+                if(marker.isSelected())
+                {
+                    marker.deselect();
+                }
+                else
+                {
+                    marker.select();
+                }
+            }
+        });
+        List<Curvaturas> data = curvatureTrim(curvature(geometry));
+        summaryAdapter = loadList2(data);
+        APIRequestsCounter = 0;
+
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                markerLocationDataAPI2(data);
+            }
+        });
+        t1.start();
+
+        Search_Variables searchVar = new Search_Variables();
+        tomtomMap.moveCamera(searchVar.setCamera(geometry.get(0), 20, 0, 0));
+
+
+    }
     static RouteClickListener routeListener = new RouteClickListener() {
         @Override
         public void onRouteClick(@NonNull com.tomtom.sdk.map.display.route.Route route) {
@@ -581,6 +901,10 @@ public class PlanificarRuta extends AppCompatActivity {
             @Override
             public void onSearchResultClick(@NonNull PlaceDetails placeDetails) {
                 tomtomMap.moveCamera(searchVar.setCamera(placeDetails.getPosition(), 15, 0, 0));
+                searchFragment.clear();
+                //Esto que parece no tener sentido es para que no se abrá solo el teclado en pantalla cuando carga la aplicación, porque tenemos el buscador que hace un trigger automático al inicio
+                InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(findViewById(R.id.search_fragment_container).getWindowToken(), 0);
             }
 
             @Override
@@ -1124,42 +1448,47 @@ public class PlanificarRuta extends AppCompatActivity {
     private void postHandler(String response, int hash)
     {
 
+        if (stopThread == false) {
+            response = response.replace("cb(", "");
+            response = response.replace(")", "");
+            response = response.replace("Ã³", "ó");
 
-        response = response.replace("cb(","");
-        response = response.replace(")","");
-        response = response.replace("Ã³","ó");
+            try {
+                JSONObject jo = new JSONObject(response);
+                JSONArray jo_addresses = (JSONArray) jo.get("addresses");
+                JSONObject jo_first_address = jo_addresses.getJSONObject(0);
+                JSONObject jo_first_address_values = jo_first_address.getJSONObject("address");
+                System.out.println(jo_first_address_values.toString());
+        //            System.out.println(jo_first_address_values.getString("streetNameAndNumber").toString());
+        //            System.out.println(jo_first_address_values.getString("municipality"));
+        //            System.out.println(jo_first_address_values.getString("countrySubdivision"));
+        //            System.out.println(jo_first_address_values.getString("country"));
 
-        try {
-            JSONObject jo = new JSONObject(response);
-            JSONArray jo_addresses =(JSONArray) jo.get("addresses");
-            JSONObject jo_first_address = jo_addresses.getJSONObject(0);
-            JSONObject jo_first_address_values = jo_first_address.getJSONObject("address");
-            System.out.println(jo_first_address_values.toString());
-//            System.out.println(jo_first_address_values.getString("streetNameAndNumber").toString());
-//            System.out.println(jo_first_address_values.getString("municipality"));
-//            System.out.println(jo_first_address_values.getString("countrySubdivision"));
-//            System.out.println(jo_first_address_values.getString("country"));
+                String old = summaryAdapter.getCurrentList()[hashListRequestsCounter.indexOf(hash)].getDescription2();
+                summaryAdapter.getCurrentList()[hashListRequestsCounter.indexOf(hash)].setDescription2(old + jo_first_address_values.getString("streetName"));
+                summaryAdapter.notifyItemChanged(hashListRequestsCounter.indexOf(hash));
 
-            String old = summaryAdapter.getCurrentList()[hashListRequestsCounter.indexOf(hash)].getDescription2();
-            summaryAdapter.getCurrentList()[hashListRequestsCounter.indexOf(hash)].setDescription2(old + jo_first_address_values.getString("streetName"));
-            summaryAdapter.notifyItemChanged(hashListRequestsCounter.indexOf(hash));
+                if (hashListRequestsCounter.indexOf(hash) == 0) {
+                    startLocation = jo_first_address_values.getString("country") + " - " + jo_first_address_values.getString("countrySubdivision") + " - " + jo_first_address_values.getString("municipality") + " - " + jo_first_address_values.getString("streetName");
+                }
 
-            if (hashListRequestsCounter.indexOf(hash) == 0)
-            {
-                startLocation = jo_first_address_values.getString("country") + " - " + jo_first_address_values.getString("countrySubdivision") + " - " + jo_first_address_values.getString("municipality");
+                if (hashListRequestsCounter.indexOf(hash) == (hashListRequestsCounter.size() - 1)) {
+                    finishLocation = jo_first_address_values.getString("country") + " - " + jo_first_address_values.getString("countrySubdivision") + " - " + jo_first_address_values.getString("municipality") + " - " + jo_first_address_values.getString("streetName");
+                }
+
+
+            } catch (JSONException | ArrayIndexOutOfBoundsException e) {
+                //Thread current = Thread.currentThread();
+                //current.interrupt();
+                throw new RuntimeException(e);
             }
-
-            if (hashListRequestsCounter.indexOf(hash) == (hashListRequestsCounter.size() - 1))
-            {
-                finishLocation = jo_first_address_values.getString("country") + " - " + jo_first_address_values.getString("countrySubdivision") + " - " + jo_first_address_values.getString("municipality");
-            }
-
-
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 
     //Esto debería ser para el usuario, cuando se abré por primera vez la app que solicite todos los permisos necesarios o se cierre pero es solo un place holder no implemente eso todavía
     @Override

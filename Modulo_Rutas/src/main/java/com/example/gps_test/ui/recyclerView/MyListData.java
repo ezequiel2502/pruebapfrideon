@@ -4,6 +4,10 @@ public class MyListData {
     private String description;
     private String description2;
     private int imgId;
+
+    public MyListData() {
+        // Default constructor required for calls to DataSnapshot.getValue(Ruta.class)
+    }
     public MyListData(String description, String description2, int imgId) {
         this.description = description;
         this.description2 = description2;
