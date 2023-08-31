@@ -388,7 +388,7 @@ public class CrearEvento extends AppCompatActivity {
 
                 // Obtener los valores seleccionados del Spinner
                 String categoriaSeleccionada = spnCategoria.getSelectedItem().toString();
-                String rutaSeleccionada = spnRuta.getSelectedItem().toString();
+                String rutaSeleccionada = "Prueba";
                 String esActivo = spnActivarDesactivar.getSelectedItem().toString();
                 String esPublico = spnPublicoPrivado.getSelectedItem().toString();
 
