@@ -63,7 +63,8 @@ public class ListaEventosPublicosVigentes extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         //Creo una instancia del adapter
-        EventoPublicoAdapter recyclerAdapter = new EventoPublicoAdapter(recycleList, getApplicationContext());
+//        EventoPublicoAdapter recyclerAdapter = new EventoPublicoAdapter(recycleList, getApplicationContext());
+        EventoPublicoAdapter recyclerAdapter = new EventoPublicoAdapter(recycleList, ListaEventosPublicosVigentes.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerViewEventosPublicosVigentes.setLayoutManager(linearLayoutManager);
         recyclerViewEventosPublicosVigentes.addItemDecoration(new DividerItemDecoration(recyclerViewEventosPublicosVigentes.getContext(), DividerItemDecoration.VERTICAL));

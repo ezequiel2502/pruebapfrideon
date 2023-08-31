@@ -91,6 +91,7 @@ public class MainActivity2 extends AppCompatActivity {
             JSONObject notificacion = new JSONObject();
             notificacion.put("titulo", "soy el titulo");
             notificacion.put("detalle", "soy el detalle");
+            notificacion.put("tipo", "postulante_evento");
 
             json.put("to", token);
             json.put("data", notificacion); // Cambio de "data" a "notification"

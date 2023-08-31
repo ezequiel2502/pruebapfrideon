@@ -165,7 +165,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 //Envia notificacion al creador del evento
-                NotificarCreadorEvento();
+                NotificarCreadorEvento();// este anda!!!!
             }
         });
 
