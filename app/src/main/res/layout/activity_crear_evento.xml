@@ -39,14 +39,14 @@
             android:layout_below="@+id/linearContainer"
             android:layout_alignBottom="@+id/linearContainer"
             android:layout_marginTop="32dp"
-            android:layout_marginBottom="-76dp"
+            android:layout_marginBottom="-96dp"
             android:padding="16dp"
             app:cardCornerRadius="8dp">
 
             <!-- LinearLayout para envolver el Spinner y el TextView "Elegir Ruta" -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="67dp"
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"
                 android:orientation="vertical">
 
                 <!-- TextView "Elegir Ruta" -->
@@ -57,13 +57,27 @@
                     android:layout_height="wrap_content"
                     android:text="Elegir Ruta" />
 
-                <Spinner
-                    android:id="@+id/spnRuta"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_CargarRutas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seleccionar Rutas" />
+
+                <Button
+                    android:id="@+id/btn_CargarNuevaRuta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_alignParentRight="true"
+                    android:text="Nueva Ruta +" />
 
                 <!--            android:entries="@array/rutas"-->
-
+            </RelativeLayout>
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

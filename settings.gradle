@@ -13,6 +13,9 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://repositories.tomtom.com/artifactory/maven")
         }
+        maven {
+            url = uri("https://jitpack.io")
+        }
     }
 }
 

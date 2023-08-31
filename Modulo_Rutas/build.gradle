@@ -83,5 +83,7 @@ dependencies {
     implementation 'com.android.volley:volley:1.2.1'
     implementation platform('com.google.firebase:firebase-bom:32.1.0')
     implementation("com.google.firebase:firebase-database")
+    implementation 'com.google.firebase:firebase-storage:20.0.0'
+    implementation ("com.github.tarek360:instacapture:2.0.1")
 
 }

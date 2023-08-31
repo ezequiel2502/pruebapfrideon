@@ -6,13 +6,16 @@ import java.util.List;
 
 public class Curvaturas {
 
-    private final double curvatureRadians;
-    private final double curvatureAngle;
-    private final List<GeoPoint> segmentPoints;
-    private final double turnDirection;
-    private final String curvatureType;
-    private final double curvatureLength;
+    private  double curvatureRadians;
+    private  double curvatureAngle;
+    private  List<GeoPoint> segmentPoints;
+    private  double turnDirection;
+    private  String curvatureType;
+    private  double curvatureLength;
 
+    public Curvaturas() {
+        // Default constructor required for calls to DataSnapshot.getValue(Ruta.class)
+    }
     public Curvaturas(double curvatureRadians, double curvatureAngle, List<GeoPoint> segmentPoints, double turnDirection, String curvatureType, double curvatureLength) {
         this.curvatureRadians = curvatureRadians;
         this.curvatureAngle = curvatureAngle;

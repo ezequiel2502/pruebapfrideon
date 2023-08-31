@@ -1,14 +1,19 @@
 package com.example.sesionconfirebase;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -17,21 +22,36 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.gps_test.PlanificarRuta;
+import com.example.gps_test.Ruta;
+import com.example.sesionconfirebase.SeleccionarRutaRecyclerView.MyListAdapter;
+import com.example.sesionconfirebase.SeleccionarRutaRecyclerView.MyListData;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -44,7 +64,11 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class CrearEvento extends AppCompatActivity {
@@ -53,7 +77,7 @@ public class CrearEvento extends AppCompatActivity {
     ImageView imvEvento;
     Button btn_FechaEncuentro,btn_CrearEvento,btn_HoraEncuentro;
 
-    //Switch switchActivar_Desactivar;
+
 
     ArrayList<String> categoriasList=new ArrayList<String>();
     ArrayList<String> rutasList=new ArrayList<String>();
@@ -126,9 +150,10 @@ public class CrearEvento extends AppCompatActivity {
         txt_Descripcion=findViewById(R.id.editTextDescripcion);
         txt_NombreEvento=findViewById(R.id.txt_NombreEvento);
 
-        //switchActivar_Desactivar=findViewById(R.id.sw_Activar_Desactivar);
+
 
         imvEvento=findViewById(R.id.imvEvento);
+
 
 
         //>>>>>>>>>>spnCategorias
@@ -153,24 +178,105 @@ public class CrearEvento extends AppCompatActivity {
 
 
 
-        //>>>>>>>>>>spnRutas
-        spnRuta=findViewById(R.id.spnRuta);
 
-        //Lleno la lista de rutas
-        rutasList.add("Ruta_1");
-        rutasList.add("Ruta_2");
-        rutasList.add("Ruta_3");
-        rutasList.add("Ruta_4");
 
-        // Crear un ArrayAdapter utilizando la lista de rutas y un diseño simple para el spinner
-        ArrayAdapter<String> rutasAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rutasList);
+        Button SavePoints = findViewById(com.example.sesionconfirebase.R.id.btn_CargarRutas);
+        Dialog dialog = new Dialog(CrearEvento.this);
 
-        // Especificar el diseño para el menú desplegable
-        rutasAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        SavePoints.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setContentView(com.example.sesionconfirebase.R.layout.list_routes_dialog);
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialog.setCancelable(true);
+                dialog.getWindow().getAttributes().windowAnimations = com.example.gps_test.R.style.animation;
+                RecyclerView recyclerView = (RecyclerView) dialog.findViewById(com.example.sesionconfirebase.R.id.routesList);
+                recyclerView.setHasFixedSize(true);
 
-        // Establecer el adaptador en el Spinner
-        spnRuta.setAdapter(rutasAdapter);
-        //spnRutas<<<<<<<<<<
+                ArrayList<MyListData> data = new ArrayList<>();
+                //MyListAdapter adapter=new MyListAdapter(data.toArray(new MyListData[]{}));
+                MyListAdapter adapter=new MyListAdapter(data);
+                adapter.addContext(CrearEvento.this);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(CrearEvento.this));
+
+                database.getReference().child("Route").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                            //Object a = dataSnapshot.getChildren().iterator().next();
+                            Ruta evento = dataSnapshot.getValue(Ruta.class);
+                            String rutaID = dataSnapshot.getKey();
+                            if (evento.author.toString().equals(userId))
+                            {
+                                MyListData route = new MyListData(evento.routeName, rutaID, evento.routePoints, evento.type, evento.lenght,
+                                        evento.curvesAmount, evento.startLocation, evento.finishLocation, evento.imgLocation);
+                                data.add(route);
+                                //adapter.getCurrentList()[adapter.getCurrentList().length] = route;
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+
+
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+                List<UploadTask> activeTasks = firebaseStorage.getReference().child("Usuarios").child(userId).child("routes").getActiveUploadTasks();
+                for (UploadTask task: activeTasks)
+                {
+                    task.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //taskSnapshot.getMetadata().getName();
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    runOnUiThread(new Runnable(){
+                                        @Override
+                                        public void run(){
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    });
+                                }
+                            }, 2000);
+                        }
+                    });
+                }
+
+
+                dialog.show();
+            }
+
+        });
+
+        ActivityResultLauncher<Intent> planificarRutaResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // There are no request codes
+                            Intent data = result.getData();
+                        }
+                    }
+                });
+        Button AgregarRuta = findViewById(com.example.sesionconfirebase.R.id.btn_CargarNuevaRuta);
+        AgregarRuta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), PlanificarRuta.class);
+                intent.putExtra("Close_On_Enter", "True");
+                intent.putExtra("User_ID", currentUser.getUid());
+                planificarRutaResultLauncher.launch(intent);
+            }
+        });
+
 
 
         //******************************spnActivarDesactivar
@@ -277,6 +383,7 @@ public class CrearEvento extends AppCompatActivity {
 
                 //ProgressDialog
                 dialog.show();
+
 
 
                 // Obtener los valores seleccionados del Spinner
