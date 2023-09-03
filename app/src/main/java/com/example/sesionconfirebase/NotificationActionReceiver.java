@@ -53,9 +53,15 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             notificarPostulanteEvento(context,nombreEvento,tokenPostulante);
 
         } else if ("Botón 2".equals(action)) {
+
             // Aquí envías un broadcast específico para capturar la acción del Botón 2 en la SingleEventoPublicoActivity
-            Intent broadcastIntent = new Intent("com.example.sesionconfirebase.ACTION_DENEGAR_POSTULACION");
-            context.sendBroadcast(broadcastIntent);
+//            Intent broadcastIntent = new Intent("com.example.sesionconfirebase.ACTION_DENEGAR_POSTULACION");
+//            context.sendBroadcast(broadcastIntent);
+
+            String nombreEvento = intent.getStringExtra("nombreEvento");
+            String tokenPostulante = intent.getStringExtra("tokenPostulante");
+
+            notificarDenegacionPostulanteEvento(context,nombreEvento,tokenPostulante);
         }
     }
 
@@ -226,5 +232,39 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         }
     }
 
+    private void notificarDenegacionPostulanteEvento( Context context,String nombreEvento, String tokenPostulante) {
+
+        RequestQueue myrequest = Volley.newRequestQueue(context);
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject notificacion = new JSONObject();
+            notificacion.put("titulo", "Denegaron tu postulacion a : ");
+            notificacion.put("detalle", nombreEvento);
+            notificacion.put("tipo", "postulante_evento");
+
+            json.put("to", tokenPostulante);
+            json.put("data", notificacion); // Cambio de "data" a "notification"
+
+
+            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+            String URL = "https://fcm.googleapis.com/fcm/send";
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header = new HashMap<>();
+                    header.put("Content-Type", "application/json");
+                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    return header;
+                }
+            };
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     
-}
+}//fin NotificactionActionReceiver

@@ -61,15 +61,18 @@ public class Fcm extends FirebaseMessagingService {
             actionIntent1.putExtra("postulanteId", postulanteId);
             actionIntent1.putExtra("tokenCreador", tokenCreador);
             actionIntent1.putExtra("tokenPostulante", tokenPostulante);
-
             actionIntent1.putExtra("ACTION", "Botón 1");
+
             PendingIntent pendingIntent1 = PendingIntent.getBroadcast(this, 0, actionIntent1, PendingIntent.FLAG_MUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Action action1 = new NotificationCompat.Action.Builder(
                     R.drawable.btn_acpt, "Aceptar", pendingIntent1).build();
 
             // Crear una acción para el segundo botón
             Intent actionIntent2 = new Intent(this, NotificationActionReceiver.class);
+            actionIntent2.putExtra("nombreEvento", nombreEvento);
+            actionIntent2.putExtra("tokenPostulante", tokenPostulante);
             actionIntent2.putExtra("ACTION", "Botón 2");
+
             PendingIntent pendingIntent2 = PendingIntent.getBroadcast(this, 0, actionIntent2, PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Action action2 = new NotificationCompat.Action.Builder(
                     R.drawable.btn_denied, "Denegar", pendingIntent2).build();
