@@ -100,10 +100,7 @@ public class Fcm extends FirebaseMessagingService {
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
             }
-            // Llamar al método buscarPrimerNoAceptado()
-            //buscarPrimerNoAceptado();
-            //buscarNoAceptadoPorEventoYUsuario(idEvento,postulanteId);
-            //notificarPostulanteEvento(nombreEvento,tokenPostulante);
+            // Aca puedo llamar metodos de forma directa ---->
 
         } else if ("postulante_evento".equals(tipoNotificacion)) {
 
