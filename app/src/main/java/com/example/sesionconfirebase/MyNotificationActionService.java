@@ -1,10 +1,8 @@
 package com.example.sesionconfirebase;
 
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,67 +15,74 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class NotificationActionReceiver extends BroadcastReceiver {
+public class MyNotificationActionService extends IntentService {
+
+    public MyNotificationActionService() {
+        super("MyNotificationActionService");
+    }
+
     @Override
-    public void onReceive(Context context, Intent intent) {
-        String action = intent.getStringExtra("ACTION");
+    protected void onHandleIntent(Intent intent) {
+        if (intent != null) {
+            String action = intent.getAction();
+            if ("ACCEPT_ACTION".equals(action)) {
 
-        if ("Botón 1".equals(action)) {
-            // Aquí puedes enviar un broadcast específico para capturar la acción en la SingleEventoPublicoActivity
-//            Intent broadcastIntent = new Intent("com.example.sesionconfirebase.ACTION_POSTULAR");
-//            context.sendBroadcast(broadcastIntent);
-            
-            // Recuperar los datos pasados al servicio
-            String idEvento = intent.getStringExtra("idEvento");
-            String postulanteId = intent.getStringExtra("postulanteId");
+                // Recuperar los datos pasados al servicio
+                String idEvento = intent.getStringExtra("idEvento");
+                String postulanteId = intent.getStringExtra("postulanteId");
 
-            // Ejecuta tu método para aceptar
-            buscarPrimerNoAceptado(context);
+                // Lógica para manejar la acción "Aceptar"
+                Log.d("MyNotificationAction", "Se hizo clic en Aceptar");
+                //buscarNoAceptadoPorEventoYUsuario(idEvento,postulanteId);
+                // Ejecuta tu método para aceptar
+                buscarPrimerNoAceptado();
 
-        } else if ("Botón 2".equals(action)) {
-            // Aquí envías un broadcast específico para capturar la acción del Botón 2 en la SingleEventoPublicoActivity
-            Intent broadcastIntent = new Intent("com.example.sesionconfirebase.ACTION_DENEGAR_POSTULACION");
-            context.sendBroadcast(broadcastIntent);
+            } else if ("DENY_ACTION".equals(action)) {
+
+                // Lógica para manejar la acción "Denegar"
+                Log.d("MyNotificationAction", "Se hizo clic en Denegar");
+                // Ejecuta tu método para denegar
+            }
         }
     }
 
 
-//    private void buscarNoAceptadoPorEventoYUsuario(String idEvento, String userId) {
-//        DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
-//
-//        DatabaseReference eventoRef = prePostulacionesRef.child(idEvento);
-//        DatabaseReference usuarioRef = eventoRef.child(userId);
-//
-//        usuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                PrePostulacion prePostulacion = dataSnapshot.getValue(PrePostulacion.class);
-//
-//                if (prePostulacion != null && !prePostulacion.getAceptado()) {
-//                    String tokenFcmPostulante = prePostulacion.getTokenFcmPostulante();
-//
-//                    usuarioRef.child("aceptado").setValue(true)
-//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    if (task.isSuccessful()) {
-//                                        postularCandidato2(context,idEvento, userId, tokenFcmPostulante);
-//                                    } else {
-//                                        // Manejar el error en la actualización
-//                                    }
-//                                }
-//                            });
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Manejar error de cancelación
-//            }
-//        });
-//    }
+    private void buscarNoAceptadoPorEventoYUsuario(String idEvento, String userId) {
+        DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
 
-    private void postularCandidato2(Context context, String idEventoRecuperado, String userId, String tokenFcmPostulante) {
+        DatabaseReference eventoRef = prePostulacionesRef.child(idEvento);
+        DatabaseReference usuarioRef = eventoRef.child(userId);
+
+        usuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                PrePostulacion prePostulacion = dataSnapshot.getValue(PrePostulacion.class);
+
+                if (prePostulacion != null && !prePostulacion.getAceptado()) {
+                    String tokenFcmPostulante = prePostulacion.getTokenFcmPostulante();
+
+                    usuarioRef.child("aceptado").setValue(true)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        postularCandidato2(idEvento, userId, tokenFcmPostulante);
+                                    } else {
+                                        // Manejar el error en la actualización
+                                    }
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar error de cancelación
+            }
+        });
+    }
+
+    private void postularCandidato2(String idEventoRecuperado, String userId, String tokenFcmPostulante) {
         DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEventoRecuperado);
 
         eventosRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -103,22 +108,22 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             if (task.isSuccessful()) {
                                                                 // Realizar la postulación exitosa
-                                                                Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(getApplicationContext(), "Te has postulado al evento", Toast.LENGTH_SHORT).show();
                                                             } else {
                                                                 // Error en la modificación del evento
-                                                                Toast.makeText(context, "Error al modificar el evento", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(getApplicationContext(), "Error al modificar el evento", Toast.LENGTH_SHORT).show();
                                                             }
                                                         }
                                                     });
                                         } else {
                                             // Error al agregar la información de postulación
-                                            Toast.makeText(context, "Error al postularte al evento", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(), "Error al postularte al evento", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
                     } else {
                         // No hay cupo disponible
-                        Toast.makeText(context, "Se alcanzó el cupo máximo", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Se alcanzó el cupo máximo", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -130,8 +135,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         });
     }
 
-
-    private void buscarPrimerNoAceptado(Context context) {
+    private void buscarPrimerNoAceptado() {
         DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
 
         prePostulacionesRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -153,7 +157,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-                                                postularCandidato2(context,idEventoRecuperado,userId, tokenFcmPostulante);
+                                                postularCandidato2(idEventoRecuperado, userId, tokenFcmPostulante);
                                             } else {
                                                 // Manejar el error en la actualización
                                             }
@@ -172,8 +176,5 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             }
         });
     }
-    
-    
-    
-    
+
 }
