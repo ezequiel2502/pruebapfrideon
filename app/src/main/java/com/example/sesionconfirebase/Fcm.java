@@ -3,6 +3,7 @@ package com.example.sesionconfirebase;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -11,6 +12,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +26,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Fcm extends FirebaseMessagingService {
@@ -37,12 +47,21 @@ public class Fcm extends FirebaseMessagingService {
         String tipoNotificacion = remoteMessage.getData().get("tipo");
         String idEvento = remoteMessage.getData().get("idEvento");
         String postulanteId = remoteMessage.getData().get("postulanteId");
+        String nombreEvento = remoteMessage.getData().get("nombreEvento");
+        String tokenCreador = remoteMessage.getData().get("tokenCreador");
+        String tokenPostulante = remoteMessage.getData().get("tokenPostulante");
 
         if ("creador_evento".equals(tipoNotificacion)) {
+
+
             // Crear una acción para el primer botón
             Intent actionIntent1 = new Intent(this, NotificationActionReceiver.class);
             actionIntent1.putExtra("idEvento", idEvento);
+            actionIntent1.putExtra("nombreEvento", nombreEvento);
             actionIntent1.putExtra("postulanteId", postulanteId);
+            actionIntent1.putExtra("tokenCreador", tokenCreador);
+            actionIntent1.putExtra("tokenPostulante", tokenPostulante);
+
             actionIntent1.putExtra("ACTION", "Botón 1");
             PendingIntent pendingIntent1 = PendingIntent.getBroadcast(this, 0, actionIntent1, PendingIntent.FLAG_MUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Action action1 = new NotificationCompat.Action.Builder(
@@ -80,7 +99,8 @@ public class Fcm extends FirebaseMessagingService {
             }
             // Llamar al método buscarPrimerNoAceptado()
             //buscarPrimerNoAceptado();
-            buscarNoAceptadoPorEventoYUsuario(idEvento,postulanteId);
+            //buscarNoAceptadoPorEventoYUsuario(idEvento,postulanteId);
+            //notificarPostulanteEvento(nombreEvento,tokenPostulante);
 
         } else if ("postulante_evento".equals(tipoNotificacion)) {
 
@@ -114,6 +134,40 @@ public class Fcm extends FirebaseMessagingService {
 
 
     }
+
+//    private void notificarPostulanteEvento( String nombreEvento, String tokenPostulante) {
+//
+//        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
+//        JSONObject json = new JSONObject();
+//
+//        try {
+//            JSONObject notificacion = new JSONObject();
+//            notificacion.put("titulo", "Aceptaron tu postulacion a : ");
+//            notificacion.put("detalle", nombreEvento);
+//            notificacion.put("tipo", "postulante_evento");
+//
+//            json.put("to", "fQnMIcygTWS_SIXnn2wdbd:APA91bHf_edzlaZ847PJzCd_efc27OCFT0Hl9iRfPaX8oLHRhI-YGnNPNDACUWuojBwcTp_Nal3QzohbWKb8NG3Co3YD6ooB92Utqm6N1wLa43S_wKVEN9dVbS3d-WTVTTGdwrS0iecM");
+//            json.put("data", notificacion); // Cambio de "data" a "notification"
+//
+//
+//            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+//            String URL = "https://fcm.googleapis.com/fcm/send";
+//
+//            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+//                @Override
+//                public Map<String, String> getHeaders() {
+//                    Map<String, String> header = new HashMap<>();
+//                    header.put("Content-Type", "application/json");
+//                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+//                    return header;
+//                }
+//            };
+//            myrequest.add(request);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     private void buscarNoAceptadoPorEventoYUsuario(String idEvento, String userId) {

@@ -5,17 +5,29 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class NotificationActionReceiver extends BroadcastReceiver {
     @Override
@@ -30,10 +42,15 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             // Recuperar los datos pasados al servicio
             String idEvento = intent.getStringExtra("idEvento");
             String postulanteId = intent.getStringExtra("postulanteId");
+            String nombreEvento = intent.getStringExtra("nombreEvento");
+            String tokenCreador = intent.getStringExtra("tokenCreador");
+            String tokenPostulante = intent.getStringExtra("tokenPostulante");
 
             // Ejecuta tu método para aceptar
+
             //buscarPrimerNoAceptado(context);
             buscarNoAceptadoPorEventoYUsuario(context,idEvento,postulanteId);
+            notificarPostulanteEvento(context,nombreEvento,tokenPostulante);
 
         } else if ("Botón 2".equals(action)) {
             // Aquí envías un broadcast específico para capturar la acción del Botón 2 en la SingleEventoPublicoActivity
@@ -173,8 +190,41 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             }
         });
     }
-    
-    
-    
+
+
+    private void notificarPostulanteEvento( Context context,String nombreEvento, String tokenPostulante) {
+
+        RequestQueue myrequest = Volley.newRequestQueue(context);
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject notificacion = new JSONObject();
+            notificacion.put("titulo", "Aceptaron tu postulacion a : ");
+            notificacion.put("detalle", nombreEvento);
+            notificacion.put("tipo", "postulante_evento");
+
+            json.put("to", tokenPostulante);
+            json.put("data", notificacion); // Cambio de "data" a "notification"
+
+
+            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+            String URL = "https://fcm.googleapis.com/fcm/send";
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header = new HashMap<>();
+                    header.put("Content-Type", "application/json");
+                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    return header;
+                }
+            };
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     
 }

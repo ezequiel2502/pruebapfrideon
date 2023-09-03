@@ -71,15 +71,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         });
 
 
-//        // Registra el BroadcastReceiver para capturar el broadcast de aceptacion de postulacion o denegacion de postulacion
-//        IntentFilter filterAceptacion = new IntentFilter("com.example.sesionconfirebase.ACTION_POSTULAR");
-//        registerReceiver(notificationReceiver, filterAceptacion);
-//        IntentFilter filterDenegacion  = new IntentFilter("com.example.sesionconfirebase.ACTION_DENEGAR_POSTULACION");
-//        registerReceiver(notificationReceiver, filterDenegacion);
-
-
-
-
         tv_SingleEvento=findViewById(R.id.tv_SingleEvento);
         tv_SingleRuta=findViewById(R.id.tv_SingleRuta);
         tv_SingleDescripcion=findViewById(R.id.tv_SingleDescripcion);
@@ -94,8 +85,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         tv_SingleActivadoDescativado=findViewById(R.id.tv_SingleActivadoDescativado);
         rb_SingleRatingEvento=findViewById(R.id.rb_SingleRatingEvento);
         btn_postularse=findViewById(R.id.btn_postularse);
-
-
 
 
         //Obtengo los datos de los intents
@@ -159,6 +148,10 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         //Referencia al nodo postulaciones que uso dentro del boton Postularse
         DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Postulaciones");
 
+
+
+
+
         //Boton Postularse
         btn_postularse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,7 +161,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                 NotificarCreadorEvento();
                 prePostularCandidato2();
 
-                //buscarPrimerNoAceptado();
+
             }
         });
 
@@ -176,71 +169,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
 
     }//fin onCreate()
-
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        // Libera el BroadcastReceiver
-//        unregisterReceiver(notificationReceiver);
-//    }
-
-
-//    private BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            if ("com.example.sesionconfirebase.ACTION_POSTULAR".equals(intent.getAction())) {
-//                buscarPrimerNoAceptado();
-//                notificarPostulanteEvento();
-//            } else if ("com.example.sesionconfirebase.ACTION_DENEGAR_POSTULACION".equals(intent.getAction())) {
-//                notificarDenegacionPostulanteEvento();
-//            }
-//        }
-//    };
-
-
-    private void buscarPrimerNoAceptado() {
-        DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
-
-        prePostulacionesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot eventoSnapshot : dataSnapshot.getChildren()) {
-                    String idEventoRecuperado = eventoSnapshot.getKey();
-
-                    for (DataSnapshot userSnapshot : eventoSnapshot.getChildren()) {
-                        String userId = userSnapshot.getKey();
-                        PrePostulacion prePostulacion = userSnapshot.getValue(PrePostulacion.class);
-
-                        if (!prePostulacion.getAceptado() && prePostulacion.getTokenFcmPostulante() != null) {
-                            String tokenFcmPostulante = prePostulacion.getTokenFcmPostulante();
-
-                            DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
-                            postulacionesRef.child(idEventoRecuperado).child(userId).child("aceptado").setValue(true)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                postularCandidato2(idEventoRecuperado, userId, tokenFcmPostulante);
-                                            } else {
-                                                // Manejar el error en la actualización
-                                            }
-                                        }
-                                    });
-
-                            break;
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Manejar error de cancelación
-            }
-        });
-    }
-
-
 
 
     private void postularCandidato(){
@@ -523,6 +451,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
         String idEvento = sharedPreferences.getString("idEvento", "");
         String tokenFcmRecuperado = sharedPreferences.getString("TokenFCM", "");
+        String tokenFcmPostulante= sharedPreferences.getString("tokenFcmPostulante", "");
+        String nombreEvento = sharedPreferences.getString("nombreEvento", "");
 
 
 
@@ -537,6 +467,9 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
             notificacion.put("tipo", "creador_evento");
             notificacion.put("idEvento", idEvento);
             notificacion.put("postulanteId", postulanteId);
+            notificacion.put("tokenCreador", tokenFcmRecuperado);
+            notificacion.put("tokenPostulante", tokenFcmPostulante);
+            notificacion.put("nombreEvento", nombreEvento);
 
             json.put("to", tokenFcmRecuperado);
             json.put("data", notificacion); // Cambio de "data" a "notification"
