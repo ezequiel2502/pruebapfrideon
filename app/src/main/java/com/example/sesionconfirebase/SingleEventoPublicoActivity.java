@@ -150,8 +150,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
 
 
-
-
         //Boton Postularse
         btn_postularse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -493,100 +491,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
-
-    private void notificarPostulanteEvento() {
-
-        //"Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM"
-
-        //userName del que se postula
-        String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-
-        // Para recuperar el tokenFcm almacenado en SharedPreferences del creador de
-        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
-        String nombreEventoRecuperado = sharedPreferences.getString("nombreEvento", "");
-
-
-        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
-        JSONObject json = new JSONObject();
-
-        try {
-            JSONObject notificacion = new JSONObject();
-            notificacion.put("titulo", "Te postulaste a : ");
-            notificacion.put("detalle", nombreEventoRecuperado);
-            notificacion.put("tipo", "postulante_evento");
-
-            json.put("to", tokenFcmPostulante);
-            json.put("data", notificacion); // Cambio de "data" a "notification"
-
-
-            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
-            String URL = "https://fcm.googleapis.com/fcm/send";
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
-                @Override
-                public Map<String, String> getHeaders() {
-                    Map<String, String> header = new HashMap<>();
-                    header.put("Content-Type", "application/json");
-                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
-                    return header;
-                }
-            };
-            myrequest.add(request);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void notificarDenegacionPostulanteEvento() {
-
-        //"Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM"
-
-        //userName del que se postula
-        String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-
-        // Para recuperar el tokenFcm almacenado en SharedPreferences del creador de
-        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
-        String nombreEventoRecuperado = sharedPreferences.getString("nombreEvento", "");
-
-
-        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
-        JSONObject json = new JSONObject();
-
-        try {
-            JSONObject notificacion = new JSONObject();
-            notificacion.put("titulo", "Te denegaron la postulacion en : ");
-            notificacion.put("detalle", nombreEventoRecuperado);
-            notificacion.put("tipo", "postulante_evento");
-
-            json.put("to", tokenFcmPostulante);
-            json.put("data", notificacion); // Cambio de "data" a "notification"
-
-
-            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
-            String URL = "https://fcm.googleapis.com/fcm/send";
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
-                @Override
-                public Map<String, String> getHeaders() {
-                    Map<String, String> header = new HashMap<>();
-                    header.put("Content-Type", "application/json");
-                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
-                    return header;
-                }
-            };
-            myrequest.add(request);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-
 
 
 
