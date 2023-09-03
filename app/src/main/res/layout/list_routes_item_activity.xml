@@ -64,15 +64,33 @@
 
 
                 <!-- TextView adicional "Ruta" en negro -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="1dp"
+                    android:layout_gravity="center">
+                    <ImageButton
+                        android:id="@+id/previewRoute"
+                        android:layout_width="24dp"
+                        android:layout_height="27dp"
+                        android:background="#00FFFFFF"
+                        app:srcCompat="@drawable/baseline_eye_24"
+                        android:layout_marginRight="8dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="end" />
 
-                <ImageButton
-                    android:id="@+id/previewRoute"
-                    android:layout_width="24dp"
-                    android:layout_height="27dp"
-                    android:background="#00FFFFFF"
-                    app:srcCompat="@drawable/baseline_eye_24"
-                    android:layout_gravity="right" />
+                    <ImageButton
+                        android:id="@+id/deleteRoute"
+                        android:layout_width="24dp"
+                        android:layout_height="27dp"
+                        android:layout_weight="1"
+                        android:background="#00FFFFFF"
+                        app:srcCompat="@drawable/baseline_remove_road_24"
+                        app:tint="@color/design_default_color_error"
+                        android:layout_gravity="end" />
 
+                </LinearLayout>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

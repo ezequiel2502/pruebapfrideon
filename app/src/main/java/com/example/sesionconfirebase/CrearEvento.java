@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -39,6 +40,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.gps_test.PlanificarRuta;
 import com.example.gps_test.Ruta;
+import com.example.gps_test.ui.map.Routing_Variables;
+import com.example.gps_test.ui.map.Search_Variables;
 import com.example.sesionconfirebase.SeleccionarRutaRecyclerView.MyListAdapter;
 import com.example.sesionconfirebase.SeleccionarRutaRecyclerView.MyListData;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -72,6 +75,7 @@ import java.util.TimerTask;
 
 
 public class CrearEvento extends AppCompatActivity {
+
     Spinner spnRuta,spnCategoria,spnActivarDesactivar,spnPublicoPrivado;
     EditText txt_FechaEncuentro,txt_HoraEncuentro,txt_CupoMinimo,txt_CupoMaximo,txt_Descripcion,txt_NombreEvento;
     ImageView imvEvento;
@@ -97,6 +101,7 @@ public class CrearEvento extends AppCompatActivity {
 
     private FirebaseDatabase database;
     private FirebaseStorage firebaseStorage;
+    private static String selectedRoute;
 
     ProgressDialog dialog;
 
@@ -181,23 +186,24 @@ public class CrearEvento extends AppCompatActivity {
 
 
         Button SavePoints = findViewById(com.example.sesionconfirebase.R.id.btn_CargarRutas);
-        Dialog dialog = new Dialog(CrearEvento.this);
+        Dialog dialogRoutes = new Dialog(CrearEvento.this);
 
         SavePoints.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.setContentView(com.example.sesionconfirebase.R.layout.list_routes_dialog);
-                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                dialog.setCancelable(true);
-                dialog.getWindow().getAttributes().windowAnimations = com.example.gps_test.R.style.animation;
-                RecyclerView recyclerView = (RecyclerView) dialog.findViewById(com.example.sesionconfirebase.R.id.routesList);
+                dialogRoutes.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogRoutes.setContentView(com.example.sesionconfirebase.R.layout.list_routes_dialog);
+                dialogRoutes.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialogRoutes.setCancelable(true);
+                dialogRoutes.getWindow().getAttributes().windowAnimations = com.example.gps_test.R.style.animation;
+                RecyclerView recyclerView = (RecyclerView) dialogRoutes.findViewById(com.example.sesionconfirebase.R.id.routesList);
                 recyclerView.setHasFixedSize(true);
 
                 ArrayList<MyListData> data = new ArrayList<>();
                 //MyListAdapter adapter=new MyListAdapter(data.toArray(new MyListData[]{}));
                 MyListAdapter adapter=new MyListAdapter(data);
                 adapter.addContext(CrearEvento.this);
+                adapter.addDialogInstance(dialogRoutes);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(CrearEvento.this));
 
@@ -250,7 +256,7 @@ public class CrearEvento extends AppCompatActivity {
                 }
 
 
-                dialog.show();
+                dialogRoutes.show();
             }
 
         });
@@ -388,7 +394,6 @@ public class CrearEvento extends AppCompatActivity {
 
                 // Obtener los valores seleccionados del Spinner
                 String categoriaSeleccionada = spnCategoria.getSelectedItem().toString();
-                String rutaSeleccionada = "Prueba";
                 String esActivo = spnActivarDesactivar.getSelectedItem().toString();
                 String esPublico = spnPublicoPrivado.getSelectedItem().toString();
 
@@ -420,7 +425,7 @@ public class CrearEvento extends AppCompatActivity {
                             public void onSuccess(Uri uri) {
                                 ModelEvento evento = new ModelEvento();
                                 evento.setCategoria(categoriaSeleccionada);
-                                evento.setRuta(rutaSeleccionada);
+                                evento.setRuta(selectedRoute);
                                 evento.setNombreEvento(nombreEvento);
                                 evento.setDescripcion(descripcion);
                                 evento.setCupoMinimo(cupoMinimo);
@@ -541,6 +546,11 @@ public class CrearEvento extends AppCompatActivity {
                     Glide.with(this).load(imageUri).into(imvEvento); // Usar Glide o cualquier otra librería de carga de imágenes
                 }
             }
+
+    public static void dialogResult(String data)
+    {
+       selectedRoute = data;
+    }
 
 
 }//fin App

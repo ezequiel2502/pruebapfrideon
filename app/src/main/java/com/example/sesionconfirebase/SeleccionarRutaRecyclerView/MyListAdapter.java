@@ -4,12 +4,15 @@ package com.example.sesionconfirebase.SeleccionarRutaRecyclerView;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.gps_test.PlanificarRuta;
+import com.example.sesionconfirebase.CrearEvento;
 import com.example.sesionconfirebase.R;
 
 import java.io.Serializable;
@@ -36,6 +40,8 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
     private List<MyListData> listdata;
     private Context activityContext;
 
+    private Dialog dialogInstance;
+
     // RecyclerView recyclerView;
     public MyListAdapter(List<MyListData> listdata)
     {
@@ -46,6 +52,10 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
     public void addContext (Context appContext)
     {
         this.activityContext = appContext;
+    }
+    public void addDialogInstance (Dialog instance)
+    {
+        this.dialogInstance = instance;
     }
 
     public List<MyListData> getCurrentList()
@@ -81,11 +91,23 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dialogInstance.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        CrearEvento.dialogResult(listdata.get(holder.getAbsoluteAdapterPosition()).getDatabaseID());
+                    }
+                });
+                dialogInstance.dismiss();
+            }
+        });
+        holder.routePreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Toast.makeText(view.getContext(),"click on item: "+myListData.getRouteName(),Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(activityContext, PlanificarRuta.class);
-                        intent.putExtra("List_Of_Points", (Serializable) listdata.get(holder.getAbsoluteAdapterPosition()).getGeometry());
-                        intent.putExtra("Invalidate_Controls", "True");
-                        activityContext.startActivity(intent);
+                Intent intent = new Intent(activityContext, PlanificarRuta.class);
+                intent.putExtra("List_Of_Points", (Serializable) listdata.get(holder.getAbsoluteAdapterPosition()).getGeometry());
+                intent.putExtra("Invalidate_Controls", "True");
+                activityContext.startActivity(intent);
             }
         });
     }
@@ -103,6 +125,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         public TextView textViewCurves;
         public TextView textViewStart;
         public TextView textViewFinish;
+        public ImageButton routePreview;
         public ViewHolder(View itemView) {
             super(itemView);
             this.imageViewRoute = (ImageView) itemView.findViewById(R.id.imageViewRoute);
@@ -111,6 +134,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
             this.textViewCurves = (TextView) itemView.findViewById(R.id.textViewCurves);
             this.textViewStart = (TextView) itemView.findViewById(R.id.textViewStart);
             this.textViewFinish = (TextView) itemView.findViewById(R.id.textViewFinish);
+            this.routePreview = (ImageButton) itemView.findViewById(R.id.previewRoute);
         }
     }
 }
