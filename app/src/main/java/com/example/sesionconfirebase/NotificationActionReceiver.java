@@ -32,7 +32,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             String postulanteId = intent.getStringExtra("postulanteId");
 
             // Ejecuta tu método para aceptar
-            buscarPrimerNoAceptado(context);
+            //buscarPrimerNoAceptado(context);
+            buscarNoAceptadoPorEventoYUsuario(context,idEvento,postulanteId);
 
         } else if ("Botón 2".equals(action)) {
             // Aquí envías un broadcast específico para capturar la acción del Botón 2 en la SingleEventoPublicoActivity
@@ -42,40 +43,40 @@ public class NotificationActionReceiver extends BroadcastReceiver {
     }
 
 
-//    private void buscarNoAceptadoPorEventoYUsuario(String idEvento, String userId) {
-//        DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
-//
-//        DatabaseReference eventoRef = prePostulacionesRef.child(idEvento);
-//        DatabaseReference usuarioRef = eventoRef.child(userId);
-//
-//        usuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                PrePostulacion prePostulacion = dataSnapshot.getValue(PrePostulacion.class);
-//
-//                if (prePostulacion != null && !prePostulacion.getAceptado()) {
-//                    String tokenFcmPostulante = prePostulacion.getTokenFcmPostulante();
-//
-//                    usuarioRef.child("aceptado").setValue(true)
-//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    if (task.isSuccessful()) {
-//                                        postularCandidato2(context,idEvento, userId, tokenFcmPostulante);
-//                                    } else {
-//                                        // Manejar el error en la actualización
-//                                    }
-//                                }
-//                            });
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Manejar error de cancelación
-//            }
-//        });
-//    }
+    private void buscarNoAceptadoPorEventoYUsuario(Context context,String idEvento, String userId) {
+        DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
+
+        DatabaseReference eventoRef = prePostulacionesRef.child(idEvento);
+        DatabaseReference usuarioRef = eventoRef.child(userId);
+
+        usuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                PrePostulacion prePostulacion = dataSnapshot.getValue(PrePostulacion.class);
+
+                if (prePostulacion != null && !prePostulacion.getAceptado()) {
+                    String tokenFcmPostulante = prePostulacion.getTokenFcmPostulante();
+
+                    usuarioRef.child("aceptado").setValue(true)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        postularCandidato2(context,idEvento, userId, tokenFcmPostulante);
+                                    } else {
+                                        // Manejar el error en la actualización
+                                    }
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar error de cancelación
+            }
+        });
+    }
 
     private void postularCandidato2(Context context, String idEventoRecuperado, String userId, String tokenFcmPostulante) {
         DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEventoRecuperado);
