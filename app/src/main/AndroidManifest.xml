@@ -9,9 +9,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.BIND_GET_INSTALL_REFERRER_SERVICE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
 
     <application
         android:allowBackup="false"
@@ -25,34 +25,30 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup"
         tools:targetApi="31">
+        <activity
+            android:name=".SingleCommentEventoPublicoActivity"
+            android:exported="false" />
 
         <receiver
             android:name=".NotificationActionReceiver"
-            android:enabled="true"
-            android:exported="false">
-        </receiver>
-
-<!--        <receiver android:name=".NotificationActionReceiver1"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.example.sesionconfirebase.ACTION_BUTTON_1" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
-
-<!--        <receiver android:name=".NotificationActionReceiver2"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.example.sesionconfirebase.ACTION_BUTTON_2" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
-
-
+            android:enabled="true" /> <!-- <receiver android:name=".NotificationActionReceiver1" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.example.sesionconfirebase.ACTION_BUTTON_1" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
+        <!-- <receiver android:name=".NotificationActionReceiver2" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.example.sesionconfirebase.ACTION_BUTTON_2" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
         <service
             android:name=".Fcm"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -28,6 +29,9 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
             tv_SingleCategoria, tv_SingleUserName, tv_SingleUserId,
             tv_SinglePublicoPrivado, tv_SingleActivadoDescativado;
     ImageView singleImage;
+
+    ImageView image_profile;
+
 
     RatingBar rb_SingleRatingEvento;
 
@@ -54,6 +58,9 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
         tv_SingleActivadoDescativado = findViewById(R.id.tv_SingleActivadoDescativado);
         rb_SingleRatingEvento = findViewById(R.id.rb_SingleRatingEvento);
         btn_CancelarPostulacion = findViewById(R.id.btn_CancelarPostulacion);
+
+
+
 
         //Obtengo los datos de los intents
 
