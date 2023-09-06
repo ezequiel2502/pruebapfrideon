@@ -1,26 +1,44 @@
 package com.example.sesionconfirebase;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
 
     ArrayList<ModelComentario>list;
     Context context;
+
+    private ModelComentario comentarioActual;
 
     public CommentAdapter(ArrayList<ModelComentario> list, Context context) {
         this.list = list;
@@ -45,6 +63,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         ModelComentario comentario=list.get(position);
 
+        // Almacena el comentario actual en la variable
+        comentarioActual = comentario;
+
         //Se carga el itemComentario
 
         // Cargar la imagen usando Glide desde la URI almacenada en la base de datos
@@ -57,15 +78,37 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.tv_comment.setText(comentario.getComment());
         holder.tv_userName.setText(comentario.getPublisherName());
 
+
+
+
         //Agrego comportamiento a los botones
 
         //Boton Reponder
+        // Agregar el listener al botón btn_reply
         holder.btn_reply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Comprueba si el comentarioActual no es nulo
+                if (comentarioActual != null) {
+                    // Crea un Intent para abrir la nueva actividad de respuesta
+                    Intent intent = new Intent(context, RespuestaComentarioActivity.class);
+                    Log.d("AdapterContext", "Context: " + context);
 
+
+                    // Pasa los datos del comentario actual al Intent
+                    intent.putExtra("comment", comentarioActual.getComment());
+                    intent.putExtra("publisherId", comentarioActual.getPublisherId());
+                    intent.putExtra("publisherName", comentarioActual.getPublisherName());
+                    intent.putExtra("imagenPerfilUri", comentarioActual.getImagen_perfil());
+                    intent.putExtra("commentId", comentarioActual.getCommentId());
+                    intent.putExtra("idEvento", comentarioActual.getEventoId());
+
+                    // Inicia la nueva actividad
+                    context.startActivity(intent);
+                }
             }
         });
+
 
         //Boton Eliminar
         holder.btn_delete.setOnClickListener(new View.OnClickListener() {
@@ -103,4 +146,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         }
     }
+
+
 }

@@ -179,7 +179,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         recycleList=new ArrayList<>();
 
         //Creo una instancia del adapter para los comentarios
-        CommentAdapter commentAdapter=new CommentAdapter(recycleList,getApplicationContext());
+        CommentAdapter commentAdapter=new CommentAdapter(recycleList,SingleEventoPublicoActivity.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerViewComments.setLayoutManager(linearLayoutManager);
         recyclerViewComments.addItemDecoration(new DividerItemDecoration(recyclerViewComments.getContext(),DividerItemDecoration.VERTICAL));
@@ -200,11 +200,14 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                     String publisherId = comentarioSnapshot.child("publisherId").getValue(String.class);
                     String publisherName = comentarioSnapshot.child("publisherName").getValue(String.class);
                     String imagen_perfil = comentarioSnapshot.child("imagenPerfilUri").getValue(String.class);
+                    String commentId = comentarioSnapshot.child("commentId").getValue(String.class);
+                    String idEvento = comentarioSnapshot.child("idEvento").getValue(String.class);
+//
 
 
 
-                   // Agrega el objeto a tu lista o adaptador (`recycleList`)
-                    ModelComentario modelComentario = new ModelComentario(publisherId, comment, imagen_perfil,publisherName);
+                   // Creo y agrega el objeto a tu lista o adaptador (`recycleList`)
+                    ModelComentario modelComentario = new ModelComentario(publisherId, comment, imagen_perfil,publisherName,commentId,idEvento);
 
                     // Agrega el objeto a tu lista o adaptador (en tu caso, `recycleList`)
                     recycleList.add(modelComentario);
@@ -608,7 +611,11 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                 hashMap.put("comment", txt_write_comment.getText().toString());
                 hashMap.put("publisherId", userId);
                 hashMap.put("publisherName", userName);
+                hashMap.put("commentId", comentarioId);
+                hashMap.put("idEvento", idEvento);
                 hashMap.put("imagenPerfilUri", imagenPerfilUri); // Agrego la URI de la imagen de perfil
+
+
 
                 // Utilizo el identificador único para almacenar el comentario
                 reference.child(comentarioId).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {

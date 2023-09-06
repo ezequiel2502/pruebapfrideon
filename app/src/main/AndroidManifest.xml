@@ -26,6 +26,9 @@
         tools:replace="android:allowBackup"
         tools:targetApi="31">
         <activity
+            android:name=".RespuestaComentarioActivity"
+            android:exported="false" />
+        <activity
             android:name=".SingleCommentEventoPublicoActivity"
             android:exported="false" />
 
