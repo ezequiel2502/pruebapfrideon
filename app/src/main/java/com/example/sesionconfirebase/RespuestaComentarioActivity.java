@@ -81,6 +81,9 @@ public class RespuestaComentarioActivity extends AppCompatActivity {
                 hashMap.put("comment", respuesta);
                 hashMap.put("publisherId", userId);
                 hashMap.put("publisherName", user.getDisplayName());
+                hashMap.put("commentId", comentarioId);
+                hashMap.put("idEvento", idEvento);
+                hashMap.put("tipo", "respuesta");
                 hashMap.put("imagenPerfilUri", user.getPhotoUrl().toString()); // Agrega la URI de la imagen de perfil del usuario actual
                 hashMap.put("parentCommentId", commentId); // Agrega la referencia al comentario al que se responde
 

@@ -13,11 +13,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -32,18 +34,20 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
+
 
     ArrayList<ModelComentario>list;
     Context context;
 
-    private ModelComentario comentarioActual;
 
     public CommentAdapter(ArrayList<ModelComentario> list, Context context) {
         this.list = list;
         this.context = context;
     }
+
 
 
     //Para representar cada elemento de la lista de comentarios
@@ -61,23 +65,62 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull CommentAdapter.ViewHolder holder, int position) {
 
+
         ModelComentario comentario=list.get(position);
 
-        // Almacena el comentario actual en la variable
-        comentarioActual = comentario;
+        // Verificar si el comentario tiene respuestas
 
-        //Se carga el itemComentario
+        ModelRespuestaComentario respuesta = comentario.getRespuesta();
 
-        // Cargar la imagen usando Glide desde la URI almacenada en la base de datos
-        String imagePath = comentario.getImagen_perfil();
-        Glide.with(context)
-                .load(imagePath) // Carga la imagen desde la URI
-                .into(holder.image_profile);
 
-        //Se cargan el resto de campos
-        holder.tv_comment.setText(comentario.getComment());
-        holder.tv_userName.setText(comentario.getPublisherName());
 
+        if (respuesta != null) {
+
+            // Configurar vista para comentario con respuesta
+            holder.linearLayoutComentario.setVisibility(View.VISIBLE);
+            holder.linearLayoutRespuesta.setVisibility(View.VISIBLE);
+
+            //**************Comentario Original***************
+            //Se carga el itemComentario
+            // Cargar la imagen usando Glide desde la URI almacenada en la base de datos
+            String imagePathComentario = comentario.getImagen_perfil();
+            Glide.with(context)
+                    .load(imagePathComentario) // Carga la imagen desde la URI
+                    .into(holder.image_profile);
+
+            //Se cargan el resto de campos
+            holder.tv_commentComentario.setText(comentario.getComment());
+            holder.tv_userNameComentario.setText(comentario.getPublisherName());
+
+
+            //**********************Respuesta******************
+            String imagePathRespuesta = respuesta.getImagen_perfil();
+            Glide.with(context)
+                    .load(imagePathRespuesta) // Carga la imagen desde la URI
+                    .into(holder.image_profileRespuesta);
+
+            //Se cargan el resto de campos
+            holder.tv_commentRespuesta.setText(respuesta.getComment());
+            holder.tv_userNameRespuesta.setText(respuesta.getPublisherName());
+
+
+        }else{
+
+            // Configurar vista para comentario sin respuesta
+            holder.linearLayoutComentario.setVisibility(View.VISIBLE);
+            holder.linearLayoutRespuesta.setVisibility(View.GONE);
+
+            //Se carga el itemComentario
+            // Cargar la imagen usando Glide desde la URI almacenada en la base de datos
+            String imagePath = comentario.getImagen_perfil();
+            Glide.with(context)
+                    .load(imagePath) // Carga la imagen desde la URI
+                    .into(holder.image_profile);
+
+            //Se cargan el resto de campos
+            holder.tv_commentComentario.setText(comentario.getComment());
+            holder.tv_userNameComentario.setText(comentario.getPublisherName());
+        }
 
 
 
@@ -88,20 +131,25 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.btn_reply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Comprueba si el comentarioActual no es nulo
-                if (comentarioActual != null) {
+                // Obtiene la posición del adaptador
+                int adapterPosition = holder.getAdapterPosition();
+
+                // Comprueba si la posición es válida
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    // Obtiene los datos del comentario al que se va a responder
+                    ModelComentario comentarioAResponder = list.get(adapterPosition);
+
                     // Crea un Intent para abrir la nueva actividad de respuesta
                     Intent intent = new Intent(context, RespuestaComentarioActivity.class);
                     Log.d("AdapterContext", "Context: " + context);
 
-
                     // Pasa los datos del comentario actual al Intent
-                    intent.putExtra("comment", comentarioActual.getComment());
-                    intent.putExtra("publisherId", comentarioActual.getPublisherId());
-                    intent.putExtra("publisherName", comentarioActual.getPublisherName());
-                    intent.putExtra("imagenPerfilUri", comentarioActual.getImagen_perfil());
-                    intent.putExtra("commentId", comentarioActual.getCommentId());
-                    intent.putExtra("idEvento", comentarioActual.getEventoId());
+                    intent.putExtra("comment", comentarioAResponder.getComment());
+                    intent.putExtra("publisherId", comentarioAResponder.getPublisherId());
+                    intent.putExtra("publisherName", comentarioAResponder.getPublisherName());
+                    intent.putExtra("imagenPerfilUri", comentarioAResponder.getImagen_perfil());
+                    intent.putExtra("commentId", comentarioAResponder.getCommentId());
+                    intent.putExtra("idEvento", comentarioAResponder.getEventoId());
 
                     // Inicia la nueva actividad
                     context.startActivity(intent);
@@ -110,8 +158,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         });
 
 
-        //Boton Eliminar
+
+        //Boton Eliminar Comenatrio
         holder.btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        //Boton Eliminar Respuesta
+        holder.btn_deleteRespuesta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -120,6 +177,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     }
 
+
+
+
+
     @Override
     public int getItemCount() {
         return list.size();
@@ -127,21 +188,32 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView tv_userName,tv_comment;
+        TextView tv_userNameComentario, tv_commentComentario,tv_commentRespuesta,tv_userNameRespuesta;
+        ImageView image_profile,image_profileRespuesta;
+        Button btn_reply,btn_delete,btn_deleteRespuesta;
 
-        Button btn_reply,btn_delete;
-        ImageView image_profile;
+        LinearLayout linearLayoutRespuesta,linearLayoutComentario;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            //Controles del itemComentario
-            tv_userName=itemView.findViewById(R.id.tv_userName);
-            tv_comment=itemView.findViewById(R.id.tv_comment);
+            //Controles del itemComentario para el comentario
+            tv_userNameComentario=itemView.findViewById(R.id.tv_userNameComentario);
+            tv_commentComentario=itemView.findViewById(R.id.tv_commentComentario);
             image_profile=itemView.findViewById(R.id.image_profile);
             btn_reply=itemView.findViewById(R.id.btn_reply);
             btn_delete=itemView.findViewById(R.id.btn_delete);
+            linearLayoutComentario=itemView.findViewById(R.id.linearLayoutComentario);
+
+            //Controles del itemComentario para la respuesta
+            image_profileRespuesta=itemView.findViewById(R.id.image_profileRespuesta);
+            tv_userNameRespuesta=itemView.findViewById(R.id.tv_userNameRespuesta);
+            tv_commentRespuesta=itemView.findViewById(R.id.tv_commentRespuesta);
+            btn_deleteRespuesta=itemView.findViewById(R.id.btn_deleteRespuesta);
+            linearLayoutRespuesta=itemView.findViewById(R.id.linearLayoutRespuesta);
+
+
 
 
         }

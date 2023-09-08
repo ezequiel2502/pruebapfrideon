@@ -69,7 +69,9 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
     TextView tv_add_comment;
 
    RecyclerView recyclerViewComments;
+
     ArrayList<ModelComentario> recycleList;
+    //ArrayList<Object> recycleList;
 
     private DatabaseReference commentsRef;
     private ValueEventListener commentsListener;
@@ -188,38 +190,52 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
 
 
-            //reviso cambios en el nodo Comentarios
+        //Reviso el nodo comentarios
         commentsRef = FirebaseDatabase.getInstance().getReference("Comentarios").child(singleIdEvento);
         commentsRef.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Recorre todos los hijos bajo el nodo del evento
                 for (DataSnapshot comentarioSnapshot : dataSnapshot.getChildren()) {
-                    // Obtiene los valores de los campos "comment" y "publisher"
                     String comment = comentarioSnapshot.child("comment").getValue(String.class);
                     String publisherId = comentarioSnapshot.child("publisherId").getValue(String.class);
                     String publisherName = comentarioSnapshot.child("publisherName").getValue(String.class);
                     String imagen_perfil = comentarioSnapshot.child("imagenPerfilUri").getValue(String.class);
                     String commentId = comentarioSnapshot.child("commentId").getValue(String.class);
                     String idEvento = comentarioSnapshot.child("idEvento").getValue(String.class);
-//
+                    String tipo = comentarioSnapshot.child("tipo").getValue(String.class);
+                    String parentCommentId = comentarioSnapshot.child("parentCommentId").getValue(String.class);
+
+                    if ("comentario".equals(tipo)) {
+                        // Es un comentario principal, crear un objeto ModelComentario
+                        ModelComentario modelComentario = new ModelComentario(publisherId, comment, imagen_perfil, publisherName, commentId, idEvento,tipo);
+
+                        // Agregar el comentario a tu lista o adaptador (en tu caso, `recycleList`)
+                        recycleList.add(modelComentario);
+                    } else {
+                        // Es una respuesta, buscar el comentario al que responde
 
 
+                        for (ModelComentario comentario : recycleList) {
+                            if (comentario.getCommentId().equals(parentCommentId)) {
+                                // Crear un objeto ModelRespuestaComentario
+                                ModelRespuestaComentario modelRespuesta = new ModelRespuestaComentario(publisherId, comment, imagen_perfil, publisherName, commentId, idEvento, parentCommentId,tipo);
 
-                   // Creo y agrega el objeto a tu lista o adaptador (`recycleList`)
-                    ModelComentario modelComentario = new ModelComentario(publisherId, comment, imagen_perfil,publisherName,commentId,idEvento);
-
-                    // Agrega el objeto a tu lista o adaptador (en tu caso, `recycleList`)
-                    recycleList.add(modelComentario);
+                                // Agregar la respuesta al comentario
+                                comentario.setRespuesta(modelRespuesta);
+                                break;
+                            }
+                        }
+                    }
                 }
 
-                // Notifica al adaptador que los datos han cambiado
+                // Notificar al adaptador que los datos han cambiado
                 commentAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // Manejar el error si es necesario
             }
         });
 
@@ -613,6 +629,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                 hashMap.put("publisherName", userName);
                 hashMap.put("commentId", comentarioId);
                 hashMap.put("idEvento", idEvento);
+                hashMap.put("tipo", "comentario");
                 hashMap.put("imagenPerfilUri", imagenPerfilUri); // Agrego la URI de la imagen de perfil
 
 
