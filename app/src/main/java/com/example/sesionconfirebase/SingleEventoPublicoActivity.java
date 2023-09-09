@@ -71,7 +71,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
    RecyclerView recyclerViewComments;
 
     ArrayList<ModelComentario> recycleList;
-    //ArrayList<Object> recycleList;
+
+    CommentAdapter commentAdapter;
 
     private DatabaseReference commentsRef;
     private ValueEventListener commentsListener;
@@ -190,54 +191,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
 
 
-        //Reviso el nodo comentarios
-        commentsRef = FirebaseDatabase.getInstance().getReference("Comentarios").child(singleIdEvento);
-        commentsRef.addListenerForSingleValueEvent(new ValueEventListener(){
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Recorre todos los hijos bajo el nodo del evento
-                for (DataSnapshot comentarioSnapshot : dataSnapshot.getChildren()) {
-                    String comment = comentarioSnapshot.child("comment").getValue(String.class);
-                    String publisherId = comentarioSnapshot.child("publisherId").getValue(String.class);
-                    String publisherName = comentarioSnapshot.child("publisherName").getValue(String.class);
-                    String imagen_perfil = comentarioSnapshot.child("imagenPerfilUri").getValue(String.class);
-                    String commentId = comentarioSnapshot.child("commentId").getValue(String.class);
-                    String idEvento = comentarioSnapshot.child("idEvento").getValue(String.class);
-                    String tipo = comentarioSnapshot.child("tipo").getValue(String.class);
-                    String parentCommentId = comentarioSnapshot.child("parentCommentId").getValue(String.class);
-
-                    if ("comentario".equals(tipo)) {
-                        // Es un comentario principal, crear un objeto ModelComentario
-                        ModelComentario modelComentario = new ModelComentario(publisherId, comment, imagen_perfil, publisherName, commentId, idEvento,tipo);
-
-                        // Agregar el comentario a tu lista o adaptador (en tu caso, `recycleList`)
-                        recycleList.add(modelComentario);
-                    } else {
-                        // Es una respuesta, buscar el comentario al que responde
-
-
-                        for (ModelComentario comentario : recycleList) {
-                            if (comentario.getCommentId().equals(parentCommentId)) {
-                                // Crear un objeto ModelRespuestaComentario
-                                ModelRespuestaComentario modelRespuesta = new ModelRespuestaComentario(publisherId, comment, imagen_perfil, publisherName, commentId, idEvento, parentCommentId,tipo);
-
-                                // Agregar la respuesta al comentario
-                                comentario.setRespuesta(modelRespuesta);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // Notificar al adaptador que los datos han cambiado
-                commentAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Manejar el error si es necesario
-            }
-        });
+        cargarComentarios(singleIdEvento,commentAdapter);
 
 
 
@@ -251,7 +205,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                 if(txt_write_comment.getText().toString().equals("")){
                     Toast.makeText(SingleEventoPublicoActivity.this, "No se pueden enviar mensajes vacios!!!", Toast.LENGTH_SHORT).show();
                 }else {
-                    addComment(singleIdEvento);
+                    addComment(singleIdEvento,commentAdapter);
                 }
             }
         });
@@ -279,6 +233,62 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
 
     }//fin onCreate()
+
+    private void cargarComentarios(String singleIdEvento,CommentAdapter commentAdapter) {
+
+                //Reviso el nodo comentarios
+        commentsRef = FirebaseDatabase.getInstance().getReference("Comentarios").child(singleIdEvento);
+        commentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Limpiar la lista actual antes de cargar los nuevos comentarios
+                recycleList.clear();
+
+
+                // Recorre todos los hijos bajo el nodo del evento
+                for (DataSnapshot comentarioSnapshot : dataSnapshot.getChildren()) {
+                    String comment = comentarioSnapshot.child("comment").getValue(String.class);
+                    String publisherId = comentarioSnapshot.child("publisherId").getValue(String.class);
+                    String publisherName = comentarioSnapshot.child("publisherName").getValue(String.class);
+                    String imagen_perfil = comentarioSnapshot.child("imagenPerfilUri").getValue(String.class);
+                    String commentId = comentarioSnapshot.child("commentId").getValue(String.class);
+                    String idEvento = comentarioSnapshot.child("idEvento").getValue(String.class);
+                    String tipo = comentarioSnapshot.child("tipo").getValue(String.class);
+                    String parentCommentId = comentarioSnapshot.child("parentCommentId").getValue(String.class);
+
+                    if ("comentario".equals(tipo)) {
+                        // Es un comentario principal, crear un objeto ModelComentario
+                        ModelComentario modelComentario = new ModelComentario(publisherId, comment, imagen_perfil, publisherName, commentId, idEvento, tipo);
+
+                        // Agregar el comentario a tu lista o adaptador (en tu caso, `recycleList`)
+                        recycleList.add(modelComentario);
+                    } else {
+                        // Es una respuesta, buscar el comentario al que responde
+
+                        for (ModelComentario comentario : recycleList) {
+                            if (comentario.getCommentId().equals(parentCommentId)) {
+                                // Crear un objeto ModelRespuestaComentario
+                                ModelRespuestaComentario modelRespuesta = new ModelRespuestaComentario(publisherId, comment, imagen_perfil, publisherName, commentId, idEvento, parentCommentId, tipo);
+
+                                // Agregar la respuesta al comentario
+                                comentario.setRespuesta(modelRespuesta);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Notificar al adaptador que los datos han cambiado
+                commentAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar el error si es necesario
+            }
+        });
+    }
+
 
 
     private void postularCandidato(){
@@ -605,7 +615,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
     }
 
 
-    private void addComment(String idEvento) {
+    private void addComment(String idEvento,CommentAdapter commentAdapter) {
         // Obtengo el usuario actual que va a publicar el mensaje
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -638,12 +648,25 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                 reference.child(comentarioId).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Toast.makeText(SingleEventoPublicoActivity.this, "Se publicó el mensaje", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SingleEventoPublicoActivity.this, "Se publicó el mensaje", Toast.LENGTH_SHORT).show();
+
+                                // Llamar a cargarComentarios después de agregar el comentario
+                                cargarComentarios(idEvento,commentAdapter);
+                            }
+                        });
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(SingleEventoPublicoActivity.this, "No se publicó el mensaje", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SingleEventoPublicoActivity.this, "No se publicó el mensaje", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 });
             }
