@@ -42,8 +42,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     ArrayList<ModelComentario>list;
     Context context;
+    private OnResponseDeleteListener onResponseDeleteListener;
 
 
+    public interface OnResponseDeleteListener {
+        void onResponseDelete(ModelRespuestaComentario respuesta);
+    }
+
+    public void setOnResponseDeleteListener(OnResponseDeleteListener listener) {
+        this.onResponseDeleteListener = listener;
+    }
 
     public CommentAdapter(ArrayList<ModelComentario> list, Context context) {
         this.list = list;
@@ -276,30 +284,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     // Verificar si el comentario tiene respuestas
                     ModelRespuestaComentario respuestaAEliminar = comentarioAEliminar.getRespuesta();
 
-                    if(respuestaAEliminar!=null){
-
-                        //borro solo la respuesta
-
-                        //***************Respuesta*****************
-                        String respuestaId=respuestaAEliminar.getCommentId();
-
-                        // Eliminar el comentario de la base de datos
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(respuestaAEliminar.getEventoId());
-                        reference.child(respuestaId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                // Operación exitosa
-                                Toast.makeText(context, "Respuesta eliminada", Toast.LENGTH_SHORT).show();
+                    if (respuestaAEliminar != null && onResponseDeleteListener != null) {
+                        onResponseDeleteListener.onResponseDelete(respuestaAEliminar);
 
 
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Manejar el error
-                                Toast.makeText(context, "Error al eliminar respuesta", Toast.LENGTH_SHORT).show();
-                            }
-                        });
 
                     }
                 }

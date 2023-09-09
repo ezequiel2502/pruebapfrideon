@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SingleEventoPublicoActivity extends AppCompatActivity {
+public class SingleEventoPublicoActivity extends AppCompatActivity implements CommentAdapter.OnResponseDeleteListener {
     TextView tv_SingleEvento,tv_SingleRuta,tv_SingleDescripcion,tv_SingleFechaEncuentro,
             tv_SingleHoraEncuentro,tv_SingleCupoMinimo,tv_SingleCupoMaximo,
             tv_SingleCategoria,tv_SingleUserName,tv_SingleUserId,
@@ -81,11 +81,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
 
-        // Obtener los valores de SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
-        String idEvento = sharedPreferences.getString("idEvento", ""); // "" es el valor por defecto si no se encuentra
 
-        cargarComentarios(idEvento,commentAdapter);
+        cargarComentarios();
     }
 
     @Override
@@ -194,6 +191,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
         //Creo una instancia del adapter para los comentarios
          commentAdapter=new CommentAdapter(recycleList,SingleEventoPublicoActivity.this);
+         commentAdapter.setOnResponseDeleteListener(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerViewComments.setLayoutManager(linearLayoutManager);
         recyclerViewComments.addItemDecoration(new DividerItemDecoration(recyclerViewComments.getContext(),DividerItemDecoration.VERTICAL));
@@ -201,8 +199,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         recyclerViewComments.setAdapter(commentAdapter);
 
 
-
-        cargarComentarios(singleIdEvento,commentAdapter);
+        //Revisa el nodo "comentarios" y actualiza la lista de los mismos
+        cargarComentarios();
 
 
 
@@ -216,7 +214,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                 if(txt_write_comment.getText().toString().equals("")){
                     Toast.makeText(SingleEventoPublicoActivity.this, "No se pueden enviar mensajes vacios!!!", Toast.LENGTH_SHORT).show();
                 }else {
-                    addComment(singleIdEvento,commentAdapter);
+                    addComment(singleIdEvento);
                 }
             }
         });
@@ -245,10 +243,16 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
     }//fin onCreate()
 
-    private void cargarComentarios(String singleIdEvento,CommentAdapter commentAdapter) {
+    private void cargarComentarios() {
 
-                //Reviso el nodo comentarios
-        commentsRef = FirebaseDatabase.getInstance().getReference("Comentarios").child(singleIdEvento);
+        // Obtener el id del evento
+        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
+        String idEvento = sharedPreferences.getString("idEvento", "");
+
+
+
+        //Reviso el nodo comentarios
+        commentsRef = FirebaseDatabase.getInstance().getReference("Comentarios").child(idEvento);
         commentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -626,7 +630,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
     }
 
 
-    private void addComment(String idEvento,CommentAdapter commentAdapter) {
+    private void addComment(String idEvento) {
         // Obtengo el usuario actual que va a publicar el mensaje
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -665,7 +669,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                                 Toast.makeText(SingleEventoPublicoActivity.this, "Se publicó el mensaje", Toast.LENGTH_SHORT).show();
 
                                 // Llamar a cargarComentarios después de agregar el comentario
-                                cargarComentarios(idEvento,commentAdapter);
+                                cargarComentarios();
                             }
                         });
                     }
@@ -699,4 +703,30 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onResponseDelete(ModelRespuestaComentario respuestaAEliminar) {
+        //borro solo la respuesta
+
+        //***************Respuesta*****************
+        String respuestaId=respuestaAEliminar.getCommentId();
+
+        // Eliminar el comentario de la base de datos
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(respuestaAEliminar.getEventoId());
+        reference.child(respuestaId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                // Operación exitosa
+                Toast.makeText(SingleEventoPublicoActivity.this, "Respuesta eliminada", Toast.LENGTH_SHORT).show();
+
+                cargarComentarios();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Manejar el error
+                Toast.makeText(SingleEventoPublicoActivity.this, "Error al eliminar respuesta", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }//Fin Appp
