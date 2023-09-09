@@ -79,6 +79,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             // Configurar vista para comentario con respuesta
             holder.linearLayoutComentario.setVisibility(View.VISIBLE);
             holder.linearLayoutRespuesta.setVisibility(View.VISIBLE);
+            // Deshabilitar el botón "Responder"
+            holder.btn_reply.setEnabled(false);
+            // Ocultar el botón "Responder"
+            holder.btn_reply.setVisibility(View.GONE);
 
             //**************Comentario Original***************
             //Se carga el itemComentario
@@ -109,6 +113,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             // Configurar vista para comentario sin respuesta
             holder.linearLayoutComentario.setVisibility(View.VISIBLE);
             holder.linearLayoutRespuesta.setVisibility(View.GONE);
+            // Para que el botón "Responder" esté habilitado
+            holder.btn_reply.setEnabled(true);
+            // Para que el botón  botón "Responder" esté visible
+            holder.btn_reply.setVisibility(View.VISIBLE);
 
             //Se carga el itemComentario
             // Cargar la imagen usando Glide desde la URI almacenada en la base de datos
