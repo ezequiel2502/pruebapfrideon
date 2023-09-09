@@ -42,6 +42,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     ArrayList<ModelComentario>list;
     Context context;
+
+    //**************Interfaz para eliminar respuesta del lado de la SingleEventoPublicoActivity
     private OnResponseDeleteListener onResponseDeleteListener;
 
 
@@ -52,6 +54,22 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public void setOnResponseDeleteListener(OnResponseDeleteListener listener) {
         this.onResponseDeleteListener = listener;
     }
+    //*******************************************************************************************
+
+    //                                  *****^****
+
+    //**************Interfaz para eliminar comentario del lado de la SingleEventoPublicoActivity
+    private OnCommentDeleteListener onCommentDeleteListener;
+
+    public interface OnCommentDeleteListener {
+        void onCommentDelete(ModelComentario comentarioAEliminar);
+    }
+
+    public void setOnCommentDeleteListener(OnCommentDeleteListener listener) {
+        this.onCommentDeleteListener = listener;
+    }
+    //*******************************************************************************************
+
 
     public CommentAdapter(ArrayList<ModelComentario> list, Context context) {
         this.list = list;
@@ -176,7 +194,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         });
 
 
-
         //Boton Eliminar Comenatrio
         holder.btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,77 +208,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     // Obtiene los datos del comentario al que se va a eliminar
                     ModelComentario comentarioAEliminar = list.get(adapterPosition);
 
-                    // Verificar si el comentario tiene respuestas
-                    ModelRespuestaComentario respuestaAEliminar = comentarioAEliminar.getRespuesta();
-
-                    if(respuestaAEliminar!=null){
-
-
-                        //borro respuesta y comenatario
-
-                        //***************Respuesta*****************
-                        String respuestaId=respuestaAEliminar.getCommentId();
-
-                        // Eliminar el comentario de la base de datos
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(respuesta.getEventoId());
-                        reference.child(respuestaId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                // Notificar al usuario que el comentario se eliminó con éxito
-
-                                //***************Comentario*****************
-                                // Obtener el ID del comentario
-                                String commentId = comentarioAEliminar.getCommentId();
-
-                                // Eliminar el comentario de la base de datos
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(comentarioAEliminar.getEventoId());
-                                reference.child(commentId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        // Notificar al usuario que el comentario se eliminó con éxito
-                                        Toast.makeText(context, "Comentario y respuesta eliminados", Toast.LENGTH_SHORT).show();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        // Manejar el error si no se puede eliminar el comentario
-                                        Toast.makeText(context, "Error al eliminar el comentario y la respuesta ", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Manejar el error si no se puede eliminar el comentario
-                                Toast.makeText(context, "Error al eliminar el comentario y la respuesta ", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    }else{
-
-                        //Borro comentario
-
-                        // Obtener el ID del comentario
-                        String commentId = comentarioAEliminar.getCommentId();
-
-                        // Eliminar el comentario de la base de datos
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(comentarioAEliminar.getEventoId());
-                        reference.child(commentId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                // Notificar al usuario que el comentario se eliminó con éxito
-                                Toast.makeText(context, "Comentario eliminado", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Manejar el error si no se puede eliminar el comentario
-                                Toast.makeText(context, "Error al eliminar el comentario", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
+                    if (onCommentDeleteListener != null) {
+                        onCommentDeleteListener.onCommentDelete(comentarioAEliminar);
                     }
+
                 }
 
             }
