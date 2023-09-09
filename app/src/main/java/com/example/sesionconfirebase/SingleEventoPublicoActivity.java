@@ -72,10 +72,21 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
     ArrayList<ModelComentario> recycleList;
 
-    CommentAdapter commentAdapter;
+   private CommentAdapter commentAdapter;
 
     private DatabaseReference commentsRef;
     private ValueEventListener commentsListener;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        // Obtener los valores de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
+        String idEvento = sharedPreferences.getString("idEvento", ""); // "" es el valor por defecto si no se encuentra
+
+        cargarComentarios(idEvento,commentAdapter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +193,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         recycleList=new ArrayList<>();
 
         //Creo una instancia del adapter para los comentarios
-        CommentAdapter commentAdapter=new CommentAdapter(recycleList,SingleEventoPublicoActivity.this);
+         commentAdapter=new CommentAdapter(recycleList,SingleEventoPublicoActivity.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerViewComments.setLayoutManager(linearLayoutManager);
         recyclerViewComments.addItemDecoration(new DividerItemDecoration(recyclerViewComments.getContext(),DividerItemDecoration.VERTICAL));
@@ -686,5 +697,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
     private void getProfileImage(){
 
     }
+
 
 }//Fin Appp

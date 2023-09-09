@@ -44,6 +44,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     Context context;
 
 
+
     public CommentAdapter(ArrayList<ModelComentario> list, Context context) {
         this.list = list;
         this.context = context;
@@ -289,6 +290,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                             public void onSuccess(Void unused) {
                                 // Operación exitosa
                                 Toast.makeText(context, "Respuesta eliminada", Toast.LENGTH_SHORT).show();
+
+
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -302,6 +305,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 }
             }
         });
+
+
+
 
 
     }//fin onBindViewHolder

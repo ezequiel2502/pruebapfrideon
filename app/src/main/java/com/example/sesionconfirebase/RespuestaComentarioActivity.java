@@ -1,5 +1,6 @@
 package com.example.sesionconfirebase;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -92,7 +93,12 @@ public class RespuestaComentarioActivity extends AppCompatActivity {
                     public void onSuccess(Void unused) {
                         Toast.makeText(RespuestaComentarioActivity.this, "Se publicó la respuesta", Toast.LENGTH_SHORT).show();
                         // Cierra la actividad actual después de publicar la respuesta
+
+
                         finish();
+
+
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -101,6 +107,8 @@ public class RespuestaComentarioActivity extends AppCompatActivity {
                     }
                 });
             }
+
+
         });
 
 
