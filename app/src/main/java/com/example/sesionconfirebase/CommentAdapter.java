@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -172,6 +173,88 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public void onClick(View view) {
 
+                // Obtiene la posición del adaptador
+                int adapterPosition = holder.getAdapterPosition();
+
+                // Comprueba si la posición es válida
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+
+                    // Obtiene los datos del comentario al que se va a eliminar
+                    ModelComentario comentarioAEliminar = list.get(adapterPosition);
+
+                    // Verificar si el comentario tiene respuestas
+                    ModelRespuestaComentario respuestaAEliminar = comentarioAEliminar.getRespuesta();
+
+                    if(respuestaAEliminar!=null){
+
+
+                        //borro respuesta y comenatario
+
+                        //***************Respuesta*****************
+                        String respuestaId=respuestaAEliminar.getCommentId();
+
+                        // Eliminar el comentario de la base de datos
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(respuesta.getEventoId());
+                        reference.child(respuestaId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                // Notificar al usuario que el comentario se eliminó con éxito
+
+                                //***************Comentario*****************
+                                // Obtener el ID del comentario
+                                String commentId = comentarioAEliminar.getCommentId();
+
+                                // Eliminar el comentario de la base de datos
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(comentarioAEliminar.getEventoId());
+                                reference.child(commentId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        // Notificar al usuario que el comentario se eliminó con éxito
+                                        Toast.makeText(context, "Comentario y respuesta eliminados", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // Manejar el error si no se puede eliminar el comentario
+                                        Toast.makeText(context, "Error al eliminar el comentario y la respuesta ", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Manejar el error si no se puede eliminar el comentario
+                                Toast.makeText(context, "Error al eliminar el comentario y la respuesta ", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }else{
+
+                        //Borro comentario
+
+                        // Obtener el ID del comentario
+                        String commentId = comentarioAEliminar.getCommentId();
+
+                        // Eliminar el comentario de la base de datos
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(comentarioAEliminar.getEventoId());
+                        reference.child(commentId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                // Notificar al usuario que el comentario se eliminó con éxito
+                                Toast.makeText(context, "Comentario eliminado", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Manejar el error si no se puede eliminar el comentario
+                                Toast.makeText(context, "Error al eliminar el comentario", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+                }
+
             }
         });
 
@@ -180,10 +263,48 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public void onClick(View view) {
 
+                // Obtiene la posición del adaptador
+                int adapterPosition = holder.getAdapterPosition();
+
+                // Comprueba si la posición es válida
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+
+                    // Obtiene los datos del comentario al que se va a eliminar
+                    ModelComentario comentarioAEliminar = list.get(adapterPosition);
+
+                    // Verificar si el comentario tiene respuestas
+                    ModelRespuestaComentario respuestaAEliminar = comentarioAEliminar.getRespuesta();
+
+                    if(respuestaAEliminar!=null){
+
+                        //borro solo la respuesta
+
+                        //***************Respuesta*****************
+                        String respuestaId=respuestaAEliminar.getCommentId();
+
+                        // Eliminar el comentario de la base de datos
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(respuestaAEliminar.getEventoId());
+                        reference.child(respuestaId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                // Operación exitosa
+                                Toast.makeText(context, "Respuesta eliminada", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Manejar el error
+                                Toast.makeText(context, "Error al eliminar respuesta", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+                }
             }
         });
 
-    }
+
+    }//fin onBindViewHolder
 
 
 

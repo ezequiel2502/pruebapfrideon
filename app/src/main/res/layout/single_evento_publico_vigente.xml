@@ -524,6 +524,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
                         android:background="@color/fui_transparent"
+                        android:textColorHint="#666666"
                         android:layout_toLeftOf="@+id/tv_add_comment">
 
                     </EditText>
