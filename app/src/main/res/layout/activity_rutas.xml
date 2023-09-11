@@ -4,13 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/Agregar_Ruta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Nueva Ruta" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lista_Rutas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:layout_editor_absoluteX="1dp"
-            tools:layout_editor_absoluteY="1dp" />
+            tools:layout_editor_absoluteY="1dp"
+            android:layout_below="@id/Agregar_Ruta"
+            />
+
+
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

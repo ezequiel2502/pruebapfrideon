@@ -34,8 +34,7 @@
 
         <receiver
             android:name=".NotificationActionReceiver"
-            android:enabled="true"
-            android:exported="false">
+            android:enabled="true">
         </receiver>
 
 <!--        <receiver android:name=".NotificationActionReceiver1"-->

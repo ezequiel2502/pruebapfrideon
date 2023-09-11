@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
-import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
@@ -122,10 +121,8 @@ import org.json.JSONObject;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -174,7 +171,8 @@ public class PlanificarRuta extends AppCompatActivity {
     private List<Integer> hashListRequestsCounter = new ArrayList<>();
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference ref = database.getReference().child("Route");
+    DatabaseReference refRoutes = database.getReference().child("Route");
+    DatabaseReference refPublicRoutes = database.getReference().child("PublicRoute");
     private Thread secondary_Thread_Reverse_Geocoding;
     private boolean stopThread = false;
     private MediaProjectionManager mProjectionManager;
@@ -328,7 +326,7 @@ public class PlanificarRuta extends AppCompatActivity {
 
         FloatingActionButton SavePoints = findViewById(R.id.saveRoutePoints);
         Dialog dialog = new Dialog(PlanificarRuta.this);
-        ref.addValueEventListener(new ValueEventListener() {
+        refRoutes.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Ruta post = dataSnapshot.getValue(Ruta.class);
@@ -373,7 +371,8 @@ public class PlanificarRuta extends AppCompatActivity {
                                         Arrays.asList(summaryAdapter.getCurrentList()));
 
                                 String baseID = String.valueOf(current_Route_Points.hashCode() + java.util.Calendar.getInstance().getTime().hashCode());
-                                ref.child(baseID).setValue(ruta);
+                                refRoutes.child(baseID).setValue(ruta);
+                                refPublicRoutes.child(baseID).setValue(ruta);
 
                                 mapFragment.getScaleView().setVisible(false);
                                 mapFragment.getZoomControlsView().setVisible(false);
@@ -409,7 +408,8 @@ public class PlanificarRuta extends AppCompatActivity {
                                         Arrays.asList(summaryAdapter.getCurrentList()));
 
                                 String baseID = String.valueOf(current_Route_Points.hashCode() + java.util.Calendar.getInstance().getTime().hashCode());
-                                ref.child(baseID).setValue(ruta);
+                                refRoutes.child(baseID).setValue(ruta);
+                                refPublicRoutes.child(baseID).setValue(ruta);
 
                                 mapFragment.getScaleView().setVisible(false);
                                 mapFragment.getZoomControlsView().setVisible(false);

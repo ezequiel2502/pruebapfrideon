@@ -71,6 +71,9 @@ public class ImageUploader {
                     DatabaseReference ref = database.getReference().child("Route");
                     ref.child(routeReference).child("imgLocation").setValue(downloadUri.toString());
 
+                    DatabaseReference ref2 = database.getReference().child("PublicRoute");
+                    ref2.child(routeReference).child("imgLocation").setValue(downloadUri.toString());
+
                 } else {
                     // Handle failures
                     // ...

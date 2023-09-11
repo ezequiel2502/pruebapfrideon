@@ -1,6 +1,9 @@
 package com.example.sesionconfirebase;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 
 import androidx.annotation.NonNull;
@@ -8,10 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.gps_test.PlanificarRuta;
 import com.example.gps_test.Ruta;
-import com.example.sesionconfirebase.R;
-import com.example.sesionconfirebase.SeleccionarRutaRecyclerView.MyListAdapter;
-import com.example.sesionconfirebase.SeleccionarRutaRecyclerView.MyListData;
+import com.example.sesionconfirebase.ActivityRutasRecyclerView.MyListAdapterActivity;
+import com.example.sesionconfirebase.ActivityRutasRecyclerView.MyListDataActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,8 +35,9 @@ import java.util.TimerTask;
 
 public class Rutas extends AppCompatActivity {
 
-    private FirebaseDatabase database;
-    private FirebaseStorage firebaseStorage;
+    private static FirebaseDatabase database;
+    private static FirebaseStorage firebaseStorage;
+    private static String userId;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +49,14 @@ public class Rutas extends AppCompatActivity {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        String userId = currentUser.getUid();
+        userId = currentUser.getUid();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.lista_Rutas);
         recyclerView.setHasFixedSize(true);
 
-        ArrayList<MyListData> data = new ArrayList<>();
+        ArrayList<MyListDataActivity> data = new ArrayList<>();
         //MyListAdapter adapter=new MyListAdapter(data.toArray(new MyListData[]{}));
-        MyListAdapter adapter=new MyListAdapter(data);
+        MyListAdapterActivity adapter = new MyListAdapterActivity(data);
         adapter.addContext(Rutas.this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(Rutas.this));
@@ -66,7 +70,7 @@ public class Rutas extends AppCompatActivity {
                     String rutaID = dataSnapshot.getKey();
                     if (evento.author.toString().equals(userId))
                     {
-                        MyListData route = new MyListData(evento.routeName, rutaID, evento.routePoints, evento.type, evento.lenght,
+                        MyListDataActivity route = new MyListDataActivity(evento.routeName, rutaID, evento.routePoints, evento.type, evento.lenght,
                                 evento.curvesAmount, evento.startLocation, evento.finishLocation, evento.imgLocation);
                         data.add(route);
                         //adapter.getCurrentList()[adapter.getCurrentList().length] = route;
@@ -105,5 +109,25 @@ public class Rutas extends AppCompatActivity {
             });
         }
 
+        Button newRoute = findViewById(com.example.sesionconfirebase.R.id.Agregar_Ruta);
+        newRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), PlanificarRuta.class);
+                intent.putExtra("Close_On_Enter", "False");
+                intent.putExtra("User_ID", currentUser.getUid());
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+            }
+        });
+
     }
+
+    public static void Delete_Route(String databaseID)
+    {
+        firebaseStorage.getReference().child("Usuarios").child(userId).child("routes").child(databaseID).delete();
+        database.getReference().child("Route").child(databaseID).removeValue();
+    }
+
 }
