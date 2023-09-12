@@ -40,7 +40,6 @@ public class Fcm extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
         //Saco los campos directamente de la notificacion recibida
         String titulo = remoteMessage.getData().get("titulo");
         String detalle = remoteMessage.getData().get("detalle");
@@ -52,7 +51,6 @@ public class Fcm extends FirebaseMessagingService {
         String tokenPostulante = remoteMessage.getData().get("tokenPostulante");
 
         if ("creador_evento".equals(tipoNotificacion)) {
-
 
             // Crear una acción para el primer botón
             Intent actionIntent1 = new Intent(this, NotificationActionReceiver.class);
@@ -101,9 +99,7 @@ public class Fcm extends FirebaseMessagingService {
                 notificationManager.notify(uniqueNotificationId, builder.build());
             }
             // Aca puedo llamar metodos de forma directa ---->
-
         } else if ("postulante_evento".equals(tipoNotificacion)) {
-
             // Notificación para el postulante de evento
             Intent intent = new Intent(this, ListaEventoPostulados.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -124,15 +120,10 @@ public class Fcm extends FirebaseMessagingService {
                 // Generar un ID único para la notificación
                 Random random = new Random();
                 int uniqueNotificationId = random.nextInt(10000);
-
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
             }
-
-
         } else if ("cupo-maximo".equals(tipoNotificacion)) {
-
-
             // Notificación para el creador de evento si se alcanza cupo maximo
             Intent intent = new Intent(this, ListaEventosPublicosVigentes.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -153,19 +144,10 @@ public class Fcm extends FirebaseMessagingService {
                 // Generar un ID único para la notificación
                 Random random = new Random();
                 int uniqueNotificationId = random.nextInt(10000);
-
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
             }
-
-
-
-
-            
         }
-
-
     }
-
 }
 
