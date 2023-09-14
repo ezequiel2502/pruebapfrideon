@@ -143,6 +143,25 @@
 
     <!-- Divisor -->
 
+    <!-- TextView de Respuesta -->
+
+    <!-- TextView de Respuesta -->
+
+    <TextView
+        android:id="@+id/textViewRespuesta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cardview_registrarseGoogle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Respuesta"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardview_registrarseGoogle"
+        app:layout_constraintVertical_bias="0.079" />
+
     <TextView
         android:id="@+id/titulo_iniciarSesion"
         android:layout_width="wrap_content"
