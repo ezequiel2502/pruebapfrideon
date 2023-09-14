@@ -26,17 +26,7 @@ import java.util.regex.Pattern;
 
 public class RegistroActivity extends AppCompatActivity {
 
-    EditText mEditTextEmail;
-    EditText mEditTextPass;
-    EditText mEditTextConfirmarPass;
-
-    EditText mEditTextUsuario;
-    Button mButtonRegistrar;
-    TextView mTextViewRespuestaR;
-
-    TextView mTieneCuenta;
-
-    FirebaseAuth mAuth;
+   FirebaseAuth mAuth;
 
     String usuario;
     String email;
@@ -143,15 +133,15 @@ public class RegistroActivity extends AppCompatActivity {
                                 mAuth.signOut();
                                 if (task.isSuccessful()) {
                                     Toast.makeText(RegistroActivity.this, "Usuario registrado correctamente. Por favor, confirma que recibiste el mail de verificacion", Toast.LENGTH_SHORT).show();
-                                    mEditTextEmail.setText("");
-                                    mEditTextPass.setText("");
+                                    editTextEmail.setText("");
+                                    editTextPass.setText("");
 
                                     //guardar datos en sharedpreferences
                                     SharedPreferences prefs = getSharedPreferences(
                                             "MyPreferences", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor=prefs.edit();
+                                    SharedPreferences.Editor editor = prefs.edit();
                                     //Guarda el password
-                                    editor.putString("password",password);
+                                    editor.putString("password", password);
                                     // Guarda el username...
                                     editor.putString("username", username);
                                     //si es login con email y contraseña...
@@ -163,9 +153,9 @@ public class RegistroActivity extends AppCompatActivity {
 
                                     //redireccionar - intent a MainActivity...para el logueo
                                     Intent intent = new Intent(RegistroActivity.this, MainActivity.class);
-                                   intent.putExtra("username", username);//lo mando al Main y desde ahi lo redirijo nuevamente al home para que este disponible cuando se loguee.intent.putExtra("password",password);//lo mando al Main y desde ahi lo redirijo nuevamente al home para que este disponible cuando se loguee.
-                                   intent.putExtra("esLoginConEmailYPass",true);//lo mando al Main y desde ahi lo redirijo nuevamente al home para controlar la eliminación de la cuenta
-                                    intent.putExtra("getPhoto",false);
+                                    intent.putExtra("username", username);//lo mando al Main y desde ahi lo redirijo nuevamente al home para que este disponible cuando se loguee.intent.putExtra("password",password);//lo mando al Main y desde ahi lo redirijo nuevamente al home para que este disponible cuando se loguee.
+                                    intent.putExtra("esLoginConEmailYPass", true);//lo mando al Main y desde ahi lo redirijo nuevamente al home para controlar la eliminación de la cuenta
+                                    intent.putExtra("getPhoto", false);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
                                 } else {
