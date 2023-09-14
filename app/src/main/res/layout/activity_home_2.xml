@@ -298,40 +298,40 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+            android:layout_height="103dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
             <!-- Añadir Detalles -->
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="8dp"
                 android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#7986CB">
+                android:layout_weight="1"
+                app:cardBackgroundColor="#7986CB"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
+                    android:padding="16dp">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/edit"
                         android:layout_gravity="center_horizontal"
+                        android:src="@drawable/edit"
                         app:tint="@android:color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:text="Añadir Detalles"
-                        android:textColor="@color/white"
-                        android:layout_gravity="center_horizontal"/>
+                        android:textColor="@color/white" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -339,32 +339,32 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="8dp"
                 android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#7986CB">
+                android:layout_weight="1"
+                app:cardBackgroundColor="#7986CB"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
+                    android:padding="16dp">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/close"
                         android:layout_gravity="center_horizontal"
+                        android:src="@drawable/close"
                         app:tint="@android:color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cerrar Sesión"
                         android:layout_gravity="center_horizontal"
-                        android:textColor="@color/white"/>
+                        android:text="Cerrar Sesión"
+                        android:textColor="@color/white" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -373,30 +373,30 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:cardElevation="4dp"
+                app:cardBackgroundColor="#7986CB"
                 app:cardCornerRadius="8dp"
-                app:cardBackgroundColor="#7986CB">
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
+                    android:padding="16dp">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/delete"
                         android:layout_gravity="center_horizontal"
+                        android:src="@drawable/delete"
                         app:tint="@color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Eliminar Cuenta"
                         android:layout_gravity="center_horizontal"
-                        android:textColor="@color/white"/>
+                        android:text="Eliminar Cuenta"
+                        android:textColor="@color/white" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
