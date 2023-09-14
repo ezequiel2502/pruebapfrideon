@@ -40,17 +40,16 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     GoogleSignInClient mGoogleSignInClient;
 
+//controles activity_main
+//    EditText mEditTextEmail;
+//    EditText mEditTextPass;
+//    Button mButtonInicio;
+//    TextView mTextViewIrRegistrar;
+//    TextView mTextViewRespuesta;
+//    TextView mTextViewForgotPassword;
+//    SignInButton mSignInButtonGoogle;
 
-    EditText mEditTextEmail;
-    EditText mEditTextPass;
-    Button mButtonInicio;
-    TextView mTextViewIrRegistrar;
-    TextView mTextViewRespuesta;
-
-    TextView mTextViewForgotPassword;
     FirebaseAuth mAuth;
-
-    SignInButton mSignInButtonGoogle;
 
     String email;
     String pass;
@@ -127,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
         password = getIntent().getStringExtra("password");
         esLoginConEmailYPass=getIntent().getBooleanExtra("esLoginConEmailYPass",false);
 
+
+
           //Para registrarse por primera vez, te manda al RegistroActivity
         cardview_registrarseUsuarioYPass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,12 +184,12 @@ public class MainActivity extends AppCompatActivity {
     }//fin OnCreate
 
     public void verificarCredenciales(){
-        String email = mEditTextEmail.getText().toString();
-        String password = mEditTextPass.getText().toString();
+        String email = editTextEmail.getText().toString();
+        String password = editTextPass.getText().toString();
         if(email.isEmpty() || !emailValido(email)){
-            showError(mEditTextEmail, "Email no valido");
+            showError(editTextEmail, "Email no valido");
         }else if(password.isEmpty()|| password.length()<7){
-            showError(mEditTextPass, "Password invalida");
+            showError(editTextPass, "Password invalida");
         }else{
             //Mostrar ProgressBar
             mProgressBar.setTitle("Login");
@@ -209,8 +210,8 @@ public class MainActivity extends AppCompatActivity {
                             String password_guardada=prefs.getString("password","");
                             Boolean esLoginConEmailYpass_guardado=prefs.getBoolean("esLoginConEmailYPass",true);
 
-                            mTextViewRespuesta.setText("CORRECTO");
-                            mTextViewRespuesta.setTextColor(Color.GREEN);
+                            textViewRespuesta.setText("CORRECTO");
+                            textViewRespuesta.setTextColor(Color.GREEN);
                             //redireccionar - intent a HomeActivity...
                             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                             intent.putExtra("getPhoto", false);
@@ -226,8 +227,8 @@ public class MainActivity extends AppCompatActivity {
                         
                     }else{
                         mProgressBar.dismiss();
-                        mTextViewRespuesta.setText("No se pudo iniciar Sesión Verifique correo/contraseña");
-                        mTextViewRespuesta.setTextColor(Color.RED);
+                        textViewRespuesta.setText("No se pudo iniciar Sesión Verifique correo/contraseña");
+                        textViewRespuesta.setTextColor(Color.RED);
                         Toast.makeText(MainActivity.this, "No se pudo iniciar Sesión Verifique correo/contraseña", Toast.LENGTH_LONG).show();
 
                     }
@@ -307,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                mTextViewRespuesta.setText(e.getMessage());
+                textViewRespuesta.setText(e.getMessage());
             }
         }
     }
@@ -339,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            mTextViewRespuesta.setText(task.getException().toString());
+                            textViewRespuesta.setText(task.getException().toString());
 
                         }
                     }

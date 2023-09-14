@@ -2,6 +2,7 @@ package com.example.sesionconfirebase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -43,44 +44,81 @@ public class RegistroActivity extends AppCompatActivity {
     String conPass;
     private ProgressDialog mProgressBar;
 
+    //***********controles nuevos
+    EditText editTextUsuario,editTextEmail,editTextPass,editConfirmarPass;
+    CardView card_view_registrar,cardViewYaTienesCuenta;
+    TextView textViewRespuestaR;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registro);
+        setContentView(R.layout.registro2);
 
-        mEditTextUsuario=findViewById(R.id.editTextUsuario);
-        mEditTextEmail = findViewById(R.id.editTextEmail);
-        mEditTextPass = findViewById(R.id.editTextPass);
-        mEditTextConfirmarPass = findViewById(R.id.editConfirmarPass);
-        mButtonRegistrar = findViewById(R.id.btnRegistrar);
-        mTextViewRespuestaR = findViewById(R.id.textViewRespuestaR);
-        mTieneCuenta=findViewById(R.id.alreadyHaveAccount);
+        //controles viejos activity_registro
+//        mEditTextUsuario=findViewById(R.id.editTextUsuario);
+//        mEditTextEmail = findViewById(R.id.editTextEmail);
+//        mEditTextPass = findViewById(R.id.editTextPass);
+//        mEditTextConfirmarPass = findViewById(R.id.editConfirmarPass);
+//        mButtonRegistrar = findViewById(R.id.btnRegistrar);
+//        mTextViewRespuestaR = findViewById(R.id.textViewRespuestaR);
+//        mTieneCuenta=findViewById(R.id.alreadyHaveAccount);
+
+
+        //Controles nuevos registro2
+        editTextUsuario=findViewById(R.id.editTextUsuario);
+        editTextEmail=findViewById(R.id.editTextEmail);
+        editTextPass=findViewById(R.id.editTextPass);
+        editConfirmarPass=findViewById(R.id.editConfirmarPass);
+        card_view_registrar=findViewById(R.id.card_view_registrar);
+        textViewRespuestaR=findViewById(R.id.textViewRespuestaR);
+        cardViewYaTienesCuenta=findViewById(R.id.cardViewYaTienesCuenta);
 
         mProgressBar=new ProgressDialog(RegistroActivity.this);
 
         mAuth = FirebaseAuth.getInstance();
 
-        mButtonRegistrar.setOnClickListener(new View.OnClickListener() {
+
+
+
+        //Para el registro de un usuario email, usuario y contraseña
+        card_view_registrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 verificarCredenciales();
             }
         });
+
+
+        //
+        cardViewYaTienesCuenta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(RegistroActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+
+
+
+
     }//fin OnCreate()
 
     public void verificarCredenciales() {
-        String username = mEditTextUsuario.getText().toString();
-        String email = mEditTextEmail.getText().toString();
-        String password = mEditTextPass.getText().toString();
-        String confirmPass = mEditTextConfirmarPass.getText().toString();
+        String username = editTextUsuario.getText().toString();
+        String email = editTextEmail.getText().toString();
+        String password = editTextPass.getText().toString();
+        String confirmPass = editConfirmarPass.getText().toString();
         if (username.isEmpty() || username.length() < 5) {
-            showError(mEditTextUsuario, "Username no valido");
+            showError(editTextUsuario, "Username no valido,debe tener 5 carcateres o mas");
         } else if (email.isEmpty() || !emailValido(email)) {
-            showError(mEditTextEmail, "Email no valido");
+            showError(editTextEmail, "Email no valido");
         } else if (password.isEmpty() || password.length() < 7) {
-            showError(mEditTextPass, "Clave no valida minimo 7 caracteres");
+            showError(editTextPass, "Clave no valida minimo 7 caracteres");
         } else if (confirmPass.isEmpty() || !confirmPass.equals(password)) {
-            showError(mEditTextConfirmarPass, "Clave no valida, no coincide.");
+            showError(editConfirmarPass, "Clave no valida, no coincide.");
         } else {
             //Mostrar ProgressBar
             mProgressBar.setTitle("Proceso de Registro");

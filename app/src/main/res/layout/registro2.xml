@@ -18,7 +18,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/logo_rideon" />
+        android:src="@drawable/logo_rideon"
+        app:tint="@color/white" />
 
     <TextView
         android:id="@+id/subtituloRegistro"
@@ -60,6 +61,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Usuario"
+                android:textColorHint="#616161"
+                android:textColor="#616161"
                 android:inputType="text" />
 
             <!-- Campo de E-mail -->
@@ -68,6 +71,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="E-mail"
+                android:textColorHint="#616161"
+                android:textColor="#616161"
                 android:inputType="textEmailAddress" />
 
             <!-- Campo de Contraseña -->
@@ -76,6 +81,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Contraseña"
+                android:textColorHint="#616161"
+                android:textColor="#616161"
                 android:inputType="textPassword" />
 
             <!-- Campo de Confirmar Contraseña -->
@@ -84,6 +91,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Confirmar Contraseña"
+                android:textColorHint="#616161"
+                android:textColor="#616161"
                 android:inputType="textPassword" />
 
         </LinearLayout>
@@ -135,6 +144,44 @@
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/card_view_registrar"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="#7986CB"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        android:id="@+id/cardViewYaTienesCuenta">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿ Ya tienes una cuenta ?"
+                android:textSize="14dp"
+                android:textColor="#FFFFFF" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/next_button_icon"
+                android:layout_marginLeft="6dp"
+                app:tint="#FFFFFF" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
 
 
 
