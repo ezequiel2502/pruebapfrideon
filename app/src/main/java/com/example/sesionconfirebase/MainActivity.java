@@ -2,6 +2,7 @@ package com.example.sesionconfirebase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -63,27 +64,53 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog mProgressBar;
 
+    //**************Controles login2**************
+
+    CardView cardview_registrarseUsuarioYPass;
+    CardView cardview_registrarseGoogle;
+    EditText editTextEmail;
+    EditText editTextPass;
+    TextView textViewRespuesta;
+
+    Button btn_olvidaste_contrasena,btn_iniciar_sesion;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.login2);
 
-        mEditTextEmail = findViewById(R.id.editTextEmail);
-        mEditTextPass = findViewById(R.id.editTextPass);
-        mButtonInicio = findViewById(R.id.btnInicio);
-        mTextViewRespuesta = findViewById(R.id.textViewRespuesta);
-        mTextViewIrRegistrar = findViewById(R.id.textViewIrRegistrar);
-        mTextViewForgotPassword=findViewById(R.id.forgotPassword);
+        //*********Controles de activity_main
+//        mEditTextEmail = findViewById(R.id.editTextEmail);
+//        mEditTextPass = findViewById(R.id.editTextPass);
+//        mButtonInicio = findViewById(R.id.btnInicio);
+//        mTextViewRespuesta = findViewById(R.id.textViewRespuesta);
+//        mTextViewIrRegistrar = findViewById(R.id.textViewIrRegistrar);
+//        mTextViewForgotPassword=findViewById(R.id.forgotPassword);
+//        mSignInButtonGoogle = findViewById(R.id.btnGoogle);
+//        mTextViewRespuesta = findViewById(R.id.textViewRespuesta);
+
+
+        //************controles login2
+        cardview_registrarseUsuarioYPass=findViewById(R.id.cardview_registrarseUsuarioYPass);
+        cardview_registrarseGoogle=findViewById(R.id.cardview_registrarseGoogle);
+        btn_olvidaste_contrasena=findViewById(R.id.btn_olvidaste_contrasena);
+        btn_iniciar_sesion=findViewById(R.id.btn_iniciar_sesion);
+        editTextEmail=findViewById(R.id.editTextEmail);
+        editTextPass=findViewById(R.id.editTextPass);
+        textViewRespuesta=findViewById(R.id.textViewRespuesta);
+
+
+
 
         mProgressBar = new ProgressDialog(MainActivity.this);
 
         //Objeto de firebase
         mAuth = FirebaseAuth.getInstance();
 
-        //Tomamos control del boton en el layout
-        mSignInButtonGoogle = findViewById(R.id.btnGoogle);
-        mTextViewRespuesta = findViewById(R.id.textViewRespuesta);
+
 
         //*****Configuraciones de firebase para google SIGNIN
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -101,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         esLoginConEmailYPass=getIntent().getBooleanExtra("esLoginConEmailYPass",false);
 
           //Para registrarse por primera vez, te manda al RegistroActivity
-          mTextViewIrRegistrar.setOnClickListener(new View.OnClickListener() {
+        cardview_registrarseUsuarioYPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
@@ -110,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Para reestablecer contraseña
-        mTextViewForgotPassword.setOnClickListener(new View.OnClickListener() {
+        btn_olvidaste_contrasena.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ResetPasswordActivity.class);
@@ -119,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Para loguearse una veza registrado...
-        mButtonInicio.setOnClickListener(new View.OnClickListener() {
+        btn_iniciar_sesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 verificarCredenciales();
@@ -127,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Le damos fuuncionalidad al boton de GOOGLE, que llama al método  que esta abajo signIn..
-        mSignInButtonGoogle.setOnClickListener(new View.OnClickListener() {
+        cardview_registrarseGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 esLoginConEmailYPass=false;
