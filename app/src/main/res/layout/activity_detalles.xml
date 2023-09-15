@@ -1,11 +1,15 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="16dp"
     tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <!-- Título "Detalles" -->
     <TextView
@@ -29,7 +33,12 @@
             android:id="@+id/editTextName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre" />
+            android:hint="Nombre"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+
+            />
     </androidx.cardview.widget.CardView>
 
     <!-- Campo para el apellido -->
@@ -46,11 +55,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Apellido"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
     </androidx.cardview.widget.CardView>
 
 
-    <!-- Campo para la edad -->
+    <!-- Campo para la fecha de nacimiento -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,13 +72,30 @@
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp">
 
-        <EditText
-            android:id="@+id/editTextAge"
+
+        <!-- Botón y campo de texto para la fecha de encuentro -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Edad"
-            android:inputType="number"
-            android:padding="12dp" />
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <Button
+                android:id="@+id/btn_FechaNacimiento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha de Nacimiento" />
+
+            <EditText
+                android:id="@+id/txt_FechaNacimiento"
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:hint="Fecha de nacimiento"
+                android:textColor="#616161"
+                android:textColorHint="#616161"
+
+                />
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
 
@@ -83,7 +113,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Ciudad"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
     </androidx.cardview.widget.CardView>
 
 
@@ -101,7 +135,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="País"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
     </androidx.cardview.widget.CardView>
 
 
@@ -119,7 +157,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Facebook"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
     </androidx.cardview.widget.CardView>
 
 
@@ -137,7 +179,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Twitter"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
 
     </androidx.cardview.widget.CardView>
 
@@ -155,7 +201,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Instagram"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
     </androidx.cardview.widget.CardView>
 
 
@@ -167,6 +217,7 @@
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardView_guardarDetalles"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -203,3 +254,5 @@
 
 
 </LinearLayout>
+</ScrollView>
+

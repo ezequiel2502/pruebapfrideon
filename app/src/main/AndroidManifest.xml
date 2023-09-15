@@ -29,7 +29,7 @@
             android:name=".RespuestaComentarioActivity"
             android:exported="false" />
         <activity
-            android:name=".SingleCommentEventoPublicoActivity"
+            android:name=".DetallesActivity"
             android:exported="false" />
 
         <receiver

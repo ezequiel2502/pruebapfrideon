@@ -170,12 +170,12 @@
                 android:textSize="14dp"
                 android:textColor="#FFFFFF" />
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/next_button_icon"
-                android:layout_marginLeft="6dp"
-                app:tint="#FFFFFF" />
+<!--            <ImageView-->
+<!--                android:layout_width="20dp"-->
+<!--                android:layout_height="20dp"-->
+<!--                android:src="@drawable/next_button_icon"-->
+<!--                android:layout_marginLeft="6dp"-->
+<!--                app:tint="#FFFFFF" />-->
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

@@ -2,6 +2,7 @@ package com.example.sesionconfirebase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,17 +35,31 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class HomeActivity extends AppCompatActivity {
 
-    Button mButtonCerrarSesion;
-    Button mButtonEliminarCuenta;
 
-    Button btnIrANotificaciones;
+    //controles viejos
+//    Button mButtonCerrarSesion;
+//    Button mButtonEliminarCuenta;
+//    Button btnIrANotificaciones;
+//    private TextView txtid, txtnombres, txtemail;
+//    private ImageView imagenUser;
+
+
+    //controles nuevos
+    ImageView profile_image;
+    ImageView change_profile_image;
+    TextView tv_user_name,tv_user_email,tv_UserId;
+    RatingBar rating_bar;
+    LinearLayout notification_bell,analytics,settings;
+    ImageView add_evento;
+    TextView tv_privados,tv_publicos,tv_postulados,tv_completados,tv_following;
+
+    CardView cardView_detalles,cardView_cerrarSesion,cardView_EliminarCuenta;
+
+
+
+
 
     FirebaseAuth mAuth;
-
-
-
-    private TextView txtid, txtnombres, txtemail;
-    private ImageView imagenUser;
 
     //Variables opcionales para desloguear de google tambien
     private GoogleSignInClient mGoogleSignInClient;
@@ -54,8 +71,9 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_home_2);
 
+        //Barra de navegacion
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.btn_perfil);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -85,14 +103,28 @@ public class HomeActivity extends AppCompatActivity {
             return false;
         });
 
-        //Tomamos los controles desde la vista
-        imagenUser = findViewById(R.id.imagenUser);
-        txtid = findViewById(R.id.txtId);
-        txtnombres = findViewById(R.id.txtNombres);
-        txtemail = findViewById(R.id.txtEmail);
-        mButtonCerrarSesion = findViewById(R.id.btnCerrarSesion);
-        mButtonEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
-        btnIrANotificaciones=findViewById(R.id.btnIrANotificaciones);
+        //controles viejos
+//        imagenUser = findViewById(R.id.imagenUser);
+//        txtid = findViewById(R.id.txtId);
+//        txtnombres = findViewById(R.id.txtNombres);
+//        txtemail = findViewById(R.id.txtEmail);
+//        mButtonCerrarSesion = findViewById(R.id.btnCerrarSesion);
+//        mButtonEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
+//        btnIrANotificaciones=findViewById(R.id.btnIrANotificaciones);
+
+
+        //Controles nuevos
+        profile_image = findViewById(R.id.profile_image);
+        tv_UserId = findViewById(R.id.tv_UserId);
+        tv_user_name = findViewById(R.id.tv_user_name);
+        tv_user_email = findViewById(R.id.tv_user_email);
+        cardView_detalles = findViewById(R.id.cardView_detalles);
+        cardView_cerrarSesion = findViewById(R.id.cardView_cerrarSesion);
+        cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
+
+
+
+
 
         //Creamos el objeto de Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -100,9 +132,9 @@ public class HomeActivity extends AppCompatActivity {
 
 
         //set datos:
-        txtid.setText(currentUser.getUid());
-        txtnombres.setText(currentUser.getDisplayName());
-        txtemail.setText(currentUser.getEmail());
+        tv_UserId.setText(currentUser.getUid());
+        tv_user_name.setText(currentUser.getDisplayName());
+        tv_user_email.setText(currentUser.getEmail());
 
         //Una forma de recibir los intents es con el Bundle...aca un ejemplo
         //Bundle data=this.getIntent().getExtras();
@@ -126,12 +158,12 @@ public class HomeActivity extends AppCompatActivity {
         if (!getPhoto) {
             //El inicio es con usuario y contraseña entonces carga una foto por defecto...no hago nada
             //Si se logueo con usuario y contraseña uso el username que proporciono y que obtuve de un intent desde el registro
-            txtnombres.setText(username);
+            tv_user_name.setText(username);
 
         } else {
             // El valor viene del inicio con google y obtiene la foto de la cuenta de google
             //cargar imágen con glide:
-            Glide.with(this).load(currentUser.getPhotoUrl()).into(imagenUser);
+            Glide.with(this).load(currentUser.getPhotoUrl()).into(profile_image);
         }
 
 
@@ -147,7 +179,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-        mButtonCerrarSesion.setOnClickListener(new View.OnClickListener()
+        cardView_cerrarSesion.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
@@ -162,7 +194,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-        mButtonEliminarCuenta.setOnClickListener(new View.OnClickListener() {
+        cardView_EliminarCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences prefs=getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
@@ -228,10 +260,31 @@ public class HomeActivity extends AppCompatActivity {
             }
         });//fin onClick
 
-        btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
+
+        //Configuraciones extras de perfil para usuarios
+//        settings.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+
+
+        //Ver las estadisticas de los usuarios
+//        analytics.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+
+
+        //Para añadir detalles al perfil del usuario
+        cardView_detalles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, MainActivity2.class);
+
+                Intent intent=new Intent(HomeActivity.this,DetallesActivity.class);
                 startActivity(intent);
             }
         });
