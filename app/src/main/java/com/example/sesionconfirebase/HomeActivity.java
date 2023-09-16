@@ -95,7 +95,7 @@ public class HomeActivity extends AppCompatActivity {
         mButtonCerrarSesion = findViewById(R.id.btnCerrarSesion);
         mButtonEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
         btnIrANotificaciones=findViewById(R.id.btnIrANotificaciones);
-
+        notificactionBadge.findViewById(R.id.badge);
         //Creamos el objeto de Firebase
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -233,7 +233,8 @@ public class HomeActivity extends AppCompatActivity {
         btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notificactionBadge.setText("5");
+                notificactionBadge.setNumber(5);
+
                 Intent intent = new Intent(HomeActivity.this, MainActivity2.class);
                 startActivity(intent);
             }
