@@ -20,7 +20,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,6 +145,8 @@ public class RegistroActivity extends AppCompatActivity {
                                     SharedPreferences prefs = getSharedPreferences(
                                             "MyPreferences", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = prefs.edit();
+                                    //Guarda el mail
+                                    editor.putString("email", email);
                                     //Guarda el password
                                     editor.putString("password", password);
                                     // Guarda el username...
@@ -148,7 +155,8 @@ public class RegistroActivity extends AppCompatActivity {
                                     editor.putBoolean("esLoginConEmailYPass", true);
                                     //si es con email y contraseña no pide la foto desde el proveedor carga una por defecto...
                                     editor.putBoolean("getPhoto", false);
-                                    editor.commit();
+                                    editor.apply();
+
 
 
                                     //redireccionar - intent a MainActivity...para el logueo
@@ -170,8 +178,24 @@ public class RegistroActivity extends AppCompatActivity {
             });
 
         }
-    }
+    }// fin verificarCredenciales()
 
+
+        private void obtenerYGuardarFcmToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            String token = task.getResult();
+                            SharedPreferences prefs = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("fcmToken", token);
+                            editor.apply();
+                        }
+                    }
+                });
+    }
 
 
     private void showError(EditText input, String s){

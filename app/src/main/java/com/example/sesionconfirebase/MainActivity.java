@@ -29,6 +29,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -201,16 +203,32 @@ public class MainActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
                         if(mAuth.getCurrentUser().isEmailVerified()){
+
+
                             //ocultar progressBar
                             mProgressBar.dismiss();
+
                             //Obtengo los datos que guardaron en sharedpreferences del RegistroActivity...
                             SharedPreferences prefs=getSharedPreferences("MyPreferences",Context.MODE_PRIVATE);
                             String username_guardado=prefs.getString("username","");
                             String password_guardada=prefs.getString("password","");
+                            String email_guardado=prefs.getString("email","");
                             Boolean esLoginConEmailYpass_guardado=prefs.getBoolean("esLoginConEmailYPass",true);
 
                             textViewRespuesta.setText("CORRECTO");
                             textViewRespuesta.setTextColor(Color.GREEN);
+
+                            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+                            // Crear un objeto ModelUsuario con la información del usuario
+                            ModelUsuario usuario = new ModelUsuario(email_guardado, password_guardada,username_guardado, userId);
+
+                            // Subir el objeto a la base de datos
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                            databaseReference.child("Perfil").child(userId).setValue(usuario);
+
+
                             //redireccionar - intent a HomeActivity...
                             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                             intent.putExtra("getPhoto", false);
