@@ -29,9 +29,11 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 public class HomeActivity extends AppCompatActivity {
 
+    NotificationBadge notificactionBadge;
     Button mButtonCerrarSesion;
     Button mButtonEliminarCuenta;
 
@@ -231,6 +233,7 @@ public class HomeActivity extends AppCompatActivity {
         btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                notificactionBadge.setText("5");
                 Intent intent = new Intent(HomeActivity.this, MainActivity2.class);
                 startActivity(intent);
             }

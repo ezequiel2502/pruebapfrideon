@@ -85,20 +85,20 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/notification_bell"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/notification_bell" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Notificaciones"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:text="Notificaciones" />
                 </LinearLayout>
 
                 <!-- Estadísticas -->
@@ -106,20 +106,20 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/analytics"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/analytics" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Estadísticas"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:text="Estadísticas" />
                 </LinearLayout>
 
                 <!-- Configuraciones -->
@@ -127,20 +127,20 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/settings"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/settings" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Configuraciones"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:text="Configuraciones" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

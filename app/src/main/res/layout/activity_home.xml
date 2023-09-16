@@ -103,21 +103,20 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/btnIrANotificaciones"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ir a notificaciones"
+                android:layout_marginTop="16dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:layout_marginTop="16dp"/>
+                android:text="Ir a notificaciones" />
 
         </LinearLayout>
 
@@ -139,5 +138,27 @@
         app:itemRippleColor="@android:color/transparent"
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/bottom_menu" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        app:srcCompat="@drawable/notification_bell" />
+
+    <com.nex3z.notificationbadge.NotificationBadge
+        android:id="@+id/badge"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:layout_below="@+id/imageView2"
+        android:layout_alignEnd="@+id/imageView2"
+        android:layout_alignBottom="@+id/imageView2"
+        android:layout_marginStart="-42dp"
+        android:layout_marginTop="-42dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toEndOf="@+id/imageView2"
+        app:nbMaxTextLength="3" />
 
 </RelativeLayout>
