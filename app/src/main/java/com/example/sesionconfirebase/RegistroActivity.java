@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -125,63 +127,87 @@ public class RegistroActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        //ocultar progressBar
-                        mProgressBar.dismiss();
 
-                        //*****************Envio Mail de verificacion**************************************
-                        mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                //Lo saco de la sesion para que se vuelva a loguear como corresponde con
-                                //la verificacion de email, ademas esto hace que no interfiera con el control de logueo
-                                //en el onStart del MainActivity
-                                mAuth.signOut();
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(RegistroActivity.this, "Usuario registrado correctamente. Por favor, confirma que recibiste el mail de verificacion", Toast.LENGTH_SHORT).show();
-                                    editTextEmail.setText("");
-                                    editTextPass.setText("");
+                        // Registro exitoso
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        String userId = user.getUid();
 
-                                    //guardar datos en sharedpreferences
-                                    SharedPreferences prefs = getSharedPreferences(
-                                            "MyPreferences", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = prefs.edit();
-                                    //Guarda el mail
-                                    editor.putString("email", email);
-                                    //Guarda el password
-                                    editor.putString("password", password);
-                                    // Guarda el username...
-                                    editor.putString("username", username);
-                                    //si es login con email y contraseña...
-                                    editor.putBoolean("esLoginConEmailYPass", true);
-                                    //si es con email y contraseña no pide la foto desde el proveedor carga una por defecto...
-                                    editor.putBoolean("getPhoto", false);
-                                    editor.apply();
+                        //Para obtener el tokenFCM
+                        FirebaseMessaging.getInstance().getToken()
+                                .addOnCompleteListener(new OnCompleteListener<String>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<String> task) {
+                                        if (task.isSuccessful() && task.getResult() != null) {
 
+                                            String tokenFcm = task.getResult();
 
+                                            // Guardar la información adicional en Realtime Database, creo un usuario con algunos valores iniciales
+                                            //DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(email.replace(".", "_"));
+                                            DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
+                                            ModelUsuario usuario = new ModelUsuario(email, password, username, userId, tokenFcm, true);
+                                            perfilRef.setValue(usuario);
 
-                                    //redireccionar - intent a MainActivity...para el logueo
-                                    Intent intent = new Intent(RegistroActivity.this, MainActivity.class);
-                                    intent.putExtra("username", username);//lo mando al Main y desde ahi lo redirijo nuevamente al home para que este disponible cuando se loguee.intent.putExtra("password",password);//lo mando al Main y desde ahi lo redirijo nuevamente al home para que este disponible cuando se loguee.
-                                    intent.putExtra("esLoginConEmailYPass", true);//lo mando al Main y desde ahi lo redirijo nuevamente al home para controlar la eliminación de la cuenta
-                                    intent.putExtra("getPhoto", false);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(RegistroActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                                            // Envía el correo de verificación
+                                            mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    //Lo saco de la sesion para que se vuelva a loguear como corresponde con
+                                                    //la verificacion de email, ademas esto hace que no interfiera con el control de logueo
+                                                    //en el onStart del MainActivity
+                                                    mAuth.signOut();
+                                                    if (task.isSuccessful()) {
+                                                        Toast.makeText(RegistroActivity.this, "Usuario registrado correctamente. Por favor, confirma que recibiste el mail de verificacion", Toast.LENGTH_SHORT).show();
+                                                        editTextEmail.setText("");
+                                                        editTextPass.setText("");
+
+                                                        //guardar datos en sharedpreferences
+                                                        SharedPreferences prefs = getSharedPreferences(
+                                                                "MyPreferences", Context.MODE_PRIVATE);
+                                                        SharedPreferences.Editor editor = prefs.edit();
+                                                        //Guarda el mail
+                                                        editor.putString("email", email);
+                                                        //Guarda el password
+                                                        editor.putString("password", password);
+                                                        // Guarda el username...
+                                                        editor.putString("username", username);
+                                                        //Guarda el userId
+                                                        editor.putString("userId", userId);
+                                                        //si es login con email y contraseña...
+                                                        editor.putBoolean("esLoginConEmailYPass", true);
+                                                        //si es con email y contraseña no pide la foto desde el proveedor carga una por defecto...
+                                                        editor.putBoolean("getPhoto", false);
+                                                        editor.apply();
+
+                                                        //redireccionar - intent a MainActivity...para el logueo
+                                                        Intent intent = new Intent(RegistroActivity.this, MainActivity.class);
+                                                        intent.putExtra("username", username);//lo mando al Main y desde ahi lo redirijo nuevamente al home para que este disponible cuando se loguee.
+                                                        intent.putExtra("esLoginConEmailYPass", true);//lo mando al Main y desde ahi lo redirijo nuevamente al home para controlar la eliminación de la cuenta
+                                                        intent.putExtra("getPhoto", false);
+                                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        startActivity(intent);
+                                                    } else {
+                                                        Toast.makeText(RegistroActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                        } else {
+                                            // Si no se pudo obtener el token, puedes manejar el error aquí
+                                            Log.e("ObtenerTokenFCM", "Error al obtener el token FCM");
+                                        }
+                                    }
+                                });
+
                     } else {
                         Toast.makeText(RegistroActivity.this, "No se pudo Registrar", Toast.LENGTH_LONG).show();
                     }
                 }
             });
-
         }
-    }// fin verificarCredenciales()
+    }
 
 
-        private void obtenerYGuardarFcmToken() {
+
+    private void obtenerYGuardarFcmToken() {
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override

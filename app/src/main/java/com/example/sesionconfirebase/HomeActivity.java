@@ -34,16 +34,14 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class HomeActivity extends AppCompatActivity {
 
-
-    //controles viejos
-//    Button mButtonCerrarSesion;
-//    Button mButtonEliminarCuenta;
-//    Button btnIrANotificaciones;
-//    private TextView txtid, txtnombres, txtemail;
-//    private ImageView imagenUser;
 
 
     //controles nuevos
@@ -54,13 +52,7 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout notification_bell,analytics,settings;
     ImageView add_evento;
     TextView tv_privados,tv_publicos,tv_postulados,tv_completados,tv_following;
-
     CardView cardView_detalles,cardView_cerrarSesion,cardView_EliminarCuenta;
-
-
-
-
-
     FirebaseAuth mAuth;
 
     //Variables opcionales para desloguear de google tambien
@@ -75,7 +67,6 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_2);
 
-        //Barra de navegacion
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.btn_perfil);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -105,15 +96,6 @@ public class HomeActivity extends AppCompatActivity {
             return false;
         });
 
-        //controles viejos
-//        imagenUser = findViewById(R.id.imagenUser);
-//        txtid = findViewById(R.id.txtId);
-//        txtnombres = findViewById(R.id.txtNombres);
-//        txtemail = findViewById(R.id.txtEmail);
-//        mButtonCerrarSesion = findViewById(R.id.btnCerrarSesion);
-//        mButtonEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
-//        btnIrANotificaciones=findViewById(R.id.btnIrANotificaciones);
-
 
         //Controles nuevos
         profile_image = findViewById(R.id.profile_image);
@@ -126,59 +108,51 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-
-
+//********************************************************************************************************************************
         //Creamos el objeto de Firebase
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
 
-        //set datos:
-        tv_UserId.setText(currentUser.getUid());
-        tv_user_name.setText(currentUser.getDisplayName());
-        tv_user_email.setText(currentUser.getEmail());
+            perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
 
-        //Una forma de recibir los intents es con el Bundle...aca un ejemplo
-        //Bundle data=this.getIntent().getExtras();
-        //String lalala=data.getString("nombre");
 
-        //Recibo el intent para saber si cargo foto desde la cuenta de google  o no
-        //Si se loguea con google toma la de la cuenta sino una por defecto
-       boolean getPhoto = getIntent().getBooleanExtra("getPhoto", false);
+                        // Cargamos los datos del usuario recuperado
+                        tv_UserId.setText(usuario.getUserId());
+                        tv_user_name.setText(usuario.getUserNameCustom());
+                        tv_user_email.setText(usuario.getEmail());
 
-        //Recibo datos
-        Bundle data=this.getIntent().getExtras();
-        password = data.getString("password");
-        username=data.getString("username");
-
-        //Recibo intent desde el main para saber si es registro con email y contraseña o no
-        Boolean esLoginConEmailYPass=getIntent().getBooleanExtra("esLoginConEmailYPass",false);
-
-        // Utilizar el valor recibido
-        //esLoginConEmailYPass
-        //!getPhoto
-        if (!getPhoto) {
-            //El inicio es con usuario y contraseña entonces carga una foto por defecto...no hago nada
-            //Si se logueo con usuario y contraseña uso el username que proporciono y que obtuve de un intent desde el registro
-            tv_user_name.setText(username);
-
-        } else {
-            // El valor viene del inicio con google y obtiene la foto de la cuenta de google
-            //cargar imágen con glide:
-            Glide.with(this).load(currentUser.getPhotoUrl()).into(profile_image);
+                        if (usuario.getEsLoginConEmailYPass()) {
+                            // El inicio es con usuario y contraseña entonces carga una foto por defecto
+                            // Si se logueó con usuario y contraseña, usa el username proporcionado
+                            tv_user_name.setText(usuario.getUserNameCustom());
+                        } else {
+                            // El valor viene del inicio con Google y obtiene la foto de la cuenta de Google
+                            Glide.with(HomeActivity.this).load(currentUser.getPhotoUrl()).into(profile_image);
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Manejar el error, si es necesario
+                }
+            });
         }
-
-
-
+//***********************************************************************************************************************
 
         //Configurar las gso para google signIn con el fin de luego desloguear de google
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build();
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-
 
 
 
@@ -213,78 +187,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
-
-//        cardView_EliminarCuenta.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                //Para ver que forma de logueo eligio
-//                SharedPreferences prefs=getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-//                Boolean esLoginConEmailYpass_guardado=prefs.getBoolean("esLoginConEmailYPass",true);
-//
-//
-//                if (esLoginConEmailYpass_guardado) {
-//
-//                    //Para eliminar la cuenta cuando se loguea con usuario y contraseña
-//                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                    AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
-//                    //Prompt the user to re-provide their sign in credentials
-//                    user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<Void> task) {
-//                            user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    if (task.isSuccessful()) {
-//                                        mAuth.signOut();
-//                                        Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-//                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                        startActivity(intent);
-//
-//                                    } else {
-//                                        Toast.makeText(HomeActivity.this, "No se pudo eliminar", Toast.LENGTH_LONG).show();
-//                                    }
-//                                }
-//                            });
-//                        }
-//                    });
-//                } else {
-//                    //Para eliminar la cuenta cuando se loguea con el boton de google
-//                    //obtener el usuario actual
-//                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                    // Get the account
-//                    GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-//                    if (signInAccount != null) {
-//                        AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
-//                        //Re-autenticar el usuario para eliminarlo
-//                        user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<Void> task) {
-//                                if (task.isSuccessful()) {
-//                                    //Eliminar el usuario
-//                                    user.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                        @Override
-//                                        public void onSuccess(Void aVoid) {
-//                                            Toast.makeText(getApplicationContext(), "Usuario Eliminado!!!", Toast.LENGTH_SHORT).show();
-//                                            //Log.d("dashBoard", "onSuccess:Usuario Eliminado");
-//                                            //llamar al metodo signOut para salir de aqui
-//                                            signOut();
-//                                        }
-//                                    });
-//                                } else {
-//                                    //Log.e("dashBoard", "onComplete: Error al eliminar el usuario", task.getException());
-//                                    Toast.makeText(getApplicationContext(), "Error al eliminar el usuario!: " + task.getException().toString(), Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        });
-//                    } else {
-//                        //Log.d("dashBoard", "Error: reAuthenticateUser: user account is null");
-//                        Toast.makeText(getApplicationContext(), "Error: reAuthenticateUser: user account is null", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            }
-//        });//fin onClick
 
 
         //Agrego una pregunta antes de eliminar la cuenta
@@ -366,34 +268,6 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-
-        //Configuraciones extras de perfil para usuarios
-//        settings.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-
-
-        //Ver las estadisticas de los usuarios
-//        analytics.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-
-
-        //Para añadir detalles al perfil del usuario
-        cardView_detalles.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent=new Intent(HomeActivity.this,DetallesActivity.class);
-                startActivity(intent);
-            }
-        });
 
 
     }//fin onCreate()

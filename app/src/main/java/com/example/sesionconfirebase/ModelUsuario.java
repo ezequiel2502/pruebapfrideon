@@ -6,14 +6,19 @@ import java.util.List;
 public class ModelUsuario {
 
     private String nombre, apellido, email, pass, userNameCustom, userId, tokenFcm, imagenPerfil, fechaNac, ciudad, pais, facebook, twitter, instagram;
-    private List<ModelEvento> privados;
-    private List<ModelEvento> publicos;
-    private List<ModelEvento> completados;
-    private List<ModelEvento> postulados;
+    private List<String> privados;
+    private List<String> publicos;
+    private List<String> completados;
+    private List<String> postulados;
+    private boolean esLoginConEmailYPass;
+
+
+    public ModelUsuario() {
+    }
 
     public ModelUsuario(String nombre, String apellido, String email, String pass, String userNameCustom,
                         String userId, String tokenFcm, String imagenPerfil, String fechaNac, String ciudad, String pais,
-                        String facebook, String twitter, String instagram) {
+                        String facebook, String twitter, String instagram, boolean esLoginConEmailYPass) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
@@ -28,18 +33,22 @@ public class ModelUsuario {
         this.facebook = facebook;
         this.twitter = twitter;
         this.instagram = instagram;
+        this.esLoginConEmailYPass=esLoginConEmailYPass;
         this.privados = null;
         this.publicos = null;
         this.completados = null;
         this.postulados = null;
+
     }
 
-    public ModelUsuario(String userId, String tokenFcm, String mail, String pass, String userNameCustom) {
+    public ModelUsuario(String mail, String pass, String userNameCustom,String userId, String tokenFcm,boolean esLoginConEmailYPass) {
         this.userId = userId;
         this.tokenFcm = tokenFcm;
         this.email = mail;
         this.pass = pass;
         this.userNameCustom = userNameCustom;
+        this.esLoginConEmailYPass=esLoginConEmailYPass;
+
 
         // Inicializar los demás atributos como null
         this.nombre = null;
@@ -58,10 +67,11 @@ public class ModelUsuario {
     }
 
 
-    public ModelUsuario(String email, String pass, String userNameCustom) {
+    public ModelUsuario(String email, String pass, String userNameCustom,boolean esLoginConEmailYPass) {
         this.email = email;
         this.pass = pass;
         this.userNameCustom = userNameCustom;
+        this.esLoginConEmailYPass=esLoginConEmailYPass;
 
 
         //Resto de los campos en null
@@ -82,11 +92,12 @@ public class ModelUsuario {
         this.postulados = null;
     }
 
-    public ModelUsuario(String email, String pass, String userNameCustom,String userId) {
+    public ModelUsuario(String email, String pass, String userNameCustom,String userId,boolean esLoginConEmailYPass) {
         this.email = email;
         this.pass = pass;
         this.userNameCustom = userNameCustom;
         this.userId = userId;
+        this.esLoginConEmailYPass=esLoginConEmailYPass;
 
 
         //Resto de los campos en null
@@ -107,34 +118,41 @@ public class ModelUsuario {
     }
 
 
-    public void agregarEventoPrivado(ModelEvento evento) {
+    public void agregarEventoPrivado(String eventoId) {
         if (this.privados == null) {
             this.privados = new ArrayList<>();
         }
-        this.privados.add(evento);
+        this.privados.add(eventoId);
     }
 
-    public void agregarEventoPublico(ModelEvento evento) {
+    public void agregarEventoPublico(String eventoId) {
         if (this.publicos == null) {
             this.publicos = new ArrayList<>();
         }
-        this.publicos.add(evento);
+        this.publicos.add(eventoId);
     }
 
-    public void agregarEventoCompletado(ModelEvento evento) {
+    public void agregarEventoCompletado(String eventoId) {
         if (this.completados == null) {
             this.completados = new ArrayList<>();
         }
-        this.completados.add(evento);
+        this.completados.add(eventoId);
     }
 
-    public void agregarEventoPostulado(ModelEvento evento) {
+    public void agregarEventoPostulado(String eventoId) {
         if (this.postulados == null) {
             this.postulados = new ArrayList<>();
         }
-        this.postulados.add(evento);
+        this.postulados.add(eventoId);
     }
 
+    public boolean getEsLoginConEmailYPass() {
+        return esLoginConEmailYPass;
+    }
+
+    public void setEsLoginConEmailYPass(boolean esLoginConEmailYPass) {
+        this.esLoginConEmailYPass = esLoginConEmailYPass;
+    }
 
     public String getEmail() {
         return email;
@@ -253,38 +271,38 @@ public class ModelUsuario {
 
 
     // Getter y Setter para 'privados'
-    public List<ModelEvento> getPrivados() {
+    public List<String> getPrivados() {
         return privados;
     }
 
-    public void setPrivados(List<ModelEvento> privados) {
+    public void setPrivados(List<String> privados) {
         this.privados = privados;
     }
 
     // Getter y Setter para 'publicos'
-    public List<ModelEvento> getPublicos() {
+    public List<String> getPublicos() {
         return publicos;
     }
 
-    public void setPublicos(List<ModelEvento> publicos) {
+    public void setPublicos(List<String> publicos) {
         this.publicos = publicos;
     }
 
     // Getter y Setter para 'completados'
-    public List<ModelEvento> getCompletados() {
+    public List<String> getCompletados() {
         return completados;
     }
 
-    public void setCompletados(List<ModelEvento> completados) {
+    public void setCompletados(List<String> completados) {
         this.completados = completados;
     }
 
     // Getter y Setter para 'postulados'
-    public List<ModelEvento> getPostulados() {
+    public List<String> getPostulados() {
         return postulados;
     }
 
-    public void setPostulados(List<ModelEvento> postulados) {
+    public void setPostulados(List<String> postulados) {
         this.postulados = postulados;
     }
 

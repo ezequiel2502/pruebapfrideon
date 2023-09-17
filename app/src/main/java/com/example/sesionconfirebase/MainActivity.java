@@ -29,8 +29,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -221,39 +225,80 @@ public class MainActivity extends AppCompatActivity {
                             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
-                            // Crear un objeto ModelUsuario con la información del usuario
-                            ModelUsuario usuario = new ModelUsuario(email_guardado, password_guardada,username_guardado, userId);
+                            // Obtener el token de FCM
+                            FirebaseMessaging.getInstance().getToken()
+                                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<String> task) {
+                                            if (task.isSuccessful() && task.getResult() != null) {
 
-                            // Subir el objeto a la base de datos
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                            databaseReference.child("Perfil").child(userId).setValue(usuario);
+                                                //Este es el token que pido desde firebase,comparo este con el que esta en la base de datos cada vez que me logueo
+                                                String tokenFcm = task.getResult();
 
+                                                // Verificar si existe un token FCM en la base de datos
+                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                                                DatabaseReference perfilRef = databaseReference.child("Perfil").child(userId);
+
+                                                perfilRef.child("tokenFcm").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        String tokenFromDatabase = dataSnapshot.getValue(String.class);
+
+                                                        // si el token cambio lo actualizo en la base de datos
+                                                        if (tokenFromDatabase != null && !tokenFromDatabase.equals(tokenFcm)) {
+                                                            perfilRef.child("tokenFcm").setValue(tokenFcm);
+                                                        }
+
+
+
+                                                        // Resto del código para redirigir o realizar otras acciones
+
+                                                        // Guardar datos en SharedPreferences
+                                                        SharedPreferences prefs = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                                                        SharedPreferences.Editor editor = prefs.edit();
+                                                        editor.putString("email", email);
+                                                        editor.putString("username", username);
+                                                        editor.putString("userId", userId);
+                                                        editor.putBoolean("esLoginConEmailYPass", true); // Esto indica que se hizo login con email y contraseña
+                                                        editor.putBoolean("getPhoto", false);
+                                                        editor.putString("fcmToken", tokenFcm);
+                                                        editor.apply();
+
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                        // Manejar el error, si es necesario
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
 
                             //redireccionar - intent a HomeActivity...
                             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                             intent.putExtra("getPhoto", false);
                             intent.putExtra("username", username_guardado);//envio el username
                             intent.putExtra("password", password_guardada);//envio el password
+                            intent.putExtra("userId", userId);//envio el userId
                             intent.putExtra("esLoginConEmailYPass",esLoginConEmailYpass_guardado);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-                        }else{
-                            mProgressBar.dismiss();
-                            Toast.makeText(MainActivity.this,"Por favor verifica tu mail!!",Toast.LENGTH_SHORT).show();
-                        }
-                        
-                    }else{
-                        mProgressBar.dismiss();
-                        textViewRespuesta.setText("No se pudo iniciar Sesión Verifique correo/contraseña");
-                        textViewRespuesta.setTextColor(Color.RED);
-                        Toast.makeText(MainActivity.this, "No se pudo iniciar Sesión Verifique correo/contraseña", Toast.LENGTH_LONG).show();
 
+                        } else {
+                            mProgressBar.dismiss();
+                            Toast.makeText(MainActivity.this, "Por favor verifica tu correo!!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else {
+                        mProgressBar.dismiss();
+                        textViewRespuesta.setText("No se pudo iniciar Sesión. Verifica correo/contraseña");
+                        textViewRespuesta.setTextColor(Color.RED);
+                        Toast.makeText(MainActivity.this, "No se pudo iniciar Sesión. Verifica correo/contraseña", Toast.LENGTH_LONG).show();
                     }
                 }
             });
-
-
-
         }
     }
 
@@ -297,8 +342,10 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("password", password_guardada);//envio el password
             intent.putExtra("esLoginConEmailYPass",esLoginConEmailYpass_guardado);
             intent.putExtra("getPhoto",getPhoto_guardado);
+            intent.putExtra("userId",user.getUid());
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+
 
         }
         super.onStart();
@@ -330,39 +377,91 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // ...
+
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+                            // Obtener datos del usuario de la cuenta de Google
+                            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+                            String username = account.getDisplayName();
+                            String email = account.getEmail();
+                            String userId = mAuth.getCurrentUser().getUid();
 
-                            //guardar datos en sharedpreferences
-                            SharedPreferences prefs = getSharedPreferences(
-                                    "MyPreferences", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor=prefs.edit();
-                            editor.putBoolean("esLoginConEmailYPass", false);
-                            editor.putBoolean("getPhoto", true);
-                            editor.commit();
+                            // Obtener el token de FCM
+                            FirebaseMessaging.getInstance().getToken()
+                                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<String> task) {
+                                            if (task.isSuccessful() && task.getResult() != null) {
 
-                            //Para que actualice la foto de la cuenta de google en HomeActivity
-                            Intent home = new Intent(MainActivity.this, HomeActivity.class);
-                            home.putExtra("getPhoto", true);
-                            home.putExtra("esLoginConEmailYPass", false);
-                            startActivity(home);
-                            MainActivity.this.finish();
+                                                //Si lo obtuvo lo almaceno
+                                                String tokenFcm= task.getResult();
 
+                                               // Obtener una referencia a la base de datos
+                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+                                                // Verificar si existe un usuario con ese ID
+                                                databaseReference.child("Perfil").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if (dataSnapshot.exists()) {
+                                                            // El usuario ya existe, verificar y actualizar el tokenFcm
+                                                            String tokenFromDatabase = dataSnapshot.child("tokenFcm").getValue(String.class);
+                                                            if (tokenFromDatabase != null && !tokenFromDatabase.equals(tokenFcm)) {
+                                                                // Actualizar el token FCM en la base de datos
+                                                                databaseReference.child("Perfil").child(userId).child("tokenFcm").setValue(tokenFcm);
+                                                            }
+                                                        } else {
+                                                            // El usuario no existe, crear uno nuevo
+                                                            ModelUsuario usuario = new ModelUsuario(email, null, username, userId, tokenFcm, false);
+                                                            databaseReference.child("Perfil").child(userId).setValue(usuario);
+                                                        }
+
+
+
+
+                                                        // Guardar datos en SharedPreferences
+                                                        SharedPreferences prefs = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                                                        SharedPreferences.Editor editor = prefs.edit();
+                                                        editor.putString("email", email);
+                                                        editor.putString("username", username);
+                                                        editor.putString("userId", userId);
+                                                        editor.putBoolean("esLoginConEmailYPass", false);
+                                                        editor.putBoolean("getPhoto", true);
+                                                        editor.putString("fcmToken", tokenFcm);
+                                                        editor.apply();
+
+                                                        // Redireccionar a HomeActivity
+                                                        Intent home = new Intent(MainActivity.this, HomeActivity.class);
+                                                        home.putExtra("getPhoto", true);
+                                                        home.putExtra("esLoginConEmailYPass", false);
+                                                        startActivity(home);
+                                                        finish();
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                        // Manejar el error, si es necesario
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
                         } else {
-                            // If sign in fails, display a message to the user.
                             textViewRespuesta.setText(task.getException().toString());
-
                         }
                     }
                 });
     }
+
+// ...
+
+
 
 
 }

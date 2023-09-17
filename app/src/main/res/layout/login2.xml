@@ -229,6 +229,7 @@
             android:layout_height="wrap_content"
             android:hint="Email"
             android:textColorHint="@android:color/white"
+            android:textColor="@android:color/white"
         android:inputType="textEmailAddress" />
 
         <!-- Campo para ingresar contraseña -->
@@ -238,6 +239,7 @@
             android:layout_height="wrap_content"
             android:hint="Contraseña"
             android:textColorHint="@android:color/white"
+            android:textColor="@android:color/white"
         android:inputType="textPassword" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
