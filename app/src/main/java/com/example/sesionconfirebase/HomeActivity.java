@@ -39,6 +39,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -99,6 +101,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Controles nuevos
         profile_image = findViewById(R.id.profile_image);
+        change_profile_image = findViewById(R.id.change_profile_image);
         tv_UserId = findViewById(R.id.tv_UserId);
         tv_user_name = findViewById(R.id.tv_user_name);
         tv_user_email = findViewById(R.id.tv_user_email);
@@ -129,16 +132,24 @@ public class HomeActivity extends AppCompatActivity {
                         tv_user_name.setText(usuario.getUserNameCustom());
                         tv_user_email.setText(usuario.getEmail());
 
-                        if (usuario.getEsLoginConEmailYPass()) {
-                            // El inicio es con usuario y contraseña entonces carga una foto por defecto
+                        String imagenPerfil = usuario.getImagenPerfil();
+
+                        if (imagenPerfil != null && !imagenPerfil.isEmpty()) {
+                            // Si existe una imagen de perfil en la base de datos, la carga
+                            Glide.with(HomeActivity.this).load(imagenPerfil).into(profile_image);
+                        }
+                        //Sino deja una imagen por defecto para el que se registro con email y contraseña(es decir no hago nada queda la de la vista)
+                        else if (usuario.getEsLoginConEmailYPass()) {
                             // Si se logueó con usuario y contraseña, usa el username proporcionado
-                            tv_user_name.setText(usuario.getUserNameCustom());
-                        } else {
-                            // El valor viene del inicio con Google y obtiene la foto de la cuenta de Google
+                            //tv_user_name.setText(usuario.getUserNameCustom());
+                        } else if (currentUser.getPhotoUrl() != null) {
+                            // Si no hay imagen de perfil en la base de datos y no se logueó con email y contraseña,
+                            // carga la foto de la cuenta de Google
                             Glide.with(HomeActivity.this).load(currentUser.getPhotoUrl()).into(profile_image);
                         }
                     }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     // Manejar el error, si es necesario
@@ -154,6 +165,20 @@ public class HomeActivity extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
+
+
+
+
+        //Cambiar imagen de perfil
+        change_profile_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Crear un Intent para seleccionar una imagen de la galería
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, 1);
+            }
+        });
 
 
         //nuevo metodo donde se pregunta antes de cerrar sesion
@@ -279,6 +304,85 @@ public class HomeActivity extends AppCompatActivity {
         });
 
     }//fin onCreate()
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+
+            //El usuario logueado
+            String userId = mAuth.getCurrentUser().getUid();
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                    .child("Perfil").child(userId);
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+                        String userName=usuario.getUserNameCustom();
+
+                        if (usuario != null) {
+                            // Verificar si el usuario tiene el atributo imagenPerfil
+                            if (usuario.getImagenPerfil() != null) {
+                                // El usuario tiene una imagen de perfil almacenada, eliminarla del Storage
+                                StorageReference oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(usuario.getImagenPerfil());
+                                oldImageRef.delete().addOnSuccessListener(aVoid -> {
+                                    // Subir la nueva imagen
+                                    subirNuevaImagen(uri, userId,userName);
+                                });
+                            } else {
+                                // No hay una imagen de perfil anterior, simplemente subir la nueva imagen
+                                subirNuevaImagen(uri, userId,userName);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Manejar el error, si es necesario
+                }
+            });
+        }
+    }
+
+    private void subirNuevaImagen(Uri uri, String userId,String userName) {
+
+        //Elijo el nombre con el que guardo la foto(username + timeStamp)
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        String imageName = userName + timeStamp + ".jpg";
+
+        //Obtengo la referencia al storage
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                .child("Perfil").child(userId).child(imageName);
+
+        storageReference.putFile(uri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    storageReference.getDownloadUrl().addOnSuccessListener(uri1 -> {
+                        String imageUrl = uri1.toString();
+
+                        // Actualizar el atributo imagenPerfil en la base de datos
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                                .child("Perfil").child(userId).child("imagenPerfil");
+                        databaseReference.setValue(imageUrl);
+
+                        // Cargar la imagen en el ImageView usando Glide
+                        Glide.with(HomeActivity.this).load(uri).into(profile_image);
+
+                        Toast.makeText(HomeActivity.this, "Imagen de perfil actualizada", Toast.LENGTH_SHORT).show();
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(HomeActivity.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
 
 
     private void eliminarCuenta(FirebaseUser user) {
