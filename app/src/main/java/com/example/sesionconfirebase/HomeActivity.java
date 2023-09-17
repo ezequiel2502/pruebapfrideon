@@ -109,7 +109,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
 //********************************************************************************************************************************
-        //Creamos el objeto de Firebase
+        //Creamos el objeto de Firebase, si paso el login entonces existe un currentuser
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -269,6 +269,14 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
+        //LLeva a la actividad que guarda detalles del usuario
+        cardView_detalles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(HomeActivity.this,DetallesActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }//fin onCreate()
 

@@ -6,9 +6,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
@@ -19,6 +28,8 @@ public class DetallesActivity extends AppCompatActivity {
     EditText editTextName,editTextLastName,txt_FechaNacimiento,editTextCity,editTextCountry,editTextFacebook,editTextTwitter,editTextInstagram;
 
     CardView cardView_guardarDetalles;
+
+    FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +50,41 @@ public class DetallesActivity extends AppCompatActivity {
         cardView_guardarDetalles=findViewById(R.id.cardView_guardarDetalles);
 
 
+        //si habia datos ya cargados en el perfil los muestra en los campos
+        // El objeto de firebase
+        mAuth = FirebaseAuth.getInstance();
+
+        // Obtener el ID de usuario actualmente autenticado
+        String userId = mAuth.getCurrentUser().getUid();
+
+        // Obtener una referencia a la base de datos
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        // Verificar si el perfil ya existe
+        databaseReference.child("Perfil").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // El perfil ya existe, obtener los datos
+                    ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+
+                    // Asignar los datos a los EditText
+                    editTextName.setText(usuario.getNombre());
+                    editTextLastName.setText(usuario.getApellido());
+                    txt_FechaNacimiento.setText(usuario.getFechaNac());
+                    editTextCity.setText(usuario.getCiudad());
+                    editTextCountry.setText(usuario.getPais());
+                    editTextFacebook.setText(usuario.getFacebook());
+                    editTextTwitter.setText(usuario.getTwitter());
+                    editTextInstagram.setText(usuario.getInstagram());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Manejar el error, si es necesario
+            }
+        });
 
 
         //DatePicker
@@ -65,6 +111,56 @@ public class DetallesActivity extends AppCompatActivity {
         cardView_guardarDetalles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // Obtener el ID de usuario actualmente autenticado
+                String userId = mAuth.getCurrentUser().getUid();
+
+                // Obtener los detalles de la vista
+                String nombre = editTextName.getText().toString();
+                String apellido = editTextLastName.getText().toString();
+                String fechaNacimiento = txt_FechaNacimiento.getText().toString();
+                String ciudad = editTextCity.getText().toString();
+                String pais = editTextCountry.getText().toString();
+                String facebook = editTextFacebook.getText().toString();
+                String twitter = editTextTwitter.getText().toString();
+                String instagram = editTextInstagram.getText().toString();
+
+
+
+                // Obtener una referencia a la base de datos
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+                // Verificar si el perfil ya existe
+                databaseReference.child("Perfil").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            // El perfil ya existe, actualizar los campos
+                            ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+                            usuario.setNombre(nombre);
+                            usuario.setApellido(apellido);
+                            usuario.setFechaNac(fechaNacimiento);
+                            usuario.setCiudad(ciudad);
+                            usuario.setPais(pais);
+                            usuario.setFacebook(facebook);
+                            usuario.setTwitter(twitter);
+                            usuario.setInstagram(instagram);
+
+                            // Actualizar el perfil en la base de datos
+                            databaseReference.child("Perfil").child(userId).setValue(usuario);
+                            Toast.makeText(DetallesActivity.this, "Perfil actualizado correctamente", Toast.LENGTH_LONG).show();
+                        } else {
+                            //No existe un perfil o no se encuentra
+                            Toast.makeText(DetallesActivity.this, "No existe un perfil o no se encuentra", Toast.LENGTH_LONG).show();
+                        }
+
+                        // Resto del código después de actualizar o crear el perfil
+
+                    }@Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Manejar el error, si es necesario
+                    }
+                });
 
             }
         });
