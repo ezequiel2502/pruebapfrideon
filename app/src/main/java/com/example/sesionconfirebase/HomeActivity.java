@@ -95,7 +95,8 @@ public class HomeActivity extends AppCompatActivity {
         mButtonCerrarSesion = findViewById(R.id.btnCerrarSesion);
         mButtonEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
         btnIrANotificaciones=findViewById(R.id.btnIrANotificaciones);
-        notificactionBadge.findViewById(R.id.badge);
+        notificactionBadge=findViewById(R.id.badge);
+
         //Creamos el objeto de Firebase
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -233,16 +234,18 @@ public class HomeActivity extends AppCompatActivity {
         btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notificactionBadge.setNumber(5);
-
                 Intent intent = new Intent(HomeActivity.this, MainActivity2.class);
                 startActivity(intent);
             }
         });
-
-
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        notificactionBadge.setNumber(contarNotificaciones(user));
     }//fin onCreate()
 
+    private int contarNotificaciones(FirebaseUser user){
+        NotificationCounter notificationCounter = new NotificationCounter();
+        return notificationCounter.obtenerCantidadNotificaciones(user.getUid());
+    }
 
     private void eliminarCuenta(FirebaseUser user) {
         user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {

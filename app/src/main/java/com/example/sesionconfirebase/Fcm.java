@@ -84,7 +84,6 @@ public class Fcm extends FirebaseMessagingService {
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.doomer))
                     .addAction(action1)
                     .addAction(action2);
-
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             if (notificationManager != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -97,6 +96,7 @@ public class Fcm extends FirebaseMessagingService {
 
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
+
             }
             // Aca puedo llamar metodos de forma directa ---->
         } else if ("postulante_evento".equals(tipoNotificacion)) {
@@ -146,8 +146,13 @@ public class Fcm extends FirebaseMessagingService {
                 int uniqueNotificationId = random.nextInt(10000);
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
+
             }
         }
     }
 }
+
+
+
+
 
