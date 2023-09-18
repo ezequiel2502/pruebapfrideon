@@ -41,7 +41,7 @@ public class Fcm extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-
+        //Saco los campos directamente de la notificacion recibida
         String titulo = remoteMessage.getData().get("titulo");
         String detalle = remoteMessage.getData().get("detalle");
         String tipoNotificacion = remoteMessage.getData().get("tipo");
@@ -130,6 +130,38 @@ public class Fcm extends FirebaseMessagingService {
             }
 
 
+        } else if ("cupo-maximo".equals(tipoNotificacion)) {
+
+
+            // Notificación para el creador de evento si se alcanza cupo maximo
+            Intent intent = new Intent(this, ListaEventosPublicosVigentes.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(titulo)
+                    .setContentText(detalle)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent);  // Agrega el PendingIntent
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
+                    notificationManager.createNotificationChannel(channel);
+                }
+                // Generar un ID único para la notificación
+                Random random = new Random();
+                int uniqueNotificationId = random.nextInt(10000);
+
+                // Notificar utilizando el ID único
+                notificationManager.notify(uniqueNotificationId, builder.build());
+            }
+
+
+
+
+            
         }
 
 

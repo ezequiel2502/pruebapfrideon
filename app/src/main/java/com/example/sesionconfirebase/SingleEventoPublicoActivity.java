@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -16,6 +18,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,22 +28,28 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SingleEventoPublicoActivity extends AppCompatActivity {
+public class SingleEventoPublicoActivity extends AppCompatActivity implements CommentAdapter.OnResponseDeleteListener, CommentAdapter.OnCommentDeleteListener {
     TextView tv_SingleEvento,tv_SingleRuta,tv_SingleDescripcion,tv_SingleFechaEncuentro,
             tv_SingleHoraEncuentro,tv_SingleCupoMinimo,tv_SingleCupoMaximo,
             tv_SingleCategoria,tv_SingleUserName,tv_SingleUserId,
@@ -49,11 +60,30 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
     Button btn_postularse;
 
+    ImageView image_profile;
+
     private static String tokenFcmPostulante;
 
 
+    EditText txt_write_comment;
+    TextView tv_add_comment;
+
+   RecyclerView recyclerViewComments;
+
+    ArrayList<ModelComentario> recycleList;
+
+   private CommentAdapter commentAdapter;
+
+    private DatabaseReference commentsRef;
+    private ValueEventListener commentsListener;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
 
 
+        cargarComentarios();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +115,11 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         tv_SingleActivadoDescativado=findViewById(R.id.tv_SingleActivadoDescativado);
         rb_SingleRatingEvento=findViewById(R.id.rb_SingleRatingEvento);
         btn_postularse=findViewById(R.id.btn_postularse);
+
+
+
+
+
 
 
         //Obtengo los datos de los intents
@@ -145,6 +180,48 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         editor.apply();
 
 
+        //Controles para los comentarios
+        txt_write_comment=findViewById(R.id.txt_write_comment);
+        tv_add_comment=findViewById(R.id.tv_add_comment);
+        image_profile=findViewById(R.id.image_profile);
+
+        //recyclerViewComments
+        recyclerViewComments=findViewById(R.id.recyclerViewComments);
+        recycleList=new ArrayList<>();
+
+        //Creo una instancia del adapter para los comentarios
+        commentAdapter = new CommentAdapter(recycleList, SingleEventoPublicoActivity.this);
+        //Seteo los listener de las interfaces de comunicacion para el adapter
+        commentAdapter.setOnCommentDeleteListener(this);
+        commentAdapter.setOnResponseDeleteListener(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerViewComments.setLayoutManager(linearLayoutManager);
+        recyclerViewComments.addItemDecoration(new DividerItemDecoration(recyclerViewComments.getContext(), DividerItemDecoration.VERTICAL));
+        recyclerViewComments.setNestedScrollingEnabled(false);
+        recyclerViewComments.setAdapter(commentAdapter);
+
+
+        //Revisa el nodo "comentarios" y actualiza la lista de los mismos
+        cargarComentarios();
+
+
+
+
+
+
+        //Para agregar un comentario
+        tv_add_comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(txt_write_comment.getText().toString().equals("")){
+                    Toast.makeText(SingleEventoPublicoActivity.this, "No se pueden enviar mensajes vacios!!!", Toast.LENGTH_SHORT).show();
+                }else {
+                    addComment(singleIdEvento);
+                }
+            }
+        });
+
+
         //Referencia al nodo postulaciones que uso dentro del boton Postularse
         DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Postulaciones");
 
@@ -167,6 +244,68 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
 
     }//fin onCreate()
+
+    private void cargarComentarios() {
+
+        // Obtener el id del evento
+        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
+        String idEvento = sharedPreferences.getString("idEvento", "");
+
+
+
+        //Reviso el nodo comentarios
+        commentsRef = FirebaseDatabase.getInstance().getReference("Comentarios").child(idEvento);
+        commentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Limpiar la lista actual antes de cargar los nuevos comentarios
+                recycleList.clear();
+
+
+                // Recorre todos los hijos bajo el nodo del evento
+                for (DataSnapshot comentarioSnapshot : dataSnapshot.getChildren()) {
+                    String comment = comentarioSnapshot.child("comment").getValue(String.class);
+                    String publisherId = comentarioSnapshot.child("publisherId").getValue(String.class);
+                    String publisherName = comentarioSnapshot.child("publisherName").getValue(String.class);
+                    String imagen_perfil = comentarioSnapshot.child("imagenPerfilUri").getValue(String.class);
+                    String commentId = comentarioSnapshot.child("commentId").getValue(String.class);
+                    String idEvento = comentarioSnapshot.child("idEvento").getValue(String.class);
+                    String tipo = comentarioSnapshot.child("tipo").getValue(String.class);
+                    String parentCommentId = comentarioSnapshot.child("parentCommentId").getValue(String.class);
+
+                    if ("comentario".equals(tipo)) {
+                        // Es un comentario principal, crear un objeto ModelComentario
+                        ModelComentario modelComentario = new ModelComentario(publisherId, comment, imagen_perfil, publisherName, commentId, idEvento, tipo);
+
+                        // Agregar el comentario a tu lista o adaptador (en tu caso, `recycleList`)
+                        recycleList.add(modelComentario);
+                    } else {
+                        // Es una respuesta, buscar el comentario al que responde
+
+                        for (ModelComentario comentario : recycleList) {
+                            if (comentario.getCommentId().equals(parentCommentId)) {
+                                // Crear un objeto ModelRespuestaComentario
+                                ModelRespuestaComentario modelRespuesta = new ModelRespuestaComentario(publisherId, comment, imagen_perfil, publisherName, commentId, idEvento, parentCommentId, tipo);
+
+                                // Agregar la respuesta al comentario
+                                comentario.setRespuesta(modelRespuesta);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Notificar al adaptador que los datos han cambiado
+                commentAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar el error si es necesario
+            }
+        });
+    }
+
 
 
     private void postularCandidato(){
@@ -493,5 +632,178 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
     }
 
 
+    private void addComment(String idEvento) {
+        // Obtengo el usuario actual que va a publicar el mensaje
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        String userId = user.getUid();
+        String userName = user.getDisplayName();
+
+        // Obtengo la URI de la imagen de perfil desde Firebase Storage
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Default-Profile/doomer.jpg");
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // La URI de la imagen de perfil se ha obtenido exitosamente
+                String imagenPerfilUri = uri.toString();
+
+                // Creo el nodo y los subnodos para agregar el comentario con un identificador único
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(idEvento);
+                String comentarioId = reference.push().getKey(); // Genera un ID único para el comentario
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("comment", txt_write_comment.getText().toString());
+                hashMap.put("publisherId", userId);
+                hashMap.put("publisherName", userName);
+                hashMap.put("commentId", comentarioId);
+                hashMap.put("idEvento", idEvento);
+                hashMap.put("tipo", "comentario");
+                hashMap.put("imagenPerfilUri", imagenPerfilUri); // Agrego la URI de la imagen de perfil
+
+
+
+                // Utilizo el identificador único para almacenar el comentario
+                reference.child(comentarioId).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SingleEventoPublicoActivity.this, "Se publicó el mensaje", Toast.LENGTH_SHORT).show();
+
+                                // Llamar a cargarComentarios después de agregar el comentario
+                                cargarComentarios();
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SingleEventoPublicoActivity.this, "No se publicó el mensaje", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Maneja el error si no se puede obtener la URI de la imagen de perfil
+                Toast.makeText(SingleEventoPublicoActivity.this, "No se pudo obtener la imagen de perfil", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+
+    //Terminar esto cuando este el perfil del usuario en la Base de datos
+    private void getProfileImage(){
+
+    }
+
+
+    @Override
+    public void onResponseDelete(ModelRespuestaComentario respuestaAEliminar) {
+        //borro solo la respuesta
+
+        //***************Respuesta*****************
+        String respuestaId=respuestaAEliminar.getCommentId();
+
+        // Eliminar el comentario de la base de datos
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(respuestaAEliminar.getEventoId());
+        reference.child(respuestaId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                // Operación exitosa
+                Toast.makeText(SingleEventoPublicoActivity.this, "Respuesta eliminada", Toast.LENGTH_SHORT).show();
+
+                cargarComentarios();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Manejar el error
+                Toast.makeText(SingleEventoPublicoActivity.this, "Error al eliminar respuesta", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onCommentDelete(ModelComentario comentarioAEliminar) {
+        // Obtener el ID del comentario a eliminar
+        String commentId = comentarioAEliminar.getCommentId();
+
+        // Verificar si el comentario tiene respuestas
+        ModelRespuestaComentario respuestaAEliminar = comentarioAEliminar.getRespuesta();
+
+
+
+        if (respuestaAEliminar != null) {
+            // Borro respuesta y comentario
+
+            //***************Respuesta*****************
+            String respuestaId = respuestaAEliminar.getCommentId();
+
+            // Eliminar el comentario de la base de datos
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(respuestaAEliminar.getEventoId());
+            reference.child(respuestaId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    //***************Comentario*****************
+                    // Obtener el ID del comentario
+                    String commentId = comentarioAEliminar.getCommentId();
+
+                    // Eliminar el comentario de la base de datos
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(comentarioAEliminar.getEventoId());
+                    reference.child(commentId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            // Notificar al usuario que el comentario se eliminó con éxito
+                            Toast.makeText(SingleEventoPublicoActivity.this, "Comentario y respuesta eliminados", Toast.LENGTH_SHORT).show();
+                            cargarComentarios();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Manejar el error si no se puede eliminar el comentario
+                            Toast.makeText(SingleEventoPublicoActivity.this, "Error al eliminar el comentario", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Manejar el error si no se puede eliminar la respuesta
+                    Toast.makeText(SingleEventoPublicoActivity.this, "Error al eliminar la respuesta", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            //Borro comentario
+
+
+            // Eliminar el comentario de la base de datos
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(comentarioAEliminar.getEventoId());
+            reference.child(comentarioAEliminar.getCommentId()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    // Notificar al usuario que el comentario se eliminó con éxito
+                    Toast.makeText(SingleEventoPublicoActivity.this, "Comentario eliminado", Toast.LENGTH_SHORT).show();
+                    cargarComentarios();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e)  {
+                    // Manejar el error si no se puede eliminar el comentario
+                    Toast.makeText(SingleEventoPublicoActivity.this, "Error al eliminar el comentario", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 
 }//Fin Appp

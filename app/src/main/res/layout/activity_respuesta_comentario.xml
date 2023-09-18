@@ -1,0 +1,93 @@
+<!-- comment_item.xml (Diseño de comentario anterior con respuesta) -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Comentario original -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#E0E0E0">
+
+        <!-- CircleImageView -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image_profile"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"/>
+
+        <!-- LinearLayout -->
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="346dp"
+            android:layout_height="67dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_toEndOf="@id/image_profile"
+            android:layout_toRightOf="@id/image_profile"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/design_default_color_primary_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="#000000"
+                android:maxLines="5"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- RelativeLayout para respuesta -->
+    <RelativeLayout
+        android:id="@+id/response_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent">
+
+        <TextView
+            android:id="@+id/response_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Envia una respuesta: "
+            android:textColor="@color/design_default_color_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txt_respuesta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/response_title"
+            android:layout_marginTop="8dp"
+            android:hint="Escribe tu respuesta"
+            android:background="@color/fui_transparent"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_enviar_respuesta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt_respuesta"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:text="Responder"
+            android:textSize="14sp" />
+    </RelativeLayout>
+</LinearLayout>
