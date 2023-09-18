@@ -112,7 +112,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
 //********************************************************************************************************************************
-        //Creamos el objeto de Firebase, si paso el login entonces existe un currentuser
+        //Creamos el objeto de Firebase, si paso el login,  entonces existe un currentuser
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -214,7 +214,8 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-        //Agrego una pregunta antes de eliminar la cuenta
+        //Agrega una pregunta antes de eliminar y no solo quita la cuenta
+        // del servicio de autenticacion sino que elimina el perfil de la base de datos
         cardView_EliminarCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,61 +226,86 @@ public class HomeActivity extends AppCompatActivity {
                 builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // Para ver qué forma de logueo eligió
-                        SharedPreferences prefs=getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-                        Boolean esLoginConEmailYpass_guardado=prefs.getBoolean("esLoginConEmailYPass",true);
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser != null) {
+                            String userId = currentUser.getUid();
+                            DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
 
-                        if (esLoginConEmailYpass_guardado) {
-                            // Código para eliminar cuenta con usuario y contraseña
-                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
-                            // Prompt the user to re-provide their sign in credentials
-                            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                mAuth.signOut();
-                                                Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+
+                                        // Elimina el perfil de la base de datos
+                                        dataSnapshot.getRef().removeValue();
+
+                                        // Desconecta al usuario
+                                        mAuth.signOut();
+
+                                        if (usuario != null) {
+                                            if (usuario.getEsLoginConEmailYPass()) {
+                                                // Código para eliminar cuenta con usuario y contraseña
+                                                AuthCredential credential = EmailAuthProvider.getCredential(usuario.getEmail(), usuario.getPass());
+                                                currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            currentUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        // Ahora, una vez que se ha eliminado el usuario correctamente,
+                                                                        // puedes ir a la pantalla de inicio
+                                                                        Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                                                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                        startActivity(intent);
+                                                                    } else {
+                                                                        Toast.makeText(HomeActivity.this, "No se pudo eliminar", Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
                                             } else {
-                                                Toast.makeText(HomeActivity.this, "No se pudo eliminar", Toast.LENGTH_LONG).show();
+                                                // Código para eliminar cuenta con inicio de sesión de Google
+                                                GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+                                                if (signInAccount != null) {
+                                                    AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
+                                                    currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                currentUser.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Toast.makeText(getApplicationContext(), "Usuario Eliminado!!!", Toast.LENGTH_SHORT).show();
+                                                                        signOut();
+                                                                    }
+                                                                });
+                                                            } else {
+                                                                Toast.makeText(getApplicationContext(), "Error al eliminar el usuario!: " + task.getException().toString(), Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    });
+                                                } else {
+                                                    Toast.makeText(getApplicationContext(), "Error: reAuthenticateUser: user account is null", Toast.LENGTH_SHORT).show();
+                                                }
                                             }
                                         }
-                                    });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // Manejar el error, si es necesario
                                 }
                             });
-                        } else {
-                            // Código para eliminar cuenta con inicio de sesión de Google
-                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-                            if (signInAccount != null) {
-                                AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
-                                user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            user.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Toast.makeText(getApplicationContext(), "Usuario Eliminado!!!", Toast.LENGTH_SHORT).show();
-                                                    signOut();
-                                                }
-                                            });
-                                        } else {
-                                            Toast.makeText(getApplicationContext(), "Error al eliminar el usuario!: " + task.getException().toString(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Error: reAuthenticateUser: user account is null", Toast.LENGTH_SHORT).show();
-                            }
                         }
                     }
                 });
+
 
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
@@ -291,6 +317,7 @@ public class HomeActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+
 
 
 
@@ -384,40 +411,6 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-
-    private void eliminarCuenta(FirebaseUser user) {
-        user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    mAuth.signOut();
-                    Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(HomeActivity.this, "No se pudo eliminar la cuenta", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
-
-    private void ObtenerPerfil(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Uri photoUrl = user.getPhotoUrl();
-
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getIdToken() instead.
-            String uid = user.getUid();
-        }
-    }
 
     private void signOut() {
         //sign out de firebase
