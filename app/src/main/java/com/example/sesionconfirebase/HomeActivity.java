@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.gps_test.BuscarEventosMapaActivity;
 import com.example.gps_test.PlanificarRuta;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -29,6 +30,7 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -36,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
     Button mButtonEliminarCuenta;
 
     Button btnIrANotificaciones;
+    Button btnIrABuscarEventos;
 
     FirebaseAuth mAuth;
 
@@ -60,6 +63,10 @@ public class HomeActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
+        //Acá decimos que queremos que firebase guarde los datos de forma local aunque se pierda la conexión
+        //solo hace falte activarlo una vez, preferentemente acá que entramos siempre
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.btn_perfil);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -70,29 +77,29 @@ public class HomeActivity extends AppCompatActivity {
                 intent.putExtra("User_ID", currentUser.getUid());
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
+                //finish();
                 return true;
             } else if (itemId == R.id.btn_inicio) {
                 startActivity(new Intent(getApplicationContext(), ListaEventosPublicosVigentes.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
+                //finish();
                 return true;
             } else if (itemId == R.id.btn_planificar) {
                 startActivity(new Intent(getApplicationContext(), ListaEventos.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
+                //finish();
                 return true;
             }
             else if (itemId == R.id.btn_lista_postulados) {
                 startActivity(new Intent(getApplicationContext(), ListaEventoPostulados.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
+                //finish();
                 return true;
             }
             else if (itemId == R.id.btn_lista_rutas) {
-                startActivity(new Intent(getApplicationContext(), ListaEventoPostulados.class));
+                startActivity(new Intent(getApplicationContext(), Rutas.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
+                //finish();
                 return true;
             }
             return false;
@@ -106,7 +113,7 @@ public class HomeActivity extends AppCompatActivity {
         mButtonCerrarSesion = findViewById(R.id.btnCerrarSesion);
         mButtonEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
         btnIrANotificaciones=findViewById(R.id.btnIrANotificaciones);
-
+        btnIrABuscarEventos = findViewById(R.id.btnIrABuscarEventos);
 
 
 
@@ -243,6 +250,14 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomeActivity.this, MainActivity2.class);
+                startActivity(intent);
+            }
+        });
+
+        btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, BuscarEventosMapaActivity.class);
                 startActivity(intent);
             }
         });

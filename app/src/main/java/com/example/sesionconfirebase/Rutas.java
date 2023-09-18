@@ -38,6 +38,7 @@ public class Rutas extends AppCompatActivity {
     private static FirebaseDatabase database;
     private static FirebaseStorage firebaseStorage;
     private static String userId;
+    private static MyListAdapterActivity adapter;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class Rutas extends AppCompatActivity {
 
         ArrayList<MyListDataActivity> data = new ArrayList<>();
         //MyListAdapter adapter=new MyListAdapter(data.toArray(new MyListData[]{}));
-        MyListAdapterActivity adapter = new MyListAdapterActivity(data);
+        adapter = new MyListAdapterActivity(data);
         adapter.addContext(Rutas.this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(Rutas.this));
@@ -124,10 +125,11 @@ public class Rutas extends AppCompatActivity {
 
     }
 
-    public static void Delete_Route(String databaseID)
+    public static void Delete_Route(String databaseID, int position)
     {
         firebaseStorage.getReference().child("Usuarios").child(userId).child("routes").child(databaseID).delete();
         database.getReference().child("Route").child(databaseID).removeValue();
+        adapter.notifyItemRemoved(position);
     }
 
 }

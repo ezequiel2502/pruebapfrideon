@@ -85,5 +85,8 @@ dependencies {
     implementation("com.google.firebase:firebase-database")
     implementation 'com.google.firebase:firebase-storage:20.0.0'
     implementation ("com.github.tarek360:instacapture:2.0.1")
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'
+    implementation 'com.google.firebase:firebase-auth:22.0.0'
 
 }

@@ -23,6 +23,19 @@
             android:label="@string/app_name" >
 
         </activity>
+        <activity
+            android:name=".BuscarEventosMapaActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            >
+
+        </activity>
+        <activity
+            android:name=".SingleEventoPublicoActivity"
+            android:exported="true"
+            android:label="@string/app_name" >
+
+        </activity>
     </application>
 
 </manifest>

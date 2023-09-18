@@ -2,13 +2,14 @@ package com.example.gps_test.ui.map;
 
 import com.tomtom.sdk.location.GeoPoint;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Curvaturas {
+public class Curvaturas implements Serializable {
 
     private  double curvatureRadians;
     private  double curvatureAngle;
-    private  List<GeoPoint> segmentPoints;
+    private  List<TupleDouble> segmentPoints;
     private  double turnDirection;
     private  String curvatureType;
     private  double curvatureLength;
@@ -16,7 +17,7 @@ public class Curvaturas {
     public Curvaturas() {
         // Default constructor required for calls to DataSnapshot.getValue(Ruta.class)
     }
-    public Curvaturas(double curvatureRadians, double curvatureAngle, List<GeoPoint> segmentPoints, double turnDirection, String curvatureType, double curvatureLength) {
+    public Curvaturas(double curvatureRadians, double curvatureAngle, List<TupleDouble> segmentPoints, double turnDirection, String curvatureType, double curvatureLength) {
         this.curvatureRadians = curvatureRadians;
         this.curvatureAngle = curvatureAngle;
         this.segmentPoints = segmentPoints;
@@ -34,7 +35,7 @@ public class Curvaturas {
         return curvatureAngle;
     }
 
-    public List<GeoPoint> getSegmentPoints() {
+    public List<TupleDouble> getSegmentPoints() {
         return segmentPoints;
     }
 

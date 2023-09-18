@@ -59,7 +59,7 @@ public class MyListAdapterActivity extends RecyclerView.Adapter<MyListAdapterAct
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View listItem= layoutInflater.inflate(R.layout.list_routes_item, parent, false);
+        View listItem= layoutInflater.inflate(R.layout.list_routes_item_activity, parent, false);
         ViewHolder viewHolder = new ViewHolder(listItem);
         return viewHolder;
     }
@@ -107,8 +107,8 @@ public class MyListAdapterActivity extends RecyclerView.Adapter<MyListAdapterAct
         holder.deleteRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(),"click on item: "+myListData.getRouteName(),Toast.LENGTH_LONG).show();
-                Rutas.Delete_Route(listdata.get(holder.getAbsoluteAdapterPosition()).getDatabaseID());
+                Toast.makeText(v.getContext(),"Se ha borrado la ruta: "+myListData.getRouteName(),Toast.LENGTH_LONG).show();
+                Rutas.Delete_Route(listdata.get(holder.getAbsoluteAdapterPosition()).getDatabaseID(), holder.getAbsoluteAdapterPosition());
             }
         });
     }

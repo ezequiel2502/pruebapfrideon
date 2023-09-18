@@ -1,6 +1,7 @@
 package com.example.gps_test.ui.recyclerView;
 
 
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         final MyListData myListData = listdata[position];
         holder.textView.setText(listdata[position].getDescription());
         holder.textView2.setText(listdata[position].getDescription2());
-        holder.imageView.setImageResource(listdata[position].getImgId());
+        holder.imageView.setImageResource(holder.itemView.getContext().getResources().getIdentifier(listdata[position].getImgId() , "drawable", holder.itemView.getContext().getPackageName()));
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

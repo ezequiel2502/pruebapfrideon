@@ -1,14 +1,16 @@
 package com.example.gps_test.ui.recyclerView;
 
-public class MyListData {
+import java.io.Serializable;
+
+public class MyListData implements Serializable {
     private String description;
     private String description2;
-    private int imgId;
+    private String imgId;
 
     public MyListData() {
         // Default constructor required for calls to DataSnapshot.getValue(Ruta.class)
     }
-    public MyListData(String description, String description2, int imgId) {
+    public MyListData(String description, String description2, String imgId) {
         this.description = description;
         this.description2 = description2;
         this.imgId = imgId;
@@ -25,10 +27,10 @@ public class MyListData {
     public void setDescription2(String description2) {
         this.description2 = description2;
     }
-    public int getImgId() {
+    public String getImgId() {
         return imgId;
     }
-    public void setImgId(int imgId) {
+    public void setImgId(String imgId) {
         this.imgId = imgId;
     }
 }

@@ -179,44 +179,7 @@ public class PlanificarRuta extends AppCompatActivity {
     private MediaProjection mMediaProjection;
     private ImageReader mImageReader;
     private Bitmap screenshot;
-    private ActivityResultLauncher<Intent> takeScreenshotLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // Get the MediaProjection
-                        mMediaProjection = mProjectionManager.getMediaProjection(result.getResultCode(), result.getData());
 
-                        DisplayMetrics displayMetrics = new DisplayMetrics();
-                        PlanificarRuta.this.getWindowManager()
-                                .getDefaultDisplay()
-                                .getMetrics(displayMetrics);
-                        // Create an ImageReader for capturing the screen
-                        mImageReader = ImageReader.newInstance(
-                                displayMetrics.widthPixels, displayMetrics.heightPixels, ImageFormat.JPEG, 2
-                        );
-
-                        // Start capturing
-                        mMediaProjection.createVirtualDisplay(
-                                "ScreenCapture", displayMetrics.widthPixels, displayMetrics.heightPixels,
-                                getResources().getDisplayMetrics().densityDpi,
-                                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                                mImageReader.getSurface(), null, null
-                        );
-
-                        Image image = mImageReader.acquireLatestImage();
-                        if (image != null) {
-                            // Convert the Image to a Bitmap
-                            Bitmap bitmap = imageToBitmap(image);
-                            ImageUploader uploadMapScreenShot = new ImageUploader();
-                            uploadMapScreenShot.cargar_bytes(getIntent().getStringExtra("User_ID"), bitmap,getIntent().getStringExtra("Route_ID"));
-                            //screenshot = bitmap;
-                            image.close();
-                        }
-                    }
-                }
-            });
 
 
 
@@ -368,7 +331,7 @@ public class PlanificarRuta extends AppCompatActivity {
                                         listGeoTolistPair(current_Route_Points),
                                         route_Summary.getSummary().getLength().inMeters(), curvesAmount,
                                         startLocation, finishLocation, "Imagén Pendiente",
-                                        Arrays.asList(summaryAdapter.getCurrentList()));
+                                        Arrays.asList(summaryAdapter.getCurrentList()), currentApiDrawRoad);
 
                                 String baseID = String.valueOf(current_Route_Points.hashCode() + java.util.Calendar.getInstance().getTime().hashCode());
                                 refRoutes.child(baseID).setValue(ruta);
@@ -405,7 +368,7 @@ public class PlanificarRuta extends AppCompatActivity {
                                         listGeoTolistPair(current_Route_Points),
                                         route_Summary.getSummary().getLength().inMeters(), curvesAmount,
                                         startLocation, finishLocation, "Imagén Pendiente",
-                                        Arrays.asList(summaryAdapter.getCurrentList()));
+                                        Arrays.asList(summaryAdapter.getCurrentList()), currentApiDrawRoad);
 
                                 String baseID = String.valueOf(current_Route_Points.hashCode() + java.util.Calendar.getInstance().getTime().hashCode());
                                 refRoutes.child(baseID).setValue(ruta);
@@ -477,13 +440,6 @@ public class PlanificarRuta extends AppCompatActivity {
 
 
 
-    private void captureScreen() {
-        // Initialize the MediaProjectionManager
-        mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-        // Start a screen capture session
-        Intent captureIntent = mProjectionManager.createScreenCaptureIntent();
-        takeScreenshotLauncher.launch(captureIntent);
-    }
 
     private Bitmap imageToBitmap(Image image) {
         Image.Plane[] planes = image.getPlanes();
@@ -814,10 +770,10 @@ public class PlanificarRuta extends AppCompatActivity {
             if (app_Start = true) {
                 tomtomMap.moveCamera(searchVar.setCamera(geoPosition.getLastKnownLocation().getPosition(), 15, 0, 0));
                 searcher = searchBar(geoPosition.getLastKnownLocation().getPosition());
-                searcher.getView().bringToFront();
+                //searcher.getView().bringToFront();
                 //Esto que parece no tener sentido es para que no se abrá solo el teclado en pantalla cuando carga la aplicación, porque tenemos el buscador que hace un trigger automático al inicio
-                InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(findViewById(R.id.search_fragment_container).getWindowToken(), 0);
+                //InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+                //imm.hideSoftInputFromWindow(findViewById(R.id.search_fragment_container).getWindowToken(), 0);
                 app_Start = false;
             }
         }
@@ -827,7 +783,7 @@ public class PlanificarRuta extends AppCompatActivity {
     public static void focusCamera(int index)
     {
         Search_Variables searchVar = new Search_Variables();
-        List<GeoPoint> a = currentApiDrawRoad.get(index).getSegmentPoints();
+        List<GeoPoint> a = new TupleDouble().listTupleTolistGeo(currentApiDrawRoad.get(index).getSegmentPoints());
         Routing_Variables route = new Routing_Variables();
         tomtomMap.moveCamera(searchVar.setCamera(a.get(a.size()/2), 20, 0, 0));
         com.tomtom.sdk.map.display.route.Route reference = tomtomMap.addRoute(route.setRouteAlt(a));
@@ -890,6 +846,9 @@ public class PlanificarRuta extends AppCompatActivity {
         Search_Variables searchVar = new Search_Variables();
         @SuppressLint("UnsafeOptInUsageError") SearchFragment searchFragment = SearchFragment.newInstance(searchVar.setSearchProperties(position, Locale.US, 10));
         getSupportFragmentManager().beginTransaction().replace(R.id.search_fragment_container, searchFragment).commitNow();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(findViewById(com.example.gps_test.R.id.search_fragment_container).getWindowToken(), 0);
+        searchFragment.getView().clearFocus();
 
         SearchFragmentListener listener = new SearchFragmentListener() {
             @Override
@@ -1055,12 +1014,12 @@ public class PlanificarRuta extends AppCompatActivity {
                 }
 
                 if (enteredNewValue21 == true) {
-                    finalList.add(new Curvaturas(radius, finalAngle, new ArrayList<GeoPoint>(Arrays.asList(new GeoPoint(newValues22.first, newValues22.second), route.get(i + 1), route.get(i + 2))), side, tipo, sideA + sideB));
+                    finalList.add(new Curvaturas(radius, finalAngle, new ArrayList<TupleDouble>(Arrays.asList(new TupleDouble(newValues22.first, newValues22.second), new TupleDouble(route.get(i + 1).getLatitude(), route.get(i + 1).getLongitude()), new TupleDouble(route.get(i + 2).getLatitude(), route.get(i + 2).getLongitude()))), side, tipo, sideA + sideB));
                     enteredNewValue21 = false;
                 }
                 else
                 {
-                    finalList.add(new Curvaturas(radius, finalAngle, new ArrayList<GeoPoint>(Arrays.asList(route.get(i), route.get(i + 1), route.get(i + 2))), side, tipo, sideA + sideB));
+                    finalList.add(new Curvaturas(radius, finalAngle, new ArrayList<TupleDouble>(Arrays.asList(new TupleDouble(route.get(i).getLatitude(), route.get(i).getLongitude()), new TupleDouble(route.get(i + 1).getLatitude(), route.get(i + 1).getLongitude()), new TupleDouble(route.get(i + 2).getLatitude(), route.get(i + 2).getLongitude()))), side, tipo, sideA + sideB));
                 }
             } else
             {
@@ -1070,12 +1029,12 @@ public class PlanificarRuta extends AppCompatActivity {
                 }
                 else
                 {
-                    GeoPoint start = finalList.get(finalList.size()-1).getSegmentPoints().get(finalList.get(finalList.size()-1).getSegmentPoints().size()-1);
+                    TupleDouble start = finalList.get(finalList.size()-1).getSegmentPoints().get(finalList.get(finalList.size()-1).getSegmentPoints().size()-1);
                     GeoPoint finish = route.get(route.size()-1);
                     double newDistance = distance(start.getLatitude(), finish.getLatitude(), start.getLongitude(), finish.getLongitude());
                     double angleX = angleFromCoordinate360(start.getLatitude(), start.getLongitude(), finish.getLatitude(), finish.getLongitude());
                     Pair<Double, Double> intermediatePoint = intermediatePoints(start.getLatitude(), start.getLongitude(), angleX, newDistance/2);
-                    finalList.add(new Curvaturas(0, 0, new ArrayList<GeoPoint>(Arrays.asList(finalList.get(finalList.size()-1).getSegmentPoints().get(finalList.get(finalList.size()-1).getSegmentPoints().size()-1), route.get(i + 1), route.get(route.size()-1))), 0, "Línea Recta", newDistance));
+                    finalList.add(new Curvaturas(0, 0, new ArrayList<TupleDouble>(Arrays.asList(finalList.get(finalList.size()-1).getSegmentPoints().get(finalList.get(finalList.size()-1).getSegmentPoints().size()-1), new TupleDouble(route.get(i + 1).getLatitude(), route.get(i + 1).getLongitude()), new TupleDouble(route.get(route.size()-1).getLatitude(), route.get(route.size()-1).getLongitude()))), 0, "Línea Recta", newDistance));
                     break;
                 }
             }
@@ -1132,7 +1091,7 @@ public class PlanificarRuta extends AppCompatActivity {
         }
 
 
-        return new Curvaturas(radius, finalAngle, new ArrayList<GeoPoint>(Arrays.asList(new GeoPoint(lat1, lon1), new GeoPoint(lat2, lon2), new GeoPoint(lat3, lon3))), side, tipo, sideA + sideB);
+        return new Curvaturas(radius, finalAngle, new ArrayList<TupleDouble>(Arrays.asList(new TupleDouble(lat1, lon1), new TupleDouble(lat2, lon2), new TupleDouble(lat3, lon3))), side, tipo, sideA + sideB);
 
     }
 
@@ -1368,24 +1327,24 @@ public class PlanificarRuta extends AppCompatActivity {
 
             if (list.get(i).getTurnDirection() == 1.0) {
                 if (list.get(i).getCurvatureAngle() < 50) {
-                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, R.drawable.outline_turn_closed_left_24));
+                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, "outline_turn_closed_left_24"));
                 }
                 else if (list.get(i).getCurvatureAngle() < 110) {
-                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, R.drawable.outline_turn_left_black_24));
+                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, "outline_turn_left_black_24"));
                 } else {
-                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, R.drawable.outline_turn_slight_left_black_24));
+                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, "outline_turn_slight_left_black_24"));
                 }
             } else if (list.get(i).getTurnDirection() == 2.0) {
                 if (list.get(i).getCurvatureAngle() < 50) {
-                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, R.drawable.outline_turn_closed_right_24));
+                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, "outline_turn_closed_right_24"));
                 }
                 else if (list.get(i).getCurvatureAngle() < 110) {
-                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, R.drawable.outline_turn_right_black_24));
+                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, "outline_turn_right_black_24"));
                 } else {
-                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, R.drawable.outline_turn_slight_right_black_24));
+                    myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", sideData, "outline_turn_slight_right_black_24"));
                 }
             } else {
-                myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", "Datos de calle: " + streetData, R.drawable.outline_north_black_24));
+                myListData.add(new MyListData(list.get(i).getCurvatureType() + " " + Math.round(list.get(i).getCurvatureLength())+"mts", "Datos de calle: " + streetData, "outline_north_black_24"));
                 curvesAmount --;
             }
 
