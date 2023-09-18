@@ -49,7 +49,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
     Button btn_postularse;
 
-    private String tokenFcmPostulante;
+    private static String tokenFcmPostulante;
 
 
 
@@ -71,15 +71,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         });
 
 
-        // Registra el BroadcastReceiver para capturar el broadcast de aceptacion de postulacion o denegacion de postulacion
-        IntentFilter filterAceptacion = new IntentFilter("com.example.sesionconfirebase.ACTION_POSTULAR");
-        registerReceiver(notificationReceiver, filterAceptacion);
-        IntentFilter filterDenegacion  = new IntentFilter("com.example.sesionconfirebase.ACTION_DENEGAR_POSTULACION");
-        registerReceiver(notificationReceiver, filterDenegacion);
-
-
-
-
         tv_SingleEvento=findViewById(R.id.tv_SingleEvento);
         tv_SingleRuta=findViewById(R.id.tv_SingleRuta);
         tv_SingleDescripcion=findViewById(R.id.tv_SingleDescripcion);
@@ -94,8 +85,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         tv_SingleActivadoDescativado=findViewById(R.id.tv_SingleActivadoDescativado);
         rb_SingleRatingEvento=findViewById(R.id.rb_SingleRatingEvento);
         btn_postularse=findViewById(R.id.btn_postularse);
-
-
 
 
         //Obtengo los datos de los intents
@@ -122,7 +111,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         String singlePublicoPrivado=getIntent().getStringExtra("singlePublicoPrivado");
         Integer singleRating=getIntent().getIntExtra("singleRating",0);
         String singleIdEvento=getIntent().getStringExtra("EventoId");
-        String singleTokenFCM=getIntent().getStringExtra("TokenFCM");
+        String singleTokenFCM=getIntent().getStringExtra("TokenFCM");//del creador del evento
 
 
         // Establece los datos en los TextViews
@@ -150,7 +139,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         String nombreEvento=singleEvento;
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("idEvento", idEvento);
-        editor.putString("TokenFCM", tokenFcm);
+        editor.putString("TokenFCM", tokenFcm);//del creador del evento
         editor.putString("tokenFcmPostulante", tokenFcmPostulante);
         editor.putString("nombreEvento", nombreEvento);
         editor.apply();
@@ -159,6 +148,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         //Referencia al nodo postulaciones que uso dentro del boton Postularse
         DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Postulaciones");
 
+
+
         //Boton Postularse
         btn_postularse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +157,9 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
                 //Envia notificacion al creador del evento
                 NotificarCreadorEvento();
+                prePostularCandidato2();
+
+
             }
         });
 
@@ -173,31 +167,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
 
     }//fin onCreate()
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Libera el BroadcastReceiver
-        unregisterReceiver(notificationReceiver);
-    }
-
-
-    private BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if ("com.example.sesionconfirebase.ACTION_POSTULAR".equals(intent.getAction())) {
-
-                postularCandidato();
-                notificarPostulanteEvento();
-
-            } else if ("com.example.sesionconfirebase.ACTION_DENEGAR_POSTULACION".equals(intent.getAction())) {
-                notificarDenegacionPostulanteEvento();
-            }
-        }
-    };
-
-
-
 
 
     private void postularCandidato(){
@@ -265,12 +234,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         });
     }
 
-    private void prePostularCandidato(){
-        // Para recuperar el idEvento almacenado en SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
-        String idEventoRecuperado = sharedPreferences.getString("idEvento", "");
-
-        // Buscar el evento
+    private void postularCandidato2(String idEventoRecuperado, String userId, String tokenFcmPostulante) {
         DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEventoRecuperado);
 
         eventosRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -279,30 +243,23 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
 
-                    // Verificar si hay cupo disponible
                     int cupoMaximo = Integer.parseInt(evento.getCupoMaximo());
                     if (cupoMaximo > 0) {
-                        // Modificar el valor del cupoMaximo
                         int nuevoCupoMaximo = cupoMaximo - 1;
                         evento.setCupoMaximo(String.valueOf(nuevoCupoMaximo));
 
-                        // Obtener el ID del usuario actual
-                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                        // Agregar la información de postulación al nodo "postulaciones"
                         DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Postulaciones");
                         postulacionesRef.child(userId).child(idEventoRecuperado).setValue(true)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            // Actualizar el evento modificado en la base de datos
                                             eventosRef.setValue(evento)
                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             if (task.isSuccessful()) {
-                                                                // Modificación exitosa
+                                                                // Realizar la postulación exitosa
                                                                 Toast.makeText(getApplicationContext(), "Te has postulado al evento", Toast.LENGTH_SHORT).show();
                                                             } else {
                                                                 // Error en la modificación del evento
@@ -329,6 +286,98 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
             }
         });
     }
+    private void prePostularCandidato2() {
+        // Para recuperar el idEvento almacenado en SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
+        String idEventoRecuperado = sharedPreferences.getString("idEvento", "");
+
+
+
+        // Buscar el evento
+        DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEventoRecuperado);
+
+        eventosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
+
+                    // Obtener el ID del usuario actual o postulante
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+                    // Agregar la información de pre-postulación al nodo "Pre-Postulaciones"
+
+                    DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
+                    prePostulacionesRef.child(idEventoRecuperado).child(userId).setValue(new PrePostulacion(tokenFcmPostulante,false))
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        // Pre-postulación exitosa
+                                        Toast.makeText(getApplicationContext(), "Te has pre-postulado al evento", Toast.LENGTH_SHORT).show();
+
+                                    } else {
+                                        // Error en la pre-postulación
+                                        Toast.makeText(getApplicationContext(), "Error al pre-postularte al evento", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar error de cancelación
+            }
+        });
+    }
+
+
+    private void prePostularCandidato() {
+        // Para recuperar el idEvento almacenado en SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
+        String idEventoRecuperado = sharedPreferences.getString("idEvento", "");
+
+        // Buscar el evento
+        DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEventoRecuperado);
+
+        eventosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
+
+                    // Obtener el ID del usuario actual o postulante
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    // Agregar la información de postulación al nodo "pre-postulaciones"
+                    DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
+                    postulacionesRef.child(idEventoRecuperado).child(userId).child(tokenFcmPostulante).child("aceptado").setValue(false)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        // Modificación exitosa
+                                        Toast.makeText(getApplicationContext(), "Te has pre-postulado al evento", Toast.LENGTH_SHORT).show();
+
+                                    } else {
+                                        // Error en la modificación del evento
+                                        Toast.makeText(getApplicationContext(), "Error al modificar el evento", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar error de cancelación
+            }
+        });
+    }
+
+
 
 
     private void guardarTokenPostulados() {
@@ -393,10 +442,18 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
         //userName del que se postula
         String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        //userId del que se postula
+        String postulanteId=FirebaseAuth.getInstance().getUid();
 
         // Para recuperar el tokenFcm almacenado en SharedPreferences del creador de
         SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
+        String idEvento = sharedPreferences.getString("idEvento", "");
         String tokenFcmRecuperado = sharedPreferences.getString("TokenFCM", "");
+        String tokenFcmPostulante= sharedPreferences.getString("tokenFcmPostulante", "");
+        String nombreEvento = sharedPreferences.getString("nombreEvento", "");
+
+
+
 
         RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
         JSONObject json = new JSONObject();
@@ -406,6 +463,11 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
             notificacion.put("titulo", "Aceptar Postulacion de: ");
             notificacion.put("detalle", userName);
             notificacion.put("tipo", "creador_evento");
+            notificacion.put("idEvento", idEvento);
+            notificacion.put("postulanteId", postulanteId);
+            notificacion.put("tokenCreador", tokenFcmRecuperado);
+            notificacion.put("tokenPostulante", tokenFcmPostulante);
+            notificacion.put("nombreEvento", nombreEvento);
 
             json.put("to", tokenFcmRecuperado);
             json.put("data", notificacion); // Cambio de "data" a "notification"
@@ -429,98 +491,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
-
-    private void notificarPostulanteEvento() {
-
-        //"Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM"
-
-        //userName del que se postula
-        String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-
-        // Para recuperar el tokenFcm almacenado en SharedPreferences del creador de
-        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
-        String nombreEventoRecuperado = sharedPreferences.getString("nombreEvento", "");
-
-
-        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
-        JSONObject json = new JSONObject();
-
-        try {
-            JSONObject notificacion = new JSONObject();
-            notificacion.put("titulo", "Te postulaste a : ");
-            notificacion.put("detalle", nombreEventoRecuperado);
-            notificacion.put("tipo", "postulante_evento");
-
-            json.put("to", tokenFcmPostulante);
-            json.put("data", notificacion); // Cambio de "data" a "notification"
-
-
-            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
-            String URL = "https://fcm.googleapis.com/fcm/send";
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
-                @Override
-                public Map<String, String> getHeaders() {
-                    Map<String, String> header = new HashMap<>();
-                    header.put("Content-Type", "application/json");
-                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
-                    return header;
-                }
-            };
-            myrequest.add(request);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void notificarDenegacionPostulanteEvento() {
-
-        //"Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM"
-
-        //userName del que se postula
-        String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-
-        // Para recuperar el tokenFcm almacenado en SharedPreferences del creador de
-        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
-        String nombreEventoRecuperado = sharedPreferences.getString("nombreEvento", "");
-
-
-        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
-        JSONObject json = new JSONObject();
-
-        try {
-            JSONObject notificacion = new JSONObject();
-            notificacion.put("titulo", "Te denegaron la postulacion en : ");
-            notificacion.put("detalle", nombreEventoRecuperado);
-            notificacion.put("tipo", "postulante_evento");
-
-            json.put("to", tokenFcmPostulante);
-            json.put("data", notificacion); // Cambio de "data" a "notification"
-
-
-            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
-            String URL = "https://fcm.googleapis.com/fcm/send";
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
-                @Override
-                public Map<String, String> getHeaders() {
-                    Map<String, String> header = new HashMap<>();
-                    header.put("Content-Type", "application/json");
-                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
-                    return header;
-                }
-            };
-            myrequest.add(request);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-
 
 
 
