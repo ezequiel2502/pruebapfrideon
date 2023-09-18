@@ -12,7 +12,7 @@ public class ModelUsuario {
     private List<String> postulados;
     private boolean esLoginConEmailYPass;
 
-
+//prueba
     public ModelUsuario() {
     }
 
