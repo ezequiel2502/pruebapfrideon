@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextEmail;
     EditText editTextPass;
     TextView textViewRespuesta;
-
+    private static boolean first_Entrance = false;
     Button btn_olvidaste_contrasena,btn_iniciar_sesion;
 
 
@@ -86,7 +86,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login2);
-
+        if (first_Entrance == false) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            first_Entrance = true;
+        }
         //*********Controles de activity_main
 //        mEditTextEmail = findViewById(R.id.editTextEmail);
 //        mEditTextPass = findViewById(R.id.editTextPass);

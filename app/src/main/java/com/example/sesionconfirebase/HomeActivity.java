@@ -2,8 +2,11 @@ package com.example.sesionconfirebase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -11,10 +14,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.gps_test.BuscarEventosMapaActivity;
 import com.example.gps_test.PlanificarRuta;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -79,7 +85,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Acá decimos que queremos que firebase guarde los datos de forma local aunque se pierda la conexión
         //solo hace falte activarlo una vez, preferentemente acá que entramos siempre
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.btn_perfil);
@@ -135,7 +141,6 @@ public class HomeActivity extends AppCompatActivity {
 //********************************************************************************************************************************
         //Creamos el objeto de Firebase, si paso el login,  entonces existe un currentuser
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
             String userId = currentUser.getUid();
@@ -351,13 +356,13 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {
+        /*btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, BuscarEventosMapaActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
 
     }//fin onCreate()
