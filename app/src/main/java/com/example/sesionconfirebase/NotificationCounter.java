@@ -53,7 +53,9 @@ public class NotificationCounter {
 
     // Método para obtener la cantidad de notificaciones para un usuario
     public int obtenerCantidadNotificaciones(String userId) {
-        int cantidadNotificaciones = 14;
+
+        int cantidadNotificaciones = 0;
+
         return cantidadNotificaciones;
     }
 }
