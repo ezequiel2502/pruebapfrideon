@@ -2,6 +2,7 @@ package com.example.sesionconfirebase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +30,15 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nex3z.notificationbadge.NotificationBadge;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicMarkableReference;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -38,7 +47,7 @@ public class HomeActivity extends AppCompatActivity {
     Button mButtonEliminarCuenta;
 
     Button btnIrANotificaciones;
-
+    LinkedList<ModelNotificacion> recycleList = new LinkedList<>();
     FirebaseAuth mAuth;
 
 
@@ -239,12 +248,28 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        notificactionBadge.setNumber(contarNotificaciones(user));
-    }//fin onCreate()
+        contarNotificaciones(user);
 
-    private int contarNotificaciones(FirebaseUser user){
-        NotificationCounter notificationCounter = new NotificationCounter();
-        return notificationCounter.obtenerCantidadNotificaciones(user.getUid());
+    }/* fin onCreate() */
+
+    private void contarNotificaciones(FirebaseUser user){
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+
+        firebaseDatabase.getReference().child("Notificaciones").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    ModelNotificacion notificacion=dataSnapshot.getValue(ModelNotificacion.class);
+                    recycleList.add(notificacion);
+                }
+                NotificationCounter not = new NotificationCounter();
+                notificactionBadge.setNumber(not.obtenerCantidadNotificaciones(user.getUid(),recycleList));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void eliminarCuenta(FirebaseUser user) {

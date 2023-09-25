@@ -10,6 +10,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 public class NotificationCounter {
 
     // Método para registrar una notificación para un usuario
@@ -52,10 +55,16 @@ public class NotificationCounter {
     }
 
     // Método para obtener la cantidad de notificaciones para un usuario
-    public int obtenerCantidadNotificaciones(String userId) {
+    public int obtenerCantidadNotificaciones(String userId, LinkedList<ModelNotificacion> lista) {
 
         int cantidadNotificaciones = 0;
-
+        for(int i=0;i< lista.size();i++)
+            {
+                if(userId.equals(lista.get(i).getPostulanteId()))
+                {
+                cantidadNotificaciones++;
+                }
+            }
         return cantidadNotificaciones;
     }
 }
