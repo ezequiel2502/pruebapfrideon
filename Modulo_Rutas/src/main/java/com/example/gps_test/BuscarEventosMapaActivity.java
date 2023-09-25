@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,10 +28,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -75,6 +79,7 @@ import com.tomtom.sdk.search.ui.SearchFragment;
 import com.tomtom.sdk.search.ui.SearchFragmentListener;
 import com.tomtom.sdk.search.ui.model.PlaceDetails;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -94,6 +99,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
     private LocationProvider geoPosition;
 
     private GeoPoint CurrentPosition;
+    private GeoPoint previousImmediatePosition;
 
     private SearchFragment searcher;
 
@@ -130,11 +136,16 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
     private final Handler h = new Handler(); //Necesario para controlar la fecha cada segundo
     private static Date currentTime = null;
     private boolean navStart = false;
+    private double distanciaRecorrida = 0;
+    CardView backgroundCard;
     ImageView instructionsViewer;
+    TextView instructionsViewerExtraText;
+    TextView instructionsViewerDistance;
     List<Curvaturas> instructions;
     TupleDouble meta;
     FloatingActionButton ComenzarEvento;
     FloatingActionButton TerminarEvento;
+    DecimalFormat df;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     DatabaseReference refRoutes = database.getReference().child("Route");
@@ -159,13 +170,17 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
 
         Chronometer cronometro = findViewById(R.id.idCMmeter);
         //cronometro.setVisibility(View.INVISIBLE);
+        df = new DecimalFormat("#.##");
         instructionsViewer =  findViewById(com.example.gps_test.R.id.imageViewIndications);
+        instructionsViewerExtraText =  findViewById(R.id.textViewIndicationsExtra);
+        instructionsViewerDistance = findViewById(R.id.textViewIndicationsDistance);
         Intent intent = getIntent();
         instructions = (List<Curvaturas>) intent.getSerializableExtra("List_Navigation");
         Intent intent1 = getIntent();
         List<TupleDouble> listaPuntos = (List<TupleDouble>) intent1.getSerializableExtra("List_Of_Points");
         TerminarEvento = findViewById(R.id.finishEventParticipation);
         meta = listaPuntos.get(listaPuntos.size()-1);
+        backgroundCard = findViewById(R.id.backgroundCard);
 
         FloatingActionButton findEvents = findViewById(R.id.findCloseEvents);
         findEvents.setOnClickListener(new View.OnClickListener() {
@@ -203,6 +218,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
         TerminarEvento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                navStart = false;
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm",
                         Locale.getDefault());
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
@@ -486,7 +502,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
             Search_Variables searchVar = new Search_Variables();
             if (app_Start == true) {
                 tomtomMap.moveCamera(searchVar.setCamera(geoPosition.getLastKnownLocation().getPosition(), 15, 0, 0));
-                searcher = searchBar(geoPosition.getLastKnownLocation().getPosition());
+                //searcher = searchBar(geoPosition.getLastKnownLocation().getPosition());
                 //searcher.getView().bringToFront();
                 //Esto que parece no tener sentido es para que no se abrá solo el teclado en pantalla cuando carga la aplicación, porque tenemos el buscador que hace un trigger automático al inicio
                 //InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
@@ -528,10 +544,20 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                         currentSegment =  currentIndex;
                         currentClosePosition = segment.getSegmentPoints().get(0);
                     }
-                    else
+                    /*else
                     {
                         Double compareDistance = distance(CurrentPosition.getLatitude(), segment.getSegmentPoints().get(0).getLatitude(), CurrentPosition.getLongitude(), segment.getSegmentPoints().get(0).getLongitude());
                         if (closestDistanceToGps > compareDistance)
+                        {
+                            closestDistanceToGps = compareDistance;
+                            currentSegment =  currentIndex;
+                            currentClosePosition = segment.getSegmentPoints().get(0);
+                        }
+                    }*/
+                    else
+                    {
+                        Double compareDistance = distance(CurrentPosition.getLatitude(), segment.getSegmentPoints().get(0).getLatitude(), CurrentPosition.getLongitude(), segment.getSegmentPoints().get(0).getLongitude());
+                        if (closestDistanceToGps > compareDistance || compareDistance < 20)
                         {
                             closestDistanceToGps = compareDistance;
                             currentSegment =  currentIndex;
@@ -541,34 +567,110 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                     currentIndex ++;
                 }
 
+                if (distanciaRecorrida == 0 && distance(CurrentPosition.getLatitude(), instructions.get(0).getSegmentPoints().get(0).getLatitude(), CurrentPosition.getLongitude(), instructions.get(0).getSegmentPoints().get(0).getLongitude()) < 10)
+                {
+                    distanciaRecorrida = 1;
+                    instructionsViewerDistance.setText(String.valueOf(distanciaRecorrida)+"m");
+                }
+                if (distanciaRecorrida > 0)
+                {
+                    distanciaRecorrida = distanciaRecorrida + distance(previousImmediatePosition.getLatitude(),CurrentPosition.getLatitude(),previousImmediatePosition.getLongitude(),CurrentPosition.getLongitude());
+                    instructionsViewerDistance.setText(df.format(distanciaRecorrida)+"m");
+                }
+                previousImmediatePosition = CurrentPosition;
+
                 if (instructions.get(currentSegment).getTurnDirection() == 1.0) {
                     if (instructions.get(currentSegment).getCurvatureAngle() < 50) {
                         //Glide.with(BuscarEventosMapaActivity.this).load(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_left_24)).into(instructionsViewer);
-                        instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_left_24));
-                        instructionsViewer.setBackgroundColor(Color.parseColor("#fc9403"));
+
+                        if (instructionsViewer.getDrawable() != null) {
+                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_left_24)});
+                            instructionsViewer.setImageDrawable(a);
+                            a.setCrossFadeEnabled(true);
+                            a.startTransition(1000);
+                        }
+                        else {
+                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_left_24));
+                        }
+                        backgroundCard.setCardBackgroundColor(Color.parseColor("#fc9403"));
+                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
                     }
                     else if (instructions.get(currentSegment).getCurvatureAngle() < 110) {
-                        instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_left_black_24));
-                        instructionsViewer.setBackgroundColor(Color.parseColor("#fce303"));
+                        if (instructionsViewer.getDrawable() != null) {
+                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_left_black_24)});
+                            instructionsViewer.setImageDrawable(a);
+                            a.setCrossFadeEnabled(true);
+                            a.startTransition(1000);
+                        }
+                        else {
+                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_left_black_24));
+                        }
+                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
+                        backgroundCard.setCardBackgroundColor(Color.parseColor("#fce303"));
                     } else {
-                        instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_left_black_24));
-                        instructionsViewer.setBackgroundColor(Color.parseColor("#7bfc03"));
+                        if (instructionsViewer.getDrawable() != null) {
+                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_left_black_24)});
+                            instructionsViewer.setImageDrawable(a);
+                            a.setCrossFadeEnabled(true);
+                            a.startTransition(1000);
+                        }
+                        else {
+                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_left_black_24));
+                        }
+                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
+                        backgroundCard.setCardBackgroundColor(Color.parseColor("#7bfc03"));
                     }
                 } else if (instructions.get(currentSegment).getTurnDirection() == 2.0) {
                     if (instructions.get(currentSegment).getCurvatureAngle() < 50) {
-                        instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_right_24));
-                        instructionsViewer.setBackgroundColor(Color.parseColor("#fc9403"));
+                        if (instructionsViewer.getDrawable() != null) {
+                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_right_24)});
+                            instructionsViewer.setImageDrawable(a);
+                            a.setCrossFadeEnabled(true);
+                            a.startTransition(1000);
+                        }
+                        else {
+                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_right_24));
+                        }
+                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
+                        backgroundCard.setCardBackgroundColor(Color.parseColor("#fc9403"));
                     }
                     else if (instructions.get(currentSegment).getCurvatureAngle() < 110) {
-                        instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_right_black_24));
-                        instructionsViewer.setBackgroundColor(Color.parseColor("#fce303"));
+                        if (instructionsViewer.getDrawable() != null) {
+                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_right_black_24)});
+                            instructionsViewer.setImageDrawable(a);
+                            a.setCrossFadeEnabled(true);
+                            a.startTransition(1000);
+                        }
+                        else {
+                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_right_black_24));
+                        }
+                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
+                        backgroundCard.setCardBackgroundColor(Color.parseColor("#fce303"));
                     } else {
-                        instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_right_black_24));
-                        instructionsViewer.setBackgroundColor(Color.parseColor("#7bfc03"));
+                        if (instructionsViewer.getDrawable() != null) {
+                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_right_black_24)});
+                            instructionsViewer.setImageDrawable(a);
+                            a.setCrossFadeEnabled(true);
+                            a.startTransition(1000);
+                        }
+                        else {
+                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_right_black_24));
+                        }
+                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
+                        backgroundCard.setCardBackgroundColor(Color.parseColor("#7bfc03"));
                     }
                 } else {
-                    instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_north_black_24));
-                    instructionsViewer.setBackgroundColor(Color.parseColor("#07fc03"));
+                    if (instructionsViewer.getDrawable() != null) {
+                        TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_north_black_24)});
+                        instructionsViewer.setImageDrawable(a);
+                        a.setCrossFadeEnabled(true);
+                        a.startTransition(1000);
+                    }
+                    else {
+                        instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_north_black_24));
+                    }
+                    instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureLength())+"m");
+                    backgroundCard.setCardBackgroundColor(Color.parseColor("#07fc03"));
                 }
 
 
