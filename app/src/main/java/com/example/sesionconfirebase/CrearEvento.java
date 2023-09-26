@@ -250,7 +250,7 @@ public class CrearEvento extends AppCompatActivity {
                                         }
                                     });
                                 }
-                            }, 2000);
+                            }, 4000);
                         }
                     });
                 }
