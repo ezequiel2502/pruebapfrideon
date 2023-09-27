@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,25 +24,26 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
-public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostuladoAdapter.ViewHolder> {
+public class EventoCompletadoAdapter extends RecyclerView.Adapter<EventoCompletadoAdapter.ViewHolder> {
 
     ArrayList<ModelEvento> list;
+
     Context context;
 
-    public EventoPostuladoAdapter(ArrayList<ModelEvento> list, Context context) {
+    public EventoCompletadoAdapter(ArrayList<ModelEvento> list, Context context) {
         this.list = list;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public EventoPostuladoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public EventoCompletadoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(context).inflate(R.layout.item_evento,parent,false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventoPostuladoAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull EventoCompletadoAdapter.ViewHolder holder, int position) {
 
         ModelEvento evento = list.get(position);
 
@@ -63,13 +66,14 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
         holder.tv_UserId.setText(evento.getUserId());
         holder.tv_ActivarDescativar.setText(evento.getActivadoDescativado());
         holder.tv_PublicoPrivado.setText(evento.getPublicoPrivado());
-        //holder.rb_calificacionEvento.setRating(evento.getRating());
+        holder.rb_calificacionEvento.setRating(evento.getCalificacionGeneral());
+
 
         //Agrego un Listener para cuando cliquee sobre el evento(item), me lleva a los detalles de la publicacion para postularme
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context, SingleEventoPostuladosActivity.class);
+                Intent intent=new Intent(context, SingleEventoCompletadoActivity.class);
                 intent.putExtra("singleImage",evento.getImagenEvento());
                 intent.putExtra("singleEvento",evento.getNombreEvento());
                 intent.putExtra("singleRuta",evento.getRuta());
@@ -81,7 +85,7 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
                 intent.putExtra("singleCategoria",evento.getCategoria());
                 intent.putExtra("singleUserName",evento.getUserName());
                 intent.putExtra("singleUserId",evento.getUserId());
-                //intent.putExtra("singleRating",evento.getRating());
+                intent.putExtra("singleRating",evento.getCalificacionGeneral());
                 intent.putExtra("singlePublicoPrivado",evento.getPublicoPrivado());
                 intent.putExtra("singleActivarDesactivar",evento.getActivadoDescativado());
                 intent.putExtra("EventoId",evento.getIdEvento());
@@ -91,6 +95,7 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
             }
         });
 
+
     }
 
     @Override
@@ -98,14 +103,19 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         //Son los controles del itemEvento
         TextView tv_tituloEvento,tv_Ruta,tv_Descripcion,tv_FechaEncuentro,tv_HoraEncuentro,
-                tv_CupoMinimo,tv_CupoMaximo,tv_Categoria,tv_UserName,tv_UserId,tv_PublicoPrivado,tv_ActivarDescativar;
+                tv_CupoMinimo,tv_CupoMaximo,tv_Categoria,tv_UserName,
+                tv_UserId,tv_PublicoPrivado,tv_ActivarDescativar;
         ImageView imvEvento;
 
-        //RatingBar rb_calificacionEvento;
+        RatingBar rb_calificacionEvento;
+
+
+
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -120,11 +130,10 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
             tv_Categoria=itemView.findViewById(R.id.tv_Categoria);
             tv_UserName=itemView.findViewById(R.id.tv_UserName);
             tv_UserId=itemView.findViewById(R.id.tv_UserId);
-            //rb_calificacionEvento=itemView.findViewById(R.id.rb_calificacionEvento);
+            rb_calificacionEvento=itemView.findViewById(R.id.rb_calificacionEvento);
             tv_PublicoPrivado=itemView.findViewById(R.id.tv_PublicoPrivado);
             tv_ActivarDescativar=itemView.findViewById(R.id.tv_ActivarDescativar);
             imvEvento=itemView.findViewById(R.id.imvEvento);
-
 
         }
     }
@@ -147,4 +156,5 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
 
         notifyDataSetChanged();
     }
+
 }

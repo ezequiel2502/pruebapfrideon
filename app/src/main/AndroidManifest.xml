@@ -38,6 +38,22 @@
             android:name=".DetallesActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".SingleEventoCompletadoActivity"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".ListaEventoCompletados"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".CalificarActivity"
+            android:exported="false">
+        </activity>
+
+
         <receiver
             android:name=".NotificationActionReceiver"
             android:enabled="true" /> <!-- <receiver android:name=".NotificationActionReceiver1" -->

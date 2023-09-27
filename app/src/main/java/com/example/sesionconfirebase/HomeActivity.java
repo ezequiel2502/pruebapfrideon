@@ -87,43 +87,7 @@ public class HomeActivity extends AppCompatActivity {
         //solo hace falte activarlo una vez, preferentemente acá que entramos siempre
 
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
-        bottomNavigationView.setSelectedItemId(R.id.btn_perfil);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.btn_perfil) {
-                Intent intent = new Intent(getApplicationContext(), PlanificarRuta.class);
-                intent.putExtra("Close_On_Enter", "False");
-                intent.putExtra("User_ID", currentUser.getUid());
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                //finish();
-                return true;
-            } else if (itemId == R.id.btn_inicio) {
-                startActivity(new Intent(getApplicationContext(), ListaEventosPublicosVigentes.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                //finish();
-                return true;
-            } else if (itemId == R.id.btn_planificar) {
-                startActivity(new Intent(getApplicationContext(), ListaEventos.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                //finish();
-                return true;
-            }
-            else if (itemId == R.id.btn_lista_postulados) {
-                startActivity(new Intent(getApplicationContext(), ListaEventoPostulados.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                //finish();
-                return true;
-            }
-            else if (itemId == R.id.btn_lista_rutas) {
-                startActivity(new Intent(getApplicationContext(), Rutas.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                //finish();
-                return true;
-            }
-            return false;
-        });
+
 
 
         //Controles nuevos
@@ -132,6 +96,7 @@ public class HomeActivity extends AppCompatActivity {
         tv_UserId = findViewById(R.id.tv_UserId);
         tv_user_name = findViewById(R.id.tv_user_name);
         tv_user_email = findViewById(R.id.tv_user_email);
+        tv_completados = findViewById(R.id.tv_completados);
         cardView_detalles = findViewById(R.id.cardView_detalles);
         cardView_cerrarSesion = findViewById(R.id.cardView_cerrarSesion);
         cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
@@ -183,6 +148,15 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 //***********************************************************************************************************************
+
+
+        tv_completados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(HomeActivity.this,ListaEventoCompletados.class);
+                startActivity(intent);
+            }
+        });
 
         //Configurar las gso para google signIn con el fin de luego desloguear de google
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -364,6 +338,46 @@ public class HomeActivity extends AppCompatActivity {
             }
         });*/
 
+
+        //Barra de navegacion
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setSelectedItemId(R.id.btn_perfil);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.btn_perfil) {
+                Intent intent = new Intent(getApplicationContext(), PlanificarRuta.class);
+                intent.putExtra("Close_On_Enter", "False");
+                intent.putExtra("User_ID", currentUser.getUid());
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                //finish();
+                return true;
+            } else if (itemId == R.id.btn_inicio) {
+                startActivity(new Intent(getApplicationContext(), ListaEventosPublicosVigentes.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                //finish();
+                return true;
+            } else if (itemId == R.id.btn_planificar) {
+                startActivity(new Intent(getApplicationContext(), ListaEventos.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                //finish();
+                return true;
+            }
+            else if (itemId == R.id.btn_lista_postulados) {
+                startActivity(new Intent(getApplicationContext(), ListaEventoPostulados.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                //finish();
+                return true;
+            }
+            else if (itemId == R.id.btn_lista_rutas) {
+                startActivity(new Intent(getApplicationContext(), Rutas.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                //finish();
+                return true;
+            }
+            return false;
+        });
 
     }//fin onCreate()
 
