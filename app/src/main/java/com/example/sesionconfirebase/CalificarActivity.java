@@ -38,17 +38,21 @@ ModelEvento evento;
         btn_agregarCalificacion=findViewById(R.id.btn_agregarCalificacion);
 
 
+
+        //Creo la instancia de la base de datos
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
         // Recibo la calificacion gral
         float calificacion_gral = getIntent().getFloatExtra("calificacion_gral", 0.0f);
-        String idEvento=getIntent().getStringExtra("EventoId");
+        String idEvento = getIntent().getStringExtra("EventoId");
 
 
-        // Establecer el rating Gereneral
+        //Establecer el rating Gereneral
         rb_ratingGeneral.setRating(calificacion_gral);
 
 
-        //Accedo al no de eventos publicos para recuperar el evento
-        // Acceder al nodo de "Eventos Publicos" usando el idEvento
+
+        // Acceder al nodo de "Eventos Publicos" usando el idEvento para recuperar el evento
         DatabaseReference eventosPublicosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(idEvento);
 
         eventosPublicosRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -72,13 +76,15 @@ ModelEvento evento;
         });
 
 
-        btn_agregarCalificacion.setOnClickListener(new View.OnClickListener() {
 
-            //Obtengo la calificacion ingresada por el usuario
-            float calificacionUsuario = rb_userRating.getRating();
+        btn_agregarCalificacion.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
+
+
+                //Obtengo la calificacion ingresada por el usuario
+                float calificacionUsuario = rb_userRating.getRating();
 
                 if (evento != null) {
 
@@ -91,6 +97,9 @@ ModelEvento evento;
 
                     // Recalcula la calificación promedio y la setea en calificacionGeneral
                     evento.calcularYSetearCalificacionPromedio();
+
+                    //agrego el objeto a la base de datos
+                    firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(idEvento).setValue(evento);
 
                     // Muestra un Toast indicando que se agregó correctamente la calificación
                     Toast.makeText(CalificarActivity.this, "Se agregó correctamente tu calificación", Toast.LENGTH_LONG).show();

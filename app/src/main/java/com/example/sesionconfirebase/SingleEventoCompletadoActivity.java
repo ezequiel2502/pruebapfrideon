@@ -108,6 +108,8 @@ public class SingleEventoCompletadoActivity extends AppCompatActivity {
                 intent.putExtra("EventoId", singleIdEvento);
                 startActivity(intent);
 
+
+
             }
         });
 

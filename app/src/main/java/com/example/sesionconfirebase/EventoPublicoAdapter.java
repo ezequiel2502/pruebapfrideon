@@ -78,7 +78,7 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
         holder.tv_UserId.setText(evento.getUserId());
         holder.tv_ActivarDescativar.setText(evento.getActivadoDescativado());
         holder.tv_PublicoPrivado.setText(evento.getPublicoPrivado());
-        //holder.rb_calificacionEvento.setRating(evento.getRating());
+        holder.rb_calificacionEvento.setRating(evento.getCalificacionGeneral());
 
 
         //Agrego un Listener para cuando cliquee sobre el evento(item), me lleva a los detalles de la publicacion para postularme
@@ -97,7 +97,7 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
                 intent.putExtra("singleCategoria",evento.getCategoria());
                 intent.putExtra("singleUserName",evento.getUserName());
                 intent.putExtra("singleUserId",evento.getUserId());
-                //intent.putExtra("singleRating",evento.getRating());
+                intent.putExtra("singleRating",evento.getCalificacionGeneral());
                 intent.putExtra("singlePublicoPrivado",evento.getPublicoPrivado());
                 intent.putExtra("singleActivarDesactivar",evento.getActivadoDescativado());
                 intent.putExtra("EventoId",evento.getIdEvento());
@@ -161,7 +161,7 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
                 tv_CupoMinimo,tv_CupoMaximo,tv_Categoria,tv_UserName,tv_UserId,tv_PublicoPrivado,tv_ActivarDescativar;
         ImageView imvEvento;
 
-        //RatingBar rb_calificacionEvento;
+        RatingBar rb_calificacionEvento;
         public ImageButton routePreview;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -177,7 +177,7 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
             tv_Categoria=itemView.findViewById(R.id.tv_Categoria);
             tv_UserName=itemView.findViewById(R.id.tv_UserName);
             tv_UserId=itemView.findViewById(R.id.tv_UserId);
-            //rb_calificacionEvento=itemView.findViewById(R.id.rb_calificacionEvento);
+            rb_calificacionEvento=itemView.findViewById(R.id.rb_calificacionEvento);
             tv_PublicoPrivado=itemView.findViewById(R.id.tv_PublicoPrivado);
             tv_ActivarDescativar=itemView.findViewById(R.id.tv_ActivarDescativar);
             imvEvento=itemView.findViewById(R.id.imvEvento);
