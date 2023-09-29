@@ -43,6 +43,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.List;
+
 public class HomeActivity extends AppCompatActivity {
 
     Button mButtonCerrarSesion;
@@ -124,6 +126,13 @@ public class HomeActivity extends AppCompatActivity {
                         tv_user_name.setText(usuario.getUserNameCustom());
                         tv_user_email.setText(usuario.getEmail());
                         rating_bar.setRating(usuario.getCalificacionGeneral());
+
+                        List<String> completados = usuario.getCompletados();
+                        if (completados != null) {
+                            tv_completados.setText("Completados: " + completados.size());
+                        } else {
+                            tv_completados.setText("Completados: 0");
+                        }
 
                         String imagenPerfil = usuario.getImagenPerfil();
 

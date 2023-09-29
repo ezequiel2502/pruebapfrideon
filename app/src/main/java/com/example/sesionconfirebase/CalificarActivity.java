@@ -120,6 +120,9 @@ ModelUsuario perfilOrganizador;
                                 // Calcula y actualiza la calificación general del usuario
                                 modelUsuario.calcularYSetearCalificacionPromedio();
 
+                                // Agrega el evento completado al ModelUsuario
+                                modelUsuario.agregarEventoCompletado(idEvento);
+
                                 // Guarda el objeto ModelUsuario actualizado en el nodo del perfil
                                 perfilRef.setValue(modelUsuario);
 

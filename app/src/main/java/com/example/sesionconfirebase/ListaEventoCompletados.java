@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListaEventoCompletados extends AppCompatActivity {
 
@@ -87,6 +88,8 @@ public class ListaEventoCompletados extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot eventoSnapshot : dataSnapshot.getChildren()) {
+
+
                     String eventoId = eventoSnapshot.getKey();
                     DatabaseReference eventoPublicoRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventoId);
 
@@ -94,6 +97,9 @@ public class ListaEventoCompletados extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
+
+                                //Si existe el evento en "Eventos Publicos" lo muevo a "Completados", esto es para el primero que completa el evento
+
                                 ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
 
                                 DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
@@ -101,7 +107,14 @@ public class ListaEventoCompletados extends AppCompatActivity {
 
                                 // Remover el evento de "Eventos Publicos"
                                 eventoPublicoRef.removeValue();
+
+                                //Actualizo el perfil del usuario que completo el evento, pongo el eventoId en su lista
+                                agregarEventoAPerfilListaCompletados( userId,eventoId);
                             }
+
+                            //Si No existe el evento en "Eventos Publicos" lo busco en "Completados", esto es para
+                            //todo ususario que no sea el primero en completar un evento
+
 
                             // Acceder a los eventos completados usando este eventoId
                             DatabaseReference eventosCompletadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
@@ -111,8 +124,14 @@ public class ListaEventoCompletados extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot eventoSnapshot) {
                                     if (eventoSnapshot.exists()) {
                                         ModelEvento evento = eventoSnapshot.getValue(ModelEvento.class);
+
+                                        //Actualizo el perfil del usuario que completo el evento, pongo el eventoId en su lista
+                                        agregarEventoAPerfilListaCompletados( userId,eventoId);
+
+                                        //Lo listo en el recycler
                                         recycleList.add(evento);
                                         recyclerAdapter.notifyDataSetChanged();
+
                                     }
                                 }
 
@@ -180,4 +199,36 @@ public class ListaEventoCompletados extends AppCompatActivity {
 
 
     }//fin onCreate()
+
+
+    private void agregarEventoAPerfilListaCompletados(String userId, String eventoId) {
+        DatabaseReference perfilRef = firebaseDatabase.getReference().child("Perfil").child(userId);
+        perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ModelUsuario modelUsuario = dataSnapshot.getValue(ModelUsuario.class);
+                    if (modelUsuario != null) {
+                        List<String> completados = modelUsuario.getCompletados();
+                        if (completados == null || !completados.contains(eventoId)) {
+                            if (completados == null) {
+                                completados = new ArrayList<>();
+                            }
+                            completados.add(eventoId);
+                            modelUsuario.setCompletados(completados);
+                            perfilRef.setValue(modelUsuario);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar error de cancelación
+            }
+        });
+    }
+
+
+
 }//fin App
