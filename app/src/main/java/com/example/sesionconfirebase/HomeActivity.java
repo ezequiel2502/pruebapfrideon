@@ -97,6 +97,7 @@ public class HomeActivity extends AppCompatActivity {
         tv_user_name = findViewById(R.id.tv_user_name);
         tv_user_email = findViewById(R.id.tv_user_email);
         tv_completados = findViewById(R.id.tv_completados);
+        rating_bar=findViewById(R.id.rating_bar);
         cardView_detalles = findViewById(R.id.cardView_detalles);
         cardView_cerrarSesion = findViewById(R.id.cardView_cerrarSesion);
         cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
@@ -122,6 +123,7 @@ public class HomeActivity extends AppCompatActivity {
                         tv_UserId.setText(usuario.getUserId());
                         tv_user_name.setText(usuario.getUserNameCustom());
                         tv_user_email.setText(usuario.getEmail());
+                        rating_bar.setRating(usuario.getCalificacionGeneral());
 
                         String imagenPerfil = usuario.getImagenPerfil();
 
@@ -325,7 +327,7 @@ public class HomeActivity extends AppCompatActivity {
         cardView_detalles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, MainActivity2.class);
+                Intent intent = new Intent(HomeActivity.this, DetallesActivity.class);
                 startActivity(intent);
             }
         });

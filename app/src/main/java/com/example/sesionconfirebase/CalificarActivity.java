@@ -84,45 +84,66 @@ ModelUsuario perfilOrganizador;
         btn_agregarCalificacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-                //Obtengo la calificacion ingresada por el usuario
+                // Obtengo la calificación ingresada por el usuario
                 float calificacionUsuario = rb_userRating.getRating();
 
                 if (evento != null) {
+                    // *****Crea una nueva instancia de ModelCalificacion****
 
-                    // Crea una nueva instancia de ModelCalificacion
+                    // Obtengo al usuario actual que completó el evento
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     ModelCalificacion nuevaCalificacion = new ModelCalificacion(userId, calificacionUsuario);
 
-                    // Agrega la nueva calificación al objeto evento
-                    evento.agregarCalificacion(nuevaCalificacion);
+                    // *****Modifico la calificación del organizador de eventos*****
+                    // Accede al nodo del perfil del usuario organizador del evento que completó el usuario actual
+                    DatabaseReference perfilRef = firebaseDatabase.getReference().child("Perfil").child(OrganizadorId);
 
-                    // Recalcula la calificación promedio y la setea en calificacionGeneral
-                    evento.calcularYSetearCalificacionPromedio();
-
-                    //agrego el objeto a la base de datos
-                    firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(idEvento).setValue(evento);
-
-
-                    //firebaseDatabase.getReference().child("Perfil").child(OrganizadorId);
-
+                    perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                // Recupera el objeto ModelUsuario
+                                ModelUsuario modelUsuario = dataSnapshot.getValue(ModelUsuario.class);
 
 
-                    // Muestra un Toast indicando que se agregó correctamente la calificación
-                    Toast.makeText(CalificarActivity.this, "Se agregó correctamente tu calificación", Toast.LENGTH_LONG).show();
+                                // Agrega la nueva calificación al objeto evento
+                                evento.agregarCalificacion(nuevaCalificacion);
+
+                                // Recalcula la calificación promedio y la setea en calificacionGeneral
+                                evento.calcularYSetearCalificacionPromedio();
 
 
-                    // Vuelvo a la singleActivityEventoCompletado con la nueva calificacion general
-                    Intent intent = new Intent(CalificarActivity.this, SingleEventoCompletadoActivity.class);
-                    intent.putExtra("singleRating", evento.getCalificacionGeneral());
-                    startActivity(intent);
+                                // Agrega la calificación del evento a la lista de calificaciones del usuario
+                                float calificacionEvento = evento.getCalificacionGeneral();
+                                modelUsuario.agregarCalificacion(calificacionEvento);
 
+                                // Calcula y actualiza la calificación general del usuario
+                                modelUsuario.calcularYSetearCalificacionPromedio();
+
+                                // Guarda el objeto ModelUsuario actualizado en el nodo del perfil
+                                perfilRef.setValue(modelUsuario);
+
+                                // Agrega el objeto a la base de datos
+                                firebaseDatabase.getReference().child("Eventos").child("Completados").child(idEvento).setValue(evento);
+
+                                // Muestra un Toast indicando que se agregó correctamente la calificación
+                                Toast.makeText(CalificarActivity.this, "Se agregó correctamente tu calificación", Toast.LENGTH_LONG).show();
+
+                                // Vuelvo a la SingleActivityEventoCompletado con la nueva calificacion general
+                                Intent intent = new Intent(CalificarActivity.this, SingleEventoCompletadoActivity.class);
+                                intent.putExtra("singleRating", evento.getCalificacionGeneral());
+                                startActivity(intent);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            // Maneja el error de cancelación
+                        }
+                    });
                 } else {
-
+                    // Manejar el caso en el que el evento sea nulo
                 }
-
-
             }
         });
 
