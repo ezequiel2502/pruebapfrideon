@@ -27,6 +27,8 @@ FirebaseDatabase firebaseDatabase;
 
 ModelEvento evento;
 
+ModelUsuario perfilOrganizador;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +44,10 @@ ModelEvento evento;
         //Creo la instancia de la base de datos
         firebaseDatabase = FirebaseDatabase.getInstance();
 
-        // Recibo la calificacion gral
+        // Recibo los intents desde la singleEventoCompletadoActivity
         float calificacion_gral = getIntent().getFloatExtra("calificacion_gral", 0.0f);
         String idEvento = getIntent().getStringExtra("EventoId");
+        String OrganizadorId = getIntent().getStringExtra("OrganizadorId");
 
 
         //Establecer el rating Gereneral
@@ -52,20 +55,17 @@ ModelEvento evento;
 
 
 
-        // Acceder al nodo de "Eventos Publicos" usando el idEvento para recuperar el evento
-        DatabaseReference eventosPublicosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(idEvento);
 
-        eventosPublicosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        //Referencia al nodo "Completados"
+        DatabaseReference eventosCompletadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(idEvento);
+        eventosCompletadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    // El evento se encuentra en "Completados"
                     evento = dataSnapshot.getValue(ModelEvento.class);
-
-
-
-
                 } else {
-                    // El evento con el id proporcionado no existe
+                    // El evento no se encuentra en ninguno de los nodos
                 }
             }
 
@@ -77,8 +77,11 @@ ModelEvento evento;
 
 
 
-        btn_agregarCalificacion.setOnClickListener(new View.OnClickListener() {
 
+
+
+
+        btn_agregarCalificacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -100,6 +103,11 @@ ModelEvento evento;
 
                     //agrego el objeto a la base de datos
                     firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(idEvento).setValue(evento);
+
+
+                    //firebaseDatabase.getReference().child("Perfil").child(OrganizadorId);
+
+
 
                     // Muestra un Toast indicando que se agregó correctamente la calificación
                     Toast.makeText(CalificarActivity.this, "Se agregó correctamente tu calificación", Toast.LENGTH_LONG).show();

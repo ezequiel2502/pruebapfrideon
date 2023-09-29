@@ -106,6 +106,7 @@ public class SingleEventoCompletadoActivity extends AppCompatActivity {
                 Intent intent=new Intent(SingleEventoCompletadoActivity.this, CalificarActivity.class);
                 intent.putExtra("calificacion_gral", singleRating);
                 intent.putExtra("EventoId", singleIdEvento);
+                intent.putExtra("OrganizadorId", singleUserId);
                 startActivity(intent);
 
 

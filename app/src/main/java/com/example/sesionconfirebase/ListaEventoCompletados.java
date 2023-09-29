@@ -88,21 +88,39 @@ public class ListaEventoCompletados extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot eventoSnapshot : dataSnapshot.getChildren()) {
                     String eventoId = eventoSnapshot.getKey();
+                    DatabaseReference eventoPublicoRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventoId);
 
-                    // Luego, accedemos a los eventos públicos usando este eventoId
-                    DatabaseReference eventosPublicosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventoId);
-
-                    eventosPublicosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    eventoPublicoRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot eventoSnapshot) {
-                            if (eventoSnapshot.exists()) {
-                                ModelEvento evento = eventoSnapshot.getValue(ModelEvento.class);
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
 
+                                DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
+                                completadosRef.setValue(evento);
 
-                                // Aquí trabajo con el evento obtenido
-                                recycleList.add(evento);
-                                recyclerAdapter.notifyDataSetChanged();
+                                // Remover el evento de "Eventos Publicos"
+                                eventoPublicoRef.removeValue();
                             }
+
+                            // Acceder a los eventos completados usando este eventoId
+                            DatabaseReference eventosCompletadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
+
+                            eventosCompletadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot eventoSnapshot) {
+                                    if (eventoSnapshot.exists()) {
+                                        ModelEvento evento = eventoSnapshot.getValue(ModelEvento.class);
+                                        recycleList.add(evento);
+                                        recyclerAdapter.notifyDataSetChanged();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    // Manejar error de cancelación
+                                }
+                            });
                         }
 
                         @Override
@@ -118,6 +136,7 @@ public class ListaEventoCompletados extends AppCompatActivity {
                 // Manejar error de cancelación
             }
         });
+
         //********************Observo cambios en el nodo events_data
 
 

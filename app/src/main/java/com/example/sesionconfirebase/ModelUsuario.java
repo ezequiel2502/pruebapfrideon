@@ -12,6 +12,9 @@ public class ModelUsuario {
     private List<String> postulados;
     private boolean esLoginConEmailYPass;
 
+    private float calificacionGeneral;
+
+    private ArrayList<Float> calificaciones;
 
     public ModelUsuario() {
     }
@@ -38,6 +41,8 @@ public class ModelUsuario {
         this.publicos = null;
         this.completados = null;
         this.postulados = null;
+        this.calificaciones = null;
+        calificacionGeneral = 0.0f;
 
     }
 
@@ -64,6 +69,8 @@ public class ModelUsuario {
         this.publicos = null;
         this.completados = null;
         this.postulados = null;
+        this.calificaciones = null;
+        calificacionGeneral = 0.0f;
     }
 
 
@@ -90,6 +97,8 @@ public class ModelUsuario {
         this.publicos = null;
         this.completados = null;
         this.postulados = null;
+        this.calificaciones = null;
+        calificacionGeneral = 0.0f;
     }
 
     public ModelUsuario(String email, String pass, String userNameCustom,String userId,boolean esLoginConEmailYPass) {
@@ -115,8 +124,32 @@ public class ModelUsuario {
         this.publicos = null;
         this.completados = null;
         this.postulados = null;
+        this.calificaciones = null;
+        calificacionGeneral = 0.0f;
     }
 
+
+    public void agregarCalificacion(float calificacion) {
+        if (calificaciones == null) {
+            calificaciones = new ArrayList<>();
+        }
+        calificaciones.add(calificacion);
+    }
+
+    // Método para calcular la calificación promedio y setearla en calificacionGeneral
+    public void calcularYSetearCalificacionPromedio() {
+        if (calificaciones == null || calificaciones.isEmpty()) {
+            calificacionGeneral = 0.0f; // Si no hay calificaciones, se asigna 0.0f
+            return;
+        }
+
+        float sumaCalificaciones = 0.0f;
+        for (float calificacion : calificaciones) {
+            sumaCalificaciones += calificacion;
+        }
+
+        calificacionGeneral = (float) sumaCalificaciones / calificaciones.size();
+    }
 
     public void agregarEventoPrivado(String eventoId) {
         if (this.privados == null) {
@@ -144,6 +177,26 @@ public class ModelUsuario {
             this.postulados = new ArrayList<>();
         }
         this.postulados.add(eventoId);
+    }
+
+
+
+    //********Getters
+
+    public float getCalificacionGeneral() {
+        return calificacionGeneral;
+    }
+
+    public ArrayList<Float> getCalificaciones() {
+        return calificaciones;
+    }
+
+    public void setCalificacionGeneral(float calificacionGeneral) {
+        this.calificacionGeneral = calificacionGeneral;
+    }
+
+    public void setCalificaciones(ArrayList<Float> calificaciones) {
+        this.calificaciones = calificaciones;
     }
 
     public boolean getEsLoginConEmailYPass() {
@@ -270,7 +323,9 @@ public class ModelUsuario {
 
 
 
-    // Getter y Setter para 'privados'
+
+
+    // Getter y Setter para Listas de punteros
     public List<String> getPrivados() {
         return privados;
     }
