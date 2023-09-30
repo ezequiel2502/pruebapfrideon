@@ -1,5 +1,7 @@
 package com.example.sesionconfirebase;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -110,73 +112,85 @@ ModelUsuario perfilOrganizador;
         btn_agregarCalificacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Obtengo la calificación ingresada por el usuario
-                float calificacionUsuario = rb_userRating.getRating();
+                AlertDialog.Builder builder = new AlertDialog.Builder(CalificarActivity.this);
+                builder.setMessage("¿Estás seguro de que quieres agregar la calificación?")
+                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Obtengo la calificación ingresada por el usuario
+                                float calificacionUsuario = rb_userRating.getRating();
 
-                if (evento != null) {
-                    // *****Crea una nueva instancia de ModelCalificacion****
+                                if (evento != null) {
+                                    // *****Crea una nueva instancia de ModelCalificacion****
 
-                    // Obtengo al usuario actual que completó el evento
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    ModelCalificacion nuevaCalificacion = new ModelCalificacion(userId, calificacionUsuario);
+                                    // Obtengo al usuario actual que completó el evento
+                                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    ModelCalificacion nuevaCalificacion = new ModelCalificacion(userId, calificacionUsuario);
 
-                    // *****Modifico la calificación del organizador de eventos*****
-                    // Accede al nodo del perfil del usuario organizador del evento que completó el usuario actual
-                    DatabaseReference perfilRef = firebaseDatabase.getReference().child("Perfil").child(OrganizadorId);
+                                    // *****Modifico la calificación del organizador de eventos*****
+                                    // Accede al nodo del perfil del usuario organizador del evento que completó el usuario actual
+                                    DatabaseReference perfilRef = firebaseDatabase.getReference().child("Perfil").child(OrganizadorId);
 
-                    perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                // Recupera el objeto ModelUsuario
-                                ModelUsuario modelUsuario = dataSnapshot.getValue(ModelUsuario.class);
+                                    perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                // Recupera el objeto ModelUsuario
+                                                ModelUsuario modelUsuario = dataSnapshot.getValue(ModelUsuario.class);
 
+                                                // Agrega la nueva calificación al objeto evento
+                                                evento.agregarCalificacion(nuevaCalificacion);
 
-                                // Agrega la nueva calificación al objeto evento
-                                evento.agregarCalificacion(nuevaCalificacion);
+                                                // Recalcula la calificación promedio y la setea en calificacionGeneral
+                                                evento.calcularYSetearCalificacionPromedio();
 
-                                // Recalcula la calificación promedio y la setea en calificacionGeneral
-                                evento.calcularYSetearCalificacionPromedio();
+                                                // Agrega la calificación del evento a la lista de calificaciones del usuario organizador
+                                                float calificacionEvento = evento.getCalificacionGeneral();
+                                                modelUsuario.agregarCalificacion(calificacionEvento);
 
+                                                // Calcula y actualiza la calificación general del usuario
+                                                modelUsuario.calcularYSetearCalificacionPromedio();
 
-                                // Agrega la calificación del evento a la lista de calificaciones del usuario organizador
-                                float calificacionEvento = evento.getCalificacionGeneral();
-                                modelUsuario.agregarCalificacion(calificacionEvento);
+                                                //todo: ver donde realizar esto, si aqui o en la lista una vez que esta en el nodo completados
+                                                // Agrega el evento completado al ModelUsuario()
+                                                //modelUsuario.agregarEventoCompletado(idEvento);
 
-                                // Calcula y actualiza la calificación general del usuario
-                                modelUsuario.calcularYSetearCalificacionPromedio();
+                                                // Guarda el objeto ModelUsuario actualizado en el nodo del perfil (del organizador)
+                                                perfilRef.setValue(modelUsuario);
 
+                                                // Agrega el objeto a la base de datos
+                                                firebaseDatabase.getReference().child("Eventos").child("Completados").child(idEvento).setValue(evento);
 
-                                //todo ver donde realizar esto si aqui o en la lista una vez que esta en el nodo completados
-                                // Agrega el evento completado al ModelUsuario()
-                                //modelUsuario.agregarEventoCompletado(idEvento);
+                                                // Muestra un Toast indicando que se agregó correctamente la calificación
+                                                Toast.makeText(CalificarActivity.this, "Se agregó correctamente tu calificación", Toast.LENGTH_LONG).show();
 
-                                // Guarda el objeto ModelUsuario actualizado en el nodo del perfil(del organizador)
-                                perfilRef.setValue(modelUsuario);
+                                                // Vuelvo a la SingleActivityEventoCompletado con la nueva calificacion general
+                                                Intent intent = new Intent(CalificarActivity.this, ListaEventoCompletados.class);
+                                                intent.putExtra("singleRating", evento.getCalificacionGeneral());
+                                                startActivity(intent);
+                                            }
+                                        }
 
-                                // Agrega el objeto a la base de datos
-                                firebaseDatabase.getReference().child("Eventos").child("Completados").child(idEvento).setValue(evento);
-
-                                // Muestra un Toast indicando que se agregó correctamente la calificación
-                                Toast.makeText(CalificarActivity.this, "Se agregó correctamente tu calificación", Toast.LENGTH_LONG).show();
-
-                                // Vuelvo a la SingleActivityEventoCompletado con la nueva calificacion general
-                                Intent intent = new Intent(CalificarActivity.this, ListaEventoCompletados.class);
-                                intent.putExtra("singleRating", evento.getCalificacionGeneral());
-                                startActivity(intent);
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            // Maneja el error de cancelación
+                                        }
+                                    });
+                                } else {
+                                    // Manejar el caso en el que el evento sea nulo
+                                }
                             }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            // Maneja el error de cancelación
-                        }
-                    });
-                } else {
-                    // Manejar el caso en el que el evento sea nulo
-                }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // No hacer nada si el usuario selecciona "No"
+                            }
+                        })
+                        .show();
             }
         });
+
 
 
     }//fin onCreate()
