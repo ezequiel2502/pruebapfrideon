@@ -64,6 +64,32 @@ ModelUsuario perfilOrganizador;
                 if (dataSnapshot.exists()) {
                     // El evento se encuentra en "Completados"
                     evento = dataSnapshot.getValue(ModelEvento.class);
+
+                    // Verificar si el usuario actual ya ha calificado este evento
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    boolean usuarioYaCalificado = false;
+                    float calificacionUsuario = 0.0f;
+
+                    if (evento.getCalificaciones() != null) {
+                        for (ModelCalificacion calificacion : evento.getCalificaciones()) {
+                            if (calificacion.getUserId().equals(userId)) {
+                                usuarioYaCalificado = true;
+                                calificacionUsuario = calificacion.getRating();
+                                break;
+                            }
+                        }
+                    }
+
+                    // Deshabilitar el botón si el usuario ya ha calificado
+                    if (usuarioYaCalificado) {
+                        btn_agregarCalificacion.setEnabled(false);
+
+                        // Establecer la calificación del usuario en la RatingBar y deshabilitarla
+                        rb_userRating.setRating(calificacionUsuario);
+                        rb_userRating.setIsIndicator(true);
+                    }
+
+
                 } else {
                     // El evento no se encuentra en ninguno de los nodos
                 }
@@ -113,17 +139,19 @@ ModelUsuario perfilOrganizador;
                                 evento.calcularYSetearCalificacionPromedio();
 
 
-                                // Agrega la calificación del evento a la lista de calificaciones del usuario
+                                // Agrega la calificación del evento a la lista de calificaciones del usuario organizador
                                 float calificacionEvento = evento.getCalificacionGeneral();
                                 modelUsuario.agregarCalificacion(calificacionEvento);
 
                                 // Calcula y actualiza la calificación general del usuario
                                 modelUsuario.calcularYSetearCalificacionPromedio();
 
-                                // Agrega el evento completado al ModelUsuario
-                                modelUsuario.agregarEventoCompletado(idEvento);
 
-                                // Guarda el objeto ModelUsuario actualizado en el nodo del perfil
+                                //todo ver donde realizar esto si aqui o en la lista una vez que esta en el nodo completados
+                                // Agrega el evento completado al ModelUsuario()
+                                //modelUsuario.agregarEventoCompletado(idEvento);
+
+                                // Guarda el objeto ModelUsuario actualizado en el nodo del perfil(del organizador)
                                 perfilRef.setValue(modelUsuario);
 
                                 // Agrega el objeto a la base de datos
@@ -133,7 +161,7 @@ ModelUsuario perfilOrganizador;
                                 Toast.makeText(CalificarActivity.this, "Se agregó correctamente tu calificación", Toast.LENGTH_LONG).show();
 
                                 // Vuelvo a la SingleActivityEventoCompletado con la nueva calificacion general
-                                Intent intent = new Intent(CalificarActivity.this, SingleEventoCompletadoActivity.class);
+                                Intent intent = new Intent(CalificarActivity.this, ListaEventoCompletados.class);
                                 intent.putExtra("singleRating", evento.getCalificacionGeneral());
                                 startActivity(intent);
                             }
