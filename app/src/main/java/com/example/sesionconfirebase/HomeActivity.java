@@ -103,6 +103,7 @@ public class HomeActivity extends AppCompatActivity {
         cardView_detalles = findViewById(R.id.cardView_detalles);
         cardView_cerrarSesion = findViewById(R.id.cardView_cerrarSesion);
         cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
+        analytics=findViewById(R.id.analytics);
 
 
 
