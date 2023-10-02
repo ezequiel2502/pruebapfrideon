@@ -16,6 +16,8 @@ public class ModelUsuario {
 
     private ArrayList<Float> calificaciones;
 
+    private ArrayList<ModelEstadistica> estadisticas;
+
     public ModelUsuario() {
     }
 
@@ -42,6 +44,7 @@ public class ModelUsuario {
         this.completados = null;
         this.postulados = null;
         this.calificaciones = null;
+        this.estadisticas = null;
         calificacionGeneral = 0.0f;
 
     }
@@ -70,6 +73,7 @@ public class ModelUsuario {
         this.completados = null;
         this.postulados = null;
         this.calificaciones = null;
+        this.estadisticas = null;
         calificacionGeneral = 0.0f;
     }
 
@@ -98,6 +102,7 @@ public class ModelUsuario {
         this.completados = null;
         this.postulados = null;
         this.calificaciones = null;
+        this.estadisticas = null;
         calificacionGeneral = 0.0f;
     }
 
@@ -125,9 +130,17 @@ public class ModelUsuario {
         this.completados = null;
         this.postulados = null;
         this.calificaciones = null;
+        this.estadisticas = null;
         calificacionGeneral = 0.0f;
     }
 
+
+    public void agregarEstadistica(ModelEstadistica estadistica) {
+        if (estadisticas == null) {
+            estadisticas = new ArrayList<>();
+        }
+        estadisticas.add(estadistica);
+    }
 
     public void agregarCalificacion(float calificacion) {
         if (calificaciones == null) {
@@ -182,6 +195,15 @@ public class ModelUsuario {
 
 
     //********Getters
+
+
+    public ArrayList<ModelEstadistica> getEstadisticas() {
+        return estadisticas;
+    }
+
+    public void setEstadisticas(ArrayList<ModelEstadistica> estadisticas) {
+        this.estadisticas = estadisticas;
+    }
 
     public float getCalificacionGeneral() {
         return calificacionGeneral;

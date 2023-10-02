@@ -491,8 +491,8 @@ public class CrearEvento extends AppCompatActivity {
                                 evento.setCupoMaximo(cupoMaximo);
                                 evento.setFechaEncuentro(fechaEncuentro);
                                 evento.setHoraEncuentro(horaEncuentro);
-                                evento.setFechaEncuentro(fechaFinalizacion);
-                                evento.setHoraEncuentro(horaFinalizacion);
+                                evento.setFechaFinalizacion(fechaFinalizacion);
+                                evento.setHoraFinalizacion(horaFinalizacion);
                                 evento.setActivarDesactivar(activadoDesactivado);
                                 evento.setUserId(userId);
                                 evento.setUserName(userName);

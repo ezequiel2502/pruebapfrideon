@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class EstadisticasAdapter extends RecyclerView.Adapter<EstadisticasAdapter.ViewHolder>{
@@ -36,6 +38,27 @@ public class EstadisticasAdapter extends RecyclerView.Adapter<EstadisticasAdapte
 
         //Cargo el item_estadistica_evento
 
+        ModelEstadistica estadistica=list.get(position);
+
+        //***Cargamos el item-estadistica
+
+
+        // Cargar la imagen usando Glide
+        Glide.with(context)
+                .load(estadistica.getImageUrl()) //  para obtener la URL de la imagen
+                .into(holder.imvEvento);
+        //cargamos el resto de controles
+        holder.tv_tituloEvento.setText(estadistica.getNombreEvento());
+        holder.tv_UserNameOrganizador.setText(estadistica.getOrganizadorUsername());
+        holder.tv_Ruta.setText("Ruta");//revisar esto
+        holder.tv_Tiempo.setText(estadistica.getTiempo());
+        holder.tv_Distancia.setText(estadistica.getDistanciaRecorrida());
+        holder.tv_Velocidad.setText(estadistica.getVelocidadPromEvento());
+
+
+
+
+
 
     }
 
@@ -50,7 +73,7 @@ public class EstadisticasAdapter extends RecyclerView.Adapter<EstadisticasAdapte
         TextView tv_Tiempo,tv_Distancia,tv_Velocidad;
 
         ImageView imvEvento;
-        RatingBar rb_calificacionEvento;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -64,7 +87,6 @@ public class EstadisticasAdapter extends RecyclerView.Adapter<EstadisticasAdapte
             tv_Tiempo=itemView.findViewById(R.id.tv_Tiempo);
             tv_Distancia=itemView.findViewById(R.id.tv_Distancia);
             tv_Velocidad=itemView.findViewById(R.id.tv_Velocidad);
-            rb_calificacionEvento=itemView.findViewById(R.id.rb_calificacionEvento);
             imvEvento=itemView.findViewById(R.id.imvEvento);
 
 

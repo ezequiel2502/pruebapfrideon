@@ -342,6 +342,17 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        //Lleva a la actividad que lista las estadisticas
+        analytics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, ListaEstadisticas.class);
+                startActivity(intent);
+            }
+        });
+
+
+
         /*btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
