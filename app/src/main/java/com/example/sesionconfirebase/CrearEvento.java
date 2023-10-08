@@ -207,7 +207,7 @@ public class CrearEvento extends AppCompatActivity {
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(CrearEvento.this));
 
-                database.getReference().child("PublicRoute").addListenerForSingleValueEvent(new ValueEventListener() {
+                database.getReference().child("Route").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot dataSnapshot: snapshot.getChildren()) {

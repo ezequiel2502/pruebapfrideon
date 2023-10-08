@@ -105,7 +105,7 @@ public class Rutas extends AppCompatActivity {
                                 }
                             });
                         }
-                    }, 2000);
+                    }, 4000);
                 }
             });
         }
@@ -129,6 +129,7 @@ public class Rutas extends AppCompatActivity {
     {
         firebaseStorage.getReference().child("Usuarios").child(userId).child("routes").child(databaseID).delete();
         database.getReference().child("Route").child(databaseID).removeValue();
+        adapter.getCurrentList().remove(position);
         adapter.notifyItemRemoved(position);
     }
 

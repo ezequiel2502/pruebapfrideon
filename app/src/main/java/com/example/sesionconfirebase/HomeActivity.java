@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.gps_test.BuscarEventosMapaActivity;
 import com.example.gps_test.PlanificarRuta;
+import com.example.gps_test.VerEventosMapaActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -92,7 +93,7 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.btn_perfil) {
-                Intent intent = new Intent(getApplicationContext(), PlanificarRuta.class);
+                Intent intent = new Intent(getApplicationContext(), VerEventosMapaActivity.class);
                 intent.putExtra("Close_On_Enter", "False");
                 intent.putExtra("User_ID", currentUser.getUid());
                 startActivity(intent);

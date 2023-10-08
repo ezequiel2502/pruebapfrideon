@@ -334,16 +334,21 @@ public class PlanificarRuta extends AppCompatActivity {
                                         Arrays.asList(summaryAdapter.getCurrentList()), currentApiDrawRoad);
 
                                 String baseID = String.valueOf(current_Route_Points.hashCode() + java.util.Calendar.getInstance().getTime().hashCode());
+                                while (baseID.equals("Infinity") || baseID.equals("Inf") || baseID.equals("-Infinity") || baseID.equals("-Inf") || baseID.equals("NaN"))
+                                {
+                                    baseID = String.valueOf(current_Route_Points.hashCode() + java.util.Calendar.getInstance().getTime().hashCode());
+                                }
                                 refRoutes.child(baseID).setValue(ruta);
                                 refPublicRoutes.child(baseID).setValue(ruta);
 
                                 mapFragment.getScaleView().setVisible(false);
                                 mapFragment.getZoomControlsView().setVisible(false);
+                                String finalBaseID = baseID;
                                 Instacapture.INSTANCE.capture(PlanificarRuta.this, new SimpleScreenCapturingListener() {
                                     @Override
                                     public void onCaptureComplete(Bitmap bitmap) {
                                         ImageUploader uploadMapScreenShot = new ImageUploader();
-                                        uploadMapScreenShot.cargar_bytes(id, bitmap,baseID);
+                                        uploadMapScreenShot.cargar_bytes(id, bitmap, finalBaseID);
                                         mapFragment.getScaleView().setVisible(true);
                                         mapFragment.getZoomControlsView().setVisible(true);
                                     }

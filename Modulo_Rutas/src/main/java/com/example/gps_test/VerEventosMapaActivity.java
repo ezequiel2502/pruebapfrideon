@@ -1,17 +1,16 @@
 package com.example.gps_test;
 
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Intent;
-import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
-import android.location.LocationManager;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Chronometer;
 import android.widget.EditText;
@@ -31,18 +29,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.gps_test.ui.ActivityBuscarEventosRecycler.EventosCercanosAdapter;
 import com.example.gps_test.ui.ActivityBuscarEventosRecycler.ModelEvento;
 import com.example.gps_test.ui.map.Curvaturas;
+import com.example.gps_test.ui.map.CustomBalloonViewAdapter;
+import com.example.gps_test.ui.map.ListMapEventsRoutes;
 import com.example.gps_test.ui.map.Location_Variables;
 import com.example.gps_test.ui.map.Marker_Variables;
 import com.example.gps_test.ui.map.Routing_Variables;
@@ -65,6 +67,7 @@ import com.tomtom.sdk.location.OnLocationUpdateListener;
 import com.tomtom.sdk.location.android.AndroidLocationProvider;
 import com.tomtom.sdk.location.android.AndroidLocationProviderConfig;
 import com.tomtom.sdk.map.display.TomTomMap;
+import com.tomtom.sdk.map.display.image.ImageFactory;
 import com.tomtom.sdk.map.display.marker.Marker;
 import com.tomtom.sdk.map.display.marker.MarkerClickListener;
 import com.tomtom.sdk.map.display.ui.MapFragment;
@@ -81,7 +84,6 @@ import com.tomtom.sdk.search.ui.model.PlaceDetails;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -92,7 +94,7 @@ import java.util.TimeZone;
 import kotlin.Triple;
 
 
-public class BuscarEventosMapaActivity extends AppCompatActivity {
+public class VerEventosMapaActivity extends AppCompatActivity {
 
     private MapView mapView;
     private static TomTomMap tomtomMap;
@@ -151,6 +153,9 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
     DatabaseReference refRoutes = database.getReference().child("Route");
     DatabaseReference refPublicRoutes = database.getReference().child("PublicRoute");
     DatabaseReference refPublicEvents = database.getReference().child("Eventos").child("Eventos Publicos");
+    List<ListMapEventsRoutes> rutasMostrar = new ArrayList<>();
+    MapFragment mapFragment = null;
+    CustomBalloonViewAdapter markers = null;
 
 
 
@@ -163,23 +168,24 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
 
         setContentView(R.layout.buscar_eventos_mapa);
         ComenzarEvento = findViewById(R.id.startEventParticipation);
+        ComenzarEvento.setVisibility(View.INVISIBLE);
 
-        MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(com.example.gps_test.R.id.map_fragment);
-
+        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(mapReady);
 
+
         Chronometer cronometro = findViewById(R.id.idCMmeter);
-        //cronometro.setVisibility(View.INVISIBLE);
+        cronometro.setVisibility(View.INVISIBLE);
         df = new DecimalFormat("#.##");
-        instructionsViewer =  findViewById(com.example.gps_test.R.id.imageViewIndications);
+        instructionsViewer =  findViewById(R.id.imageViewIndications);
         instructionsViewerExtraText =  findViewById(R.id.textViewIndicationsExtra);
         instructionsViewerDistance = findViewById(R.id.textViewIndicationsDistance);
         Intent intent = getIntent();
-        instructions = (List<Curvaturas>) intent.getSerializableExtra("List_Navigation");
+
         Intent intent1 = getIntent();
-        List<TupleDouble> listaPuntos = (List<TupleDouble>) intent1.getSerializableExtra("List_Of_Points");
+
         TerminarEvento = findViewById(R.id.finishEventParticipation);
-        meta = listaPuntos.get(listaPuntos.size()-1);
+        TerminarEvento.setVisibility(View.INVISIBLE);
         backgroundCard = findViewById(R.id.backgroundCard);
 
         FloatingActionButton findEvents = findViewById(R.id.findCloseEvents);
@@ -213,7 +219,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
 
 
 
-        Dialog dialog = new Dialog(BuscarEventosMapaActivity.this);
+        Dialog dialog = new Dialog(VerEventosMapaActivity.this);
 
         TerminarEvento.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,18 +240,19 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
         });
 
         FloatingActionButton OpenBottomSheet = findViewById(R.id.openRouteSummary);
+        OpenBottomSheet.setVisibility(View.INVISIBLE);
         OpenBottomSheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
-                        BuscarEventosMapaActivity.this, com.google.android.material.R.style.Theme_Design_BottomSheetDialog);
-                View bottomSheetView = LayoutInflater.from(BuscarEventosMapaActivity.this)
+                        VerEventosMapaActivity.this, com.google.android.material.R.style.Theme_Design_BottomSheetDialog);
+                View bottomSheetView = LayoutInflater.from(VerEventosMapaActivity.this)
                         .inflate(R.layout.bottom_sheet_layout,
                                 (LinearLayout)findViewById(R.id.modalBottomSheetContainer));
                 route_Instructions = bottomSheetView;
                 RecyclerView recyclerView = (RecyclerView) route_Instructions.findViewById(R.id.routeSummary2);
                 recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(BuscarEventosMapaActivity.this));
+                recyclerView.setLayoutManager(new LinearLayoutManager(VerEventosMapaActivity.this));
                 recyclerView.setAdapter(summaryAdapter);
                 routeSummaryDialog = bottomSheetDialog;
 
@@ -306,19 +313,19 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
     public void showEventsDialog(String expectedDistance)
     {
         List<String> availableEvents = new ArrayList<>();
-        Dialog dialogEvents = new Dialog(BuscarEventosMapaActivity.this);
+        Dialog dialogEvents = new Dialog(VerEventosMapaActivity.this);
         dialogEvents.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialogEvents.setContentView(R.layout.list_events_dialog);
         dialogEvents.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialogEvents.setCancelable(true);
-        dialogEvents.getWindow().getAttributes().windowAnimations = com.example.gps_test.R.style.animation;
+        dialogEvents.getWindow().getAttributes().windowAnimations = R.style.animation;
         RecyclerView recyclerView = (RecyclerView) dialogEvents.findViewById(R.id.eventsList);
         recyclerView.setHasFixedSize(true);
 
         ArrayList<ModelEvento> data = new ArrayList<>();
-        EventosCercanosAdapter adapter=new EventosCercanosAdapter(data, BuscarEventosMapaActivity.this);
+        EventosCercanosAdapter adapter=new EventosCercanosAdapter(data, VerEventosMapaActivity.this);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(BuscarEventosMapaActivity.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(VerEventosMapaActivity.this));
 
 
 
@@ -436,14 +443,81 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
             geoPosition = locationProvider;
             geoPosition.addOnLocationUpdateListener(locationUpdateListener);
 
-            Intent intent = getIntent();
-            List<TupleDouble> points = (List<TupleDouble>)intent.getSerializableExtra("List_Of_Points");
-            if (points != null)
-            {
-                loadRouteOnMap((List<TupleDouble>) intent.getSerializableExtra("List_Of_Points"),
-                        (List<com.example.gps_test.ui.recyclerView.MyListData>) intent.getSerializableExtra("Resume_Data"));
-            }
+            refPublicEvents.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                    for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                        ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
+
+                        try {
+                            double d = Double.parseDouble(evento.getRuta());
+                            refRoutes.child(evento.getRuta()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    Ruta ruta_actual = snapshot.getValue(Ruta.class);
+                                    Bitmap preview = null;
+                                    Glide.with(VerEventosMapaActivity.this)
+                                            .asBitmap()
+                                            .fitCenter()
+                                            .load(evento.getImagenEvento()) // ModelEvento tiene un método para obtener la URL de la imagen
+                                            .into(new CustomTarget<Bitmap>(200, 200) {
+                                                @Override
+                                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                                    evento.getImagenEvento();
+                                                    for (ListMapEventsRoutes current: rutasMostrar)
+                                                    {
+                                                        if(evento.getImagenEvento().equals(current.getEvento().getImagenEvento()))
+                                                        {
+                                                            current.setImagenEvento(resource);
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                                }
+                                            });
+                                    Marker_Variables m = new Marker_Variables();
+                                    TupleDouble parser = new TupleDouble();
+                                    Marker marker = tomtomMap.addMarker(m.setMarkerOptions(parser.tupleToGeopoint(ruta_actual.routePoints.get(0)), ImageFactory.INSTANCE.fromResource(R.drawable.baseline_location_on_24), "Event Marker"));
+                                    rutasMostrar.add(new ListMapEventsRoutes(marker.a, evento, ruta_actual, null));
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        } catch (NumberFormatException nfe) {
+
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            tomtomMap.addMarkerClickListener(new MarkerClickListener() {
+                @Override
+                public void onMarkerClicked(@NonNull Marker marker) {
+                    if(marker.isSelected())
+                    {
+                        marker.deselect();
+                    }
+                    else
+                    {
+                        marker.select();
+                    }
+                }
+            });
+            markers = new CustomBalloonViewAdapter(VerEventosMapaActivity.this, rutasMostrar);
+            mapFragment.setMarkerBalloonViewAdapter(markers);
         }
     };
 
@@ -458,7 +532,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    public void loadRouteOnMap(List<TupleDouble> points, List<com.example.gps_test.ui.recyclerView.MyListData> resume) {
+    public void loadRouteOnMap(List<TupleDouble> points, List<MyListData> resume) {
         Routing_Variables helper = new Routing_Variables();
         RoutePlanner routePlanner = OnlineRoutePlanner.create(getApplicationContext(), BuildConfig.CREDENTIALS_KEY, null);
         List<GeoPoint> geometry = listPairTolistGeo(points);
@@ -499,184 +573,14 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
         public void onLocationUpdate(GeoLocation geoLocation) {
             CurrentPosition = geoLocation.getPosition();
             Search_Variables searchVar = new Search_Variables();
-            if (app_Start == true) {
+            if (app_Start = true) {
                 tomtomMap.moveCamera(searchVar.setCamera(geoPosition.getLastKnownLocation().getPosition(), 15, 0, 0));
-                //searcher = searchBar(geoPosition.getLastKnownLocation().getPosition());
+                searcher = searchBar(geoPosition.getLastKnownLocation().getPosition());
                 //searcher.getView().bringToFront();
                 //Esto que parece no tener sentido es para que no se abrá solo el teclado en pantalla cuando carga la aplicación, porque tenemos el buscador que hace un trigger automático al inicio
                 //InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
-                //imm.hideSoftInputFromWindow(findViewById(com.example.gps_test.R.id.search_fragment_container).getWindowToken(), 0);
-                enableStartButton(ComenzarEvento); //Lo pongo acá porque en el onCreate todavía no conocemos la posición del gps y da error por nulo.
+                //imm.hideSoftInputFromWindow(findViewById(R.id.search_fragment_container).getWindowToken(), 0);
                 app_Start = false;
-            }
-            if(navStart == true){
-
-                int currentIndex = 0;
-                int currentSegment = 0;
-                TupleDouble currentClosePosition = null;
-                Double closestDistanceToGps = 9999999999999.0;
-                for (Curvaturas segment: instructions)
-                {
-
-                    /*for (TupleDouble pair: segment.getSegmentPoints())
-                    {
-                        if (closestDistanceToGps == 9999999999999.0)
-                        {
-                            closestDistanceToGps = distance(CurrentPosition.getLatitude(), pair.getLatitude(), CurrentPosition.getLongitude(), pair.getLongitude());
-                            currentSegment =  currentIndex;
-                            currentClosePosition = pair;
-                        }
-                        else
-                        {
-                            Double compareDistance = distance(CurrentPosition.getLatitude(), pair.getLatitude(), CurrentPosition.getLongitude(), pair.getLongitude());
-                            if (closestDistanceToGps > compareDistance)
-                            {
-                                closestDistanceToGps = compareDistance;
-                                currentSegment =  currentIndex;
-                                currentClosePosition = pair;
-                            }
-                        }
-                    }*/
-                    if (closestDistanceToGps == 9999999999999.0)
-                    {
-                        closestDistanceToGps = distance(CurrentPosition.getLatitude(), segment.getSegmentPoints().get(0).getLatitude(), CurrentPosition.getLongitude(), segment.getSegmentPoints().get(0).getLongitude());
-                        currentSegment =  currentIndex;
-                        currentClosePosition = segment.getSegmentPoints().get(0);
-                    }
-                    /*else
-                    {
-                        Double compareDistance = distance(CurrentPosition.getLatitude(), segment.getSegmentPoints().get(0).getLatitude(), CurrentPosition.getLongitude(), segment.getSegmentPoints().get(0).getLongitude());
-                        if (closestDistanceToGps > compareDistance)
-                        {
-                            closestDistanceToGps = compareDistance;
-                            currentSegment =  currentIndex;
-                            currentClosePosition = segment.getSegmentPoints().get(0);
-                        }
-                    }*/
-                    else
-                    {
-                        Double compareDistance = distance(CurrentPosition.getLatitude(), segment.getSegmentPoints().get(0).getLatitude(), CurrentPosition.getLongitude(), segment.getSegmentPoints().get(0).getLongitude());
-                        if (closestDistanceToGps > compareDistance || compareDistance < 20)
-                        {
-                            closestDistanceToGps = compareDistance;
-                            currentSegment =  currentIndex;
-                            currentClosePosition = segment.getSegmentPoints().get(0);
-                        }
-                    }
-                    currentIndex ++;
-                }
-
-                if (distanciaRecorrida == 0 && distance(CurrentPosition.getLatitude(), instructions.get(0).getSegmentPoints().get(0).getLatitude(), CurrentPosition.getLongitude(), instructions.get(0).getSegmentPoints().get(0).getLongitude()) < 10)
-                {
-                    distanciaRecorrida = 1;
-                    instructionsViewerDistance.setText(String.valueOf(distanciaRecorrida)+"m");
-                }
-                if (distanciaRecorrida > 0)
-                {
-                    distanciaRecorrida = distanciaRecorrida + distance(previousImmediatePosition.getLatitude(),CurrentPosition.getLatitude(),previousImmediatePosition.getLongitude(),CurrentPosition.getLongitude());
-                    instructionsViewerDistance.setText(df.format(distanciaRecorrida)+"m");
-                }
-                previousImmediatePosition = CurrentPosition;
-
-                if (instructions.get(currentSegment).getTurnDirection() == 1.0) {
-                    if (instructions.get(currentSegment).getCurvatureAngle() < 50) {
-                        //Glide.with(BuscarEventosMapaActivity.this).load(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_left_24)).into(instructionsViewer);
-
-                        if (instructionsViewer.getDrawable() != null) {
-                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_left_24)});
-                            instructionsViewer.setImageDrawable(a);
-                            a.setCrossFadeEnabled(true);
-                            a.startTransition(1000);
-                        }
-                        else {
-                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_left_24));
-                        }
-                        backgroundCard.setCardBackgroundColor(Color.parseColor("#fc9403"));
-                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
-                    }
-                    else if (instructions.get(currentSegment).getCurvatureAngle() < 110) {
-                        if (instructionsViewer.getDrawable() != null) {
-                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_left_black_24)});
-                            instructionsViewer.setImageDrawable(a);
-                            a.setCrossFadeEnabled(true);
-                            a.startTransition(1000);
-                        }
-                        else {
-                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_left_black_24));
-                        }
-                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
-                        backgroundCard.setCardBackgroundColor(Color.parseColor("#fce303"));
-                    } else {
-                        if (instructionsViewer.getDrawable() != null) {
-                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_left_black_24)});
-                            instructionsViewer.setImageDrawable(a);
-                            a.setCrossFadeEnabled(true);
-                            a.startTransition(1000);
-                        }
-                        else {
-                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_left_black_24));
-                        }
-                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
-                        backgroundCard.setCardBackgroundColor(Color.parseColor("#7bfc03"));
-                    }
-                } else if (instructions.get(currentSegment).getTurnDirection() == 2.0) {
-                    if (instructions.get(currentSegment).getCurvatureAngle() < 50) {
-                        if (instructionsViewer.getDrawable() != null) {
-                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_right_24)});
-                            instructionsViewer.setImageDrawable(a);
-                            a.setCrossFadeEnabled(true);
-                            a.startTransition(1000);
-                        }
-                        else {
-                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_closed_right_24));
-                        }
-                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
-                        backgroundCard.setCardBackgroundColor(Color.parseColor("#fc9403"));
-                    }
-                    else if (instructions.get(currentSegment).getCurvatureAngle() < 110) {
-                        if (instructionsViewer.getDrawable() != null) {
-                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_right_black_24)});
-                            instructionsViewer.setImageDrawable(a);
-                            a.setCrossFadeEnabled(true);
-                            a.startTransition(1000);
-                        }
-                        else {
-                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_right_black_24));
-                        }
-                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
-                        backgroundCard.setCardBackgroundColor(Color.parseColor("#fce303"));
-                    } else {
-                        if (instructionsViewer.getDrawable() != null) {
-                            TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_right_black_24)});
-                            instructionsViewer.setImageDrawable(a);
-                            a.setCrossFadeEnabled(true);
-                            a.startTransition(1000);
-                        }
-                        else {
-                            instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_turn_slight_right_black_24));
-                        }
-                        instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureAngle())+"°");
-                        backgroundCard.setCardBackgroundColor(Color.parseColor("#7bfc03"));
-                    }
-                } else {
-                    if (instructionsViewer.getDrawable() != null) {
-                        TransitionDrawable a = new TransitionDrawable(new Drawable[]{instructionsViewer.getDrawable(), ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_north_black_24)});
-                        instructionsViewer.setImageDrawable(a);
-                        a.setCrossFadeEnabled(true);
-                        a.startTransition(1000);
-                    }
-                    else {
-                        instructionsViewer.setImageDrawable(ContextCompat.getDrawable(BuscarEventosMapaActivity.this, R.drawable.outline_north_black_24));
-                    }
-                    instructionsViewerExtraText.setText(df.format(instructions.get(currentSegment).getCurvatureLength())+"m");
-                    backgroundCard.setCardBackgroundColor(Color.parseColor("#07fc03"));
-                }
-
-
-                if (distance(CurrentPosition.getLatitude(), meta.getLatitude(), CurrentPosition.getLongitude(), meta.getLongitude()) < 30)
-                {
-                    TerminarEvento.performClick();
-                }
             }
         }
     };
@@ -700,9 +604,9 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
         Search_Variables searchVar = new Search_Variables();
         @SuppressLint("UnsafeOptInUsageError") SearchFragment searchFragment = SearchFragment.newInstance(searchVar.setSearchProperties(position, Locale.US, 10));
         searchFragment.setMenuVisibility(false);
-        getSupportFragmentManager().beginTransaction().replace(com.example.gps_test.R.id.search_fragment_container, searchFragment).commitNow();
+        getSupportFragmentManager().beginTransaction().replace(R.id.search_fragment_container, searchFragment).commitNow();
         InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(findViewById(com.example.gps_test.R.id.search_fragment_container).getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(findViewById(R.id.search_fragment_container).getWindowToken(), 0);
         searchFragment.getView().clearFocus();
 
         SearchFragmentListener listener = new SearchFragmentListener() {
@@ -718,7 +622,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 searchFragment.clear();
                 //Esto que parece no tener sentido es para que no se abrá solo el teclado en pantalla cuando carga la aplicación, porque tenemos el buscador que hace un trigger automático al inicio
                 InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(findViewById(com.example.gps_test.R.id.search_fragment_container).getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(findViewById(R.id.search_fragment_container).getWindowToken(), 0);
             }
 
             @Override
@@ -740,7 +644,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
 
             }
         };
-        Search searchApi = OnlineSearch.create(getApplicationContext(), com.example.gps_test.BuildConfig.CREDENTIALS_KEY, null, null);
+        Search searchApi = OnlineSearch.create(getApplicationContext(), BuildConfig.CREDENTIALS_KEY, null, null);
         searchFragment.setSearchApi(searchApi);
         searchFragment.setFragmentListener(listener);
         return searchFragment;
