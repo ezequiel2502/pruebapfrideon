@@ -34,9 +34,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class Fcm extends FirebaseMessagingService {
-
     private static final String CHANNEL_ID = "Nuevo";
-
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -49,7 +47,7 @@ public class Fcm extends FirebaseMessagingService {
         String nombreEvento = remoteMessage.getData().get("nombreEvento");
         String tokenCreador = remoteMessage.getData().get("tokenCreador");
         String tokenPostulante = remoteMessage.getData().get("tokenPostulante");
-        NotificationCounter notificacion;
+
         if ("creador_evento".equals(tipoNotificacion)) {
 
             // Crear una acción para el primer botón
@@ -85,8 +83,7 @@ public class Fcm extends FirebaseMessagingService {
                     .addAction(action1)
                     .addAction(action2);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificacion = new NotificationCounter();
-            notificacion.registrarNotificacion(titulo,detalle,tipoNotificacion,idEvento,postulanteId,nombreEvento,tokenCreador,tokenPostulante);
+
             if (notificationManager != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
@@ -125,8 +122,6 @@ public class Fcm extends FirebaseMessagingService {
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
             }
-            notificacion = new NotificationCounter();
-            notificacion.registrarNotificacion(titulo,detalle,tipoNotificacion,idEvento,postulanteId,nombreEvento,tokenCreador,tokenPostulante);
         } else if ("cupo-maximo".equals(tipoNotificacion)) {
             // Notificación para el creador de evento si se alcanza cupo maximo
             Intent intent = new Intent(this, ListaEventosPublicosVigentes.class);
@@ -150,10 +145,7 @@ public class Fcm extends FirebaseMessagingService {
                 int uniqueNotificationId = random.nextInt(10000);
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
-
             }
-            notificacion = new NotificationCounter();
-            notificacion.registrarNotificacion(titulo,detalle,tipoNotificacion,idEvento,postulanteId,nombreEvento,tokenCreador,tokenPostulante);
         }
     }
 }

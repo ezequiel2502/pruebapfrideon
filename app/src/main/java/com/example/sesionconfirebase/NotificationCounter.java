@@ -17,7 +17,7 @@ public class NotificationCounter {
 
     // Método para registrar una notificación para un usuario
 
-    public boolean registrarNotificacion(String titulo, String detalle,String tipoNotificacion,String idEvento,String postulanteId,String nombreEvento,String tokenCreador,String tokenPostulante)
+    public boolean registrarNotificacionCreadorEvento(String titulo, String detalle,String tipoNotificacion,String idEvento,String idOrganizador,String postulanteId,String nombreEvento)
     {
       FirebaseDatabase database;
       FirebaseStorage firebaseStorage;
@@ -31,8 +31,110 @@ public class NotificationCounter {
         notificacion.setIdEvento(idEvento);
         notificacion.setPostulanteId(postulanteId);
         notificacion.setNombreEvento(nombreEvento);
-        notificacion.setTokenCreador(tokenCreador);
-        notificacion.setTokenPostulante(tokenPostulante);
+        notificacion.setIdOrganizador(idOrganizador);
+        DatabaseReference notificacionRef = database.getReference().child("Notificaciones");
+
+        DatabaseReference nuevonotificacionRef = notificacionRef.push();
+        String nuevoNotificacionId = nuevonotificacionRef.getKey();
+        notificacion.setIdNotificacion(nuevoNotificacionId);
+        nuevonotificacionRef.setValue(notificacion).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // La inserción fue exitosa
+                ban[0] = true;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // La inserción falló
+                ban[0] = false;
+            }
+        });
+        return ban[0];
+    }
+    public boolean registrarNotificacionCupoMaximoAlcanzado(String titulo, String detalle,String tipoNotificacion,String idEvento,String idOrganizador,String nombreEvento)
+    {
+        FirebaseDatabase database;
+        FirebaseStorage firebaseStorage;
+        final Boolean[] ban = {false};
+        database=FirebaseDatabase.getInstance();
+        firebaseStorage=FirebaseStorage.getInstance();
+        ModelNotificacion notificacion = new ModelNotificacion();
+        notificacion.setDetalle(detalle);
+        notificacion.setTipoNotificacion(tipoNotificacion);
+        notificacion.setTitulo(titulo);
+        notificacion.setIdEvento(idEvento);
+        notificacion.setNombreEvento(nombreEvento);
+        notificacion.setIdOrganizador(idOrganizador);
+        DatabaseReference notificacionRef = database.getReference().child("Notificaciones");
+
+        DatabaseReference nuevonotificacionRef = notificacionRef.push();
+        String nuevoNotificacionId = nuevonotificacionRef.getKey();
+        notificacion.setIdNotificacion(nuevoNotificacionId);
+        nuevonotificacionRef.setValue(notificacion).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // La inserción fue exitosa
+                ban[0] = true;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // La inserción falló
+                ban[0] = false;
+            }
+        });
+        return ban[0];
+    }
+    public boolean registrarNotificacionPostulanteEvento(String titulo, String detalle,String tipoNotificacion,String idEvento,String idPostulante,String nombreEvento)
+    {
+        FirebaseDatabase database;
+        FirebaseStorage firebaseStorage;
+        final Boolean[] ban = {false};
+        database=FirebaseDatabase.getInstance();
+        firebaseStorage=FirebaseStorage.getInstance();
+        ModelNotificacion notificacion = new ModelNotificacion();
+        notificacion.setDetalle(detalle);
+        notificacion.setTipoNotificacion(tipoNotificacion);
+        notificacion.setTitulo(titulo);
+        notificacion.setIdEvento(idEvento);
+        notificacion.setNombreEvento(nombreEvento);
+        notificacion.setPostulanteId(idPostulante);
+        DatabaseReference notificacionRef = database.getReference().child("Notificaciones");
+
+        DatabaseReference nuevonotificacionRef = notificacionRef.push();
+        String nuevoNotificacionId = nuevonotificacionRef.getKey();
+        notificacion.setIdNotificacion(nuevoNotificacionId);
+        nuevonotificacionRef.setValue(notificacion).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // La inserción fue exitosa
+                ban[0] = true;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // La inserción falló
+                ban[0] = false;
+            }
+        });
+        return ban[0];
+    }
+
+    public boolean registrarNotificacionDenegacionPostulanteEvento(String titulo, String detalle,String tipoNotificacion,String idEvento,String idPostulante,String nombreEvento)
+    {
+        FirebaseDatabase database;
+        FirebaseStorage firebaseStorage;
+        final Boolean[] ban = {false};
+        database=FirebaseDatabase.getInstance();
+        firebaseStorage=FirebaseStorage.getInstance();
+        ModelNotificacion notificacion = new ModelNotificacion();
+        notificacion.setDetalle(detalle);
+        notificacion.setTipoNotificacion(tipoNotificacion);
+        notificacion.setTitulo(titulo);
+        notificacion.setIdEvento(idEvento);
+        notificacion.setNombreEvento(nombreEvento);
+        notificacion.setPostulanteId(idPostulante);
         DatabaseReference notificacionRef = database.getReference().child("Notificaciones");
 
         DatabaseReference nuevonotificacionRef = notificacionRef.push();
@@ -60,7 +162,7 @@ public class NotificationCounter {
         int cantidadNotificaciones = 0;
         for(int i=0;i< lista.size();i++)
             {
-                if(userId.equals(lista.get(i).getPostulanteId()))
+                if(userId.equals(lista.get(i).getIdOrganizador()) || userId.equals(lista.get(i).getPostulanteId()))
                 {
                 cantidadNotificaciones++;
                 }

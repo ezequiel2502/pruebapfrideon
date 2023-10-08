@@ -2,13 +2,13 @@ package com.example.sesionconfirebase;
 
 public class ModelNotificacion {
 
-    private String titulo,detalle,tipoNotificacion,idEvento,postulanteId,nombreEvento,tokenCreador,tokenPostulante;
+    private String titulo,detalle,tipoNotificacion,idEvento,idOrganizador,postulanteId,nombreEvento;
     private String idNotificacion;
 
     public ModelNotificacion() {
     }
 
-    public ModelNotificacion(String titulo,String detalle,String tipoNotificacion,String idEvento,String postulanteId,String nombreEvento,String tokenCreador,String tokenPostulante
+    public ModelNotificacion(String titulo,String detalle,String tipoNotificacion,String idEvento,String idOrganizador,String postulanteId,String nombreEvento
                      ) {
         this.nombreEvento = nombreEvento;
         this.titulo = detalle;
@@ -16,8 +16,7 @@ public class ModelNotificacion {
         this.idEvento = idEvento;
         this.postulanteId = postulanteId;
         this.nombreEvento = nombreEvento;
-        this.tokenCreador = tokenCreador;
-        this.tokenPostulante = tokenPostulante;
+        this.idOrganizador = idOrganizador;
     }
 
     public String getIdNotificacion() {
@@ -52,15 +51,9 @@ public class ModelNotificacion {
         return nombreEvento;
     }
 
-    public String getTokenCreador() {
-        return tokenCreador;
+    public String getIdOrganizador() {
+        return idOrganizador;
     }
-
-    public String getTokenPostulante() {
-        return tokenPostulante;
-    }
-
-
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
@@ -86,12 +79,7 @@ public class ModelNotificacion {
         this.nombreEvento = nombreEvento;
     }
 
-    public void setTokenCreador(String tokenCreador) {
-        this.tokenCreador = tokenCreador;
+    public void setIdOrganizador(String idOrganizador) {
+        this.idOrganizador = idOrganizador;
     }
-
-    public void setTokenPostulante(String tokenPostulante) {
-        this.tokenPostulante = tokenPostulante;
-    }
-
 }
