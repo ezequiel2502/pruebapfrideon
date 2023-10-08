@@ -52,7 +52,8 @@ public class Utils {
         float velocidad = distancia / tiempoEnHoras;
 
         // Convertimos la velocidad a String
-        return String.format("%.2f", velocidad) + " km/h";
+//        return String.format("%.2f", velocidad) + " km/h";
+            return String.format("%.2f", velocidad);
     }
 
 }

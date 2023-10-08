@@ -92,4 +92,6 @@ public class EstadisticasAdapter extends RecyclerView.Adapter<EstadisticasAdapte
 
         }
     }
+
+
 }

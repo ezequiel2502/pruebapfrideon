@@ -4,6 +4,7 @@ import static com.example.sesionconfirebase.Utils.calcularTiempo;
 import static com.example.sesionconfirebase.Utils.calcularVelocidad;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +35,15 @@ public class ListaEstadisticas extends AppCompatActivity {
 
     String userNameCustom;
 
+    TextView tvTiempoTotal,tvDistanciaTotal,tvVelocidadPromedio;
+
+    //Para totales y promedios
+    int totalTiempo;
+    double totalDistancia;
+    double totalVelocidad;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +52,14 @@ public class ListaEstadisticas extends AppCompatActivity {
         // Tomo los ocntroles de la vista
 
         recyclerViewEstadisticasEventos=findViewById(R.id.recyclerViewEstadisticasEventos);
+        tvTiempoTotal=findViewById(R.id.tvTiempoTotal);
+        tvDistanciaTotal=findViewById(R.id.tvDistanciaTotal);
+        tvVelocidadPromedio=findViewById(R.id.tvVelocidadPromedio);
+
         recycleList = new ArrayList<>();
+
+
+
 
         //Creo la instancia de la base de datos
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -89,6 +106,10 @@ public class ListaEstadisticas extends AppCompatActivity {
         });
 
         //-----Accedo al perfil del usuario participante-------
+
+
+
+
 
 
 
@@ -151,6 +172,9 @@ public class ListaEstadisticas extends AppCompatActivity {
                                                 // Agrega estadistica a tu lista
                                                 recycleList.add(estadistica);
                                                 recyclerAdapter.notifyDataSetChanged();
+
+                                                //Para que se actualicen los promedios y totales de la lista
+                                                calcularTotalesYPromedios();
                                             }
                                         }
 
@@ -178,9 +202,54 @@ public class ListaEstadisticas extends AppCompatActivity {
         });
 
 
-        //*****Observo cambios en Events_data
+
+
 
     }//fin onCReate()
 
 
-}
+    // Método para convertir tiempo en formato "HH:mm"
+    private String convertirSegundosATiempo(int segundos) {
+        int horas = segundos / 3600;
+        int minutos = (segundos % 3600) / 60;
+        return String.format("%02d:%02d", horas, minutos);
+    }
+
+    // Método para calcular totales y promedios
+    private void calcularTotalesYPromedios() {
+
+        int totalTiempo = 0;
+        double totalDistancia = 0;
+        double totalVelocidad = 0;
+
+        // Iterar a través de la lista de estadísticas
+        for (ModelEstadistica estadistica : recycleList) {
+            // Convertir tiempos a segundos
+            totalTiempo += convertirTiempoASegundos(estadistica.getTiempo());
+
+            // Convertir distancia a double
+            totalDistancia += Double.parseDouble(estadistica.getDistanciaRecorrida());
+
+            // Convertir velocidad a double
+            totalVelocidad += Double.parseDouble(estadistica.getVelocidadPromEvento());
+        }
+
+        // Calcular promedio de velocidad
+        double promedioVelocidad = totalVelocidad / recycleList.size();
+
+        // Mostrar los resultados
+        tvTiempoTotal.setText(convertirSegundosATiempo(totalTiempo) + " (H:m)");
+        tvDistanciaTotal.setText(totalDistancia + " mts");
+        tvVelocidadPromedio.setText(promedioVelocidad + " m/s");
+    }
+
+    // Método para convertir tiempo a segundos (formato HH:mm)
+    private int convertirTiempoASegundos(String tiempo) {
+        String[] partes = tiempo.split(":");
+        int horas = Integer.parseInt(partes[0]);
+        int minutos = Integer.parseInt(partes[1]);
+        return horas * 3600 + minutos * 60;
+    }
+
+
+}//fin App
