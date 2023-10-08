@@ -77,9 +77,10 @@ import java.util.TimerTask;
 public class CrearEvento extends AppCompatActivity {
 
     Spinner spnRuta,spnCategoria,spnActivarDesactivar,spnPublicoPrivado;
-    EditText txt_FechaEncuentro,txt_HoraEncuentro,txt_CupoMinimo,txt_CupoMaximo,txt_Descripcion,txt_NombreEvento;
+    EditText txt_FechaEncuentro,txt_HoraEncuentro,txt_CupoMinimo,
+            txt_CupoMaximo,txt_Descripcion,txt_NombreEvento,txt_FechaFinalizacion,txt_HoraFinalizacion;
     ImageView imvEvento;
-    Button btn_FechaEncuentro,btn_CrearEvento,btn_HoraEncuentro;
+    Button btn_FechaEncuentro,btn_CrearEvento,btn_HoraEncuentro,btn_FechaFinalizacion,btn_HoraFinalizacion;
 
 
 
@@ -146,14 +147,21 @@ public class CrearEvento extends AppCompatActivity {
         btn_FechaEncuentro=findViewById(R.id.btn_FechaEncuentro);
         btn_HoraEncuentro=findViewById(R.id.btn_HoraEncuentro);
         btn_CrearEvento=findViewById(R.id.btn_CrearEvento);
+        btn_FechaFinalizacion=findViewById(R.id.btn_FechaFinalizacion);
+        btn_HoraFinalizacion=findViewById(R.id.btn_HoraFinalizacion);
+
+
 
         txt_FechaEncuentro=findViewById(R.id.txt_FechaEncuentro);
         txt_HoraEncuentro=findViewById(R.id.txt_HoraEncuentro);
+        txt_FechaFinalizacion=findViewById(R.id.txt_FechaFinalizacion);
+        txt_HoraFinalizacion=findViewById(R.id.txt_HoraFinalizacion);
 
         txt_CupoMinimo=findViewById(R.id.editTextCupoMinimo);
         txt_CupoMaximo=findViewById(R.id.editTextCupoMaximo);
         txt_Descripcion=findViewById(R.id.editTextDescripcion);
         txt_NombreEvento=findViewById(R.id.txt_NombreEvento);
+
 
 
 
@@ -327,7 +335,7 @@ public class CrearEvento extends AppCompatActivity {
         //********************************spnPublicoPrivado
 
 
-        //DatePicker
+        //DatePicker Fecha y Hora de ***Encuentro***
         btn_FechaEncuentro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -372,6 +380,52 @@ public class CrearEvento extends AppCompatActivity {
 
 
 
+
+        //DatePicker Fecha y Hora de ***Finalizacion***
+        btn_FechaFinalizacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final Calendar c = Calendar.getInstance();
+                dia = c.get(Calendar.DAY_OF_MONTH);
+                mes = c.get(Calendar.MONTH);
+                ano = c.get(Calendar.YEAR);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(CrearEvento.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayofMonth) {
+                        txt_FechaFinalizacion.setText(dayofMonth+"/"+(monthOfYear+1)+"/"+year);
+                    }
+                }, ano, mes, dia); // Pasar los valores de año, mes y día para mostrar la fecha actual al abrir el diálogo
+                datePickerDialog.show();
+            }
+        });
+
+        //TimePicker
+        btn_HoraFinalizacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final Calendar c = Calendar.getInstance();
+                hora = c.get(Calendar.HOUR_OF_DAY);
+                minutos = c.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(CrearEvento.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+
+                        // Por ejemplo, actualizar un TextView con la hora seleccionada
+                        txt_HoraFinalizacion.setText(String.format("%02d:%02d", hourOfDay, minute));
+                    }
+                }, hora, minutos, true); // true indica que el cuadro de diálogo muestra el formato de 24 horas
+
+                timePickerDialog.show(); // Mostrar el cuadro de diálogo
+            }
+        });
+
+
+
+
         //Para elegir la imagen
         imvEvento.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -401,8 +455,13 @@ public class CrearEvento extends AppCompatActivity {
                 String cupoMinimo = txt_CupoMinimo.getText().toString();
                 String cupoMaximo = txt_CupoMaximo.getText().toString();
                 String descripcion = txt_Descripcion.getText().toString();
+
                 String fechaEncuentro = txt_FechaEncuentro.getText().toString();
                 String horaEncuentro = txt_HoraEncuentro.getText().toString();
+
+                String fechaFinalizacion = txt_FechaFinalizacion.getText().toString();
+                String horaFinalizacion = txt_HoraFinalizacion.getText().toString();
+
                 String nombreEvento = txt_NombreEvento.getText().toString();
                 Boolean activadoDesactivado = activar_desactivar;
 
@@ -432,10 +491,12 @@ public class CrearEvento extends AppCompatActivity {
                                 evento.setCupoMaximo(cupoMaximo);
                                 evento.setFechaEncuentro(fechaEncuentro);
                                 evento.setHoraEncuentro(horaEncuentro);
+                                evento.setFechaFinalizacion(fechaFinalizacion);
+                                evento.setHoraFinalizacion(horaFinalizacion);
                                 evento.setActivarDesactivar(activadoDesactivado);
                                 evento.setUserId(userId);
                                 evento.setUserName(userName);
-                                evento.setRating(0);
+                                evento.setCalificacionGeneral(0.0f);
                                 evento.setPublicoPrivado(esPublico);
                                 evento.setActivadoDescativado(esActivo);
                                 evento.setTokenFCM(tokenFCM);

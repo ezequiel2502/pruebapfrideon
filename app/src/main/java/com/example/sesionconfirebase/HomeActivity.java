@@ -44,6 +44,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.List;
+
 public class HomeActivity extends AppCompatActivity {
 
     Button mButtonCerrarSesion;
@@ -133,9 +135,12 @@ public class HomeActivity extends AppCompatActivity {
         tv_UserId = findViewById(R.id.tv_UserId);
         tv_user_name = findViewById(R.id.tv_user_name);
         tv_user_email = findViewById(R.id.tv_user_email);
+        tv_completados = findViewById(R.id.tv_completados);
+        rating_bar=findViewById(R.id.rating_bar);
         cardView_detalles = findViewById(R.id.cardView_detalles);
         cardView_cerrarSesion = findViewById(R.id.cardView_cerrarSesion);
         cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
+        analytics=findViewById(R.id.analytics);
 
 
 
@@ -158,6 +163,14 @@ public class HomeActivity extends AppCompatActivity {
                         tv_UserId.setText(usuario.getUserId());
                         tv_user_name.setText(usuario.getUserNameCustom());
                         tv_user_email.setText(usuario.getEmail());
+                        rating_bar.setRating(usuario.getCalificacionGeneral());
+
+                        List<String> completados = usuario.getCompletados();
+                        if (completados != null) {
+                            tv_completados.setText("Completados: " + completados.size());
+                        } else {
+                            tv_completados.setText("Completados: 0");
+                        }
 
                         String imagenPerfil = usuario.getImagenPerfil();
 
@@ -184,6 +197,15 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 //***********************************************************************************************************************
+
+
+        tv_completados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(HomeActivity.this,ListaEventoCompletados.class);
+                startActivity(intent);
+            }
+        });
 
         //Configurar las gso para google signIn con el fin de luego desloguear de google
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -352,10 +374,21 @@ public class HomeActivity extends AppCompatActivity {
         cardView_detalles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, MainActivity2.class);
+                Intent intent = new Intent(HomeActivity.this, DetallesActivity.class);
                 startActivity(intent);
             }
         });
+
+        //Lleva a la actividad que lista las estadisticas
+        analytics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, ListaEstadisticas.class);
+                startActivity(intent);
+            }
+        });
+
+
 
         /*btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -144,7 +144,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         String singleUserId=getIntent().getStringExtra("singleUserId");
         String singleActivarDesactivar=getIntent().getStringExtra("singleActivarDesactivar");
         String singlePublicoPrivado=getIntent().getStringExtra("singlePublicoPrivado");
-        Integer singleRating=getIntent().getIntExtra("singleRating",0);
+        Float singleRating=  getIntent().getFloatExtra("singleRating",0);
         String singleIdEvento=getIntent().getStringExtra("EventoId");
         String singleTokenFCM=getIntent().getStringExtra("TokenFCM");//del creador del evento
 

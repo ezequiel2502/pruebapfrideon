@@ -1,8 +1,12 @@
 package com.example.sesionconfirebase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ModelEvento {
 
-private String nombreEvento,Ruta,descripcion,fechaEncuentro,horaEncuentro,cupoMinimo,cupoMaximo,categoria;
+private String nombreEvento,Ruta,descripcion,fechaEncuentro,
+        horaEncuentro,cupoMinimo,cupoMaximo,categoria,fechaFinalizacion,horaFinalizacion;
 private String imagenEvento;
 
 private boolean activarDesactivar;
@@ -16,17 +20,23 @@ private  String activadoDescativado;
 private String idEvento;
 
 private String tokenFCM;
-private int rating;
+private ArrayList<ModelCalificacion> calificaciones;
+
+private float calificacionGeneral;
+
+
 
     public ModelEvento() {
     }
 
+
     public ModelEvento(String nombreEvento, String ruta, String descripcion,
                        String fechaEncuentro, String horaEncuentro, String cupoMinimo,
-                       String cupoMaximo, String categoria, String imagenEvento,
+                       String cupoMaximo, String categoria, String fechaFinalizacion,
+                       String horaFinalizacion, String imagenEvento,
                        boolean activarDesactivar, String userId, String userName,
                        String publicoPrivado, String activadoDescativado, String idEvento,
-                       String tokenFCM, int rating) {
+                       String tokenFCM) {
         this.nombreEvento = nombreEvento;
         Ruta = ruta;
         this.descripcion = descripcion;
@@ -35,6 +45,8 @@ private int rating;
         this.cupoMinimo = cupoMinimo;
         this.cupoMaximo = cupoMaximo;
         this.categoria = categoria;
+        this.fechaFinalizacion = fechaFinalizacion;
+        this.horaFinalizacion = horaFinalizacion;
         this.imagenEvento = imagenEvento;
         this.activarDesactivar = activarDesactivar;
         this.userId = userId;
@@ -43,7 +55,100 @@ private int rating;
         this.activadoDescativado = activadoDescativado;
         this.idEvento = idEvento;
         this.tokenFCM = tokenFCM;
-        this.rating = rating;
+        this.calificaciones = null;
+        calificacionGeneral = 0.0f;
+    }
+
+    public ModelEvento(String nombreEvento, String ruta, String descripcion,
+                       String fechaEncuentro, String horaEncuentro, String cupoMinimo,
+                       String cupoMaximo, String categoria, String fechaFinalizacion,
+                       String horaFinalizacion, String imagenEvento,
+                       boolean activarDesactivar, String userId, String userName,
+                       String publicoPrivado, String activadoDescativado, String idEvento,
+                       String tokenFCM, ArrayList<ModelCalificacion>calificaciones,Float calificacionGeneral) {
+        this.nombreEvento = nombreEvento;
+        Ruta = ruta;
+        this.descripcion = descripcion;
+        this.fechaEncuentro = fechaEncuentro;
+        this.horaEncuentro = horaEncuentro;
+        this.cupoMinimo = cupoMinimo;
+        this.cupoMaximo = cupoMaximo;
+        this.categoria = categoria;
+        this.fechaFinalizacion = fechaFinalizacion;
+        this.horaFinalizacion = horaFinalizacion;
+        this.imagenEvento = imagenEvento;
+        this.activarDesactivar = activarDesactivar;
+        this.userId = userId;
+        this.userName = userName;
+        this.publicoPrivado = publicoPrivado;
+        this.activadoDescativado = activadoDescativado;
+        this.idEvento = idEvento;
+        this.tokenFCM = tokenFCM;
+        this.calificaciones = calificaciones;
+        this.calificacionGeneral=calificacionGeneral;
+    }
+
+
+
+    public void agregarCalificacion(ModelCalificacion calificacion) {
+        if (calificaciones == null) {
+            calificaciones = new ArrayList<>();
+        }
+        calificaciones.add(calificacion);
+    }
+
+
+    // Método para calcular la calificación promedio
+    public float calcularYRetornarCalificacionPromedio() {
+        if (calificaciones == null || calificaciones.isEmpty()) {
+            return 0.0f;
+        }
+
+        float sumaCalificaciones = 0.0f;
+        for (ModelCalificacion calificacion : calificaciones) {
+            sumaCalificaciones += calificacion.getRating();
+        }
+
+        return (float) sumaCalificaciones / calificaciones.size();
+    }
+
+    // Método para calcular la calificación promedio y setearla en calificacionGeneral
+    public void calcularYSetearCalificacionPromedio() {
+        if (calificaciones == null || calificaciones.isEmpty()) {
+            calificacionGeneral = 0.0f; // Si no hay calificaciones, se asigna 0.0f
+            return;
+        }
+
+        float sumaCalificaciones = 0.0f;
+        for (ModelCalificacion calificacion : calificaciones) {
+            sumaCalificaciones += calificacion.getRating();
+        }
+
+        calificacionGeneral = (float) sumaCalificaciones / calificaciones.size();
+    }
+
+
+    // Método para calcular la calificación promedio, setearla en calificacionGeneral y luego retornarla
+    public float calcularSetearYRetornarCalificacionPromedio() {
+        if (calificaciones == null || calificaciones.isEmpty()) {
+            calificacionGeneral = 0.0f; // Si no hay calificaciones, se asigna 0.0f
+            return calificacionGeneral; // Se retorna el valor calculado
+        }
+
+        float sumaCalificaciones = 0.0f;
+        for (ModelCalificacion calificacion : calificaciones) {
+            sumaCalificaciones += calificacion.getRating();
+        }
+
+        calificacionGeneral = (float) sumaCalificaciones / calificaciones.size(); // Se asigna la calificación general
+        return calificacionGeneral; // Se retorna el valor calculado
+    }
+
+    //********Getters
+
+
+    public float getCalificacionGeneral() {
+        return calificacionGeneral;
     }
 
     public String getTokenFCM() {
@@ -62,9 +167,7 @@ private int rating;
         return activadoDescativado;
     }
 
-    public int getRating() {
-        return rating;
-    }
+
 
     public String getUserId() {
         return userId;
@@ -80,9 +183,7 @@ private int rating;
         return activarDesactivar;
     }
 
-    public void setActivarDesactivar(boolean activarDesactivar) {
-        this.activarDesactivar = activarDesactivar;
-    }
+
 
     public String getNombreEvento() {
         return nombreEvento;
@@ -120,9 +221,19 @@ private int rating;
         return imagenEvento;
     }
 
+    public String getFechaFinalizacion() {
+        return fechaFinalizacion;
+    }
 
+    public String getHoraFinalizacion() {
+        return horaFinalizacion;
+    }
 
+    public ArrayList<ModelCalificacion> getCalificaciones() {
+        return calificaciones;
+    }
 
+    //******Setters
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -163,10 +274,6 @@ private int rating;
         this.categoria = categoria;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
     public void setImagenEvento(String imagenEvento) {
         this.imagenEvento = imagenEvento;
     }
@@ -184,8 +291,28 @@ private int rating;
         this.idEvento = idEvento;
     }
 
+    public void setActivarDesactivar(boolean activarDesactivar) {
+        this.activarDesactivar = activarDesactivar;
+    }
+
     public void setTokenFCM(String tokenFCM) {
         this.tokenFCM = tokenFCM;
+    }
+
+    public void setFechaFinalizacion(String fechaFinalizacion) {
+        this.fechaFinalizacion = fechaFinalizacion;
+    }
+
+    public void setHoraFinalizacion(String horaFinalizacion) {
+        this.horaFinalizacion = horaFinalizacion;
+    }
+
+    public void setCalificaciones(ArrayList<ModelCalificacion> calificaciones) {
+        this.calificaciones = calificaciones;
+    }
+
+    public void setCalificacionGeneral(float calificacionGeneral) {
+        this.calificacionGeneral = calificacionGeneral;
     }
 }
 

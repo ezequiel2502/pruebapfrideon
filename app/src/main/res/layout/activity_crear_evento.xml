@@ -132,12 +132,65 @@
 
         </androidx.cardview.widget.CardView>
 
+
+
+        <!-- CardView para la Fecha de Finalización y la Hora de Finalización -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewFechaHoraFinalizacion"
+            android:layout_width="391dp"
+            android:layout_height="149dp"
+            android:layout_below="@+id/cardViewFechaHora"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp">
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="2">
+
+                <!-- Botón "Fecha de Finalización" y campo de texto -->
+                <Button
+                    android:id="@+id/btn_FechaFinalizacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha de Finalización" />
+
+                <EditText
+                    android:id="@+id/txt_FechaFinalizacion"
+                    android:layout_width="210dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Ingresa la fecha de finalización" />
+
+                <!-- Botón "Hora de Finalización" y campo de texto -->
+                <Button
+                    android:id="@+id/btn_HoraFinalizacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hora de Finalización" />
+
+                <EditText
+                    android:id="@+id/txt_HoraFinalizacion"
+                    android:layout_width="208dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Ingresa la hora de finalización" />
+
+            </GridLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
         <!--    CardView CupoMinYMax-->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewCupoMinYMax"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/cardViewFechaHora"
+            android:layout_below="@+id/cardViewFechaHoraFinalizacion"
             app:cardCornerRadius="8dp">
 
             <LinearLayout
