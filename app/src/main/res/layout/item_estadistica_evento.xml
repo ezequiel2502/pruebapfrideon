@@ -80,7 +80,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_etiquetaEvento"
@@ -88,7 +88,10 @@
                             android:layout_height="wrap_content"
                             android:text="Evento:"
                             android:textColor="@color/lavender"
-                            android:textSize="14dp" />
+                            android:textSize="14dp"
+                             />
+
+
 
                         <!-- Título "Evento" en negro -->
                         <TextView
@@ -97,7 +100,9 @@
                             android:layout_height="wrap_content"
                             android:text="Evento"
                             android:textColor="@android:color/black"
-                            android:textSize="12dp" />
+                            android:textSize="12dp"
+                            android:gravity="start"
+                            android:layout_gravity="center_vertical"/>
 
                     </LinearLayout>
 
@@ -111,7 +116,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_etiquertaUserName"
@@ -121,6 +126,8 @@
                             android:textColor="@color/lavender"
                             android:textSize="14dp" />
 
+
+
                         <!-- Título "UserName" en negro -->
                         <TextView
                             android:id="@+id/tv_UserNameOrganizador"
@@ -128,7 +135,9 @@
                             android:layout_height="wrap_content"
                             android:text="UserName"
                             android:textColor="@android:color/black"
-                            android:textSize="12dp" />
+                            android:textSize="12dp"
+                            android:gravity="start"
+                            android:layout_gravity="center_vertical"/>
 
                     </LinearLayout>
 
@@ -142,7 +151,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_etiquetaRuta"
@@ -152,6 +161,8 @@
                             android:textColor="@color/lavender"
                             android:textSize="14dp" />
 
+
+
                         <!-- Título "Ruta" en negro -->
                         <TextView
                             android:id="@+id/tv_Ruta"
@@ -159,7 +170,9 @@
                             android:layout_height="wrap_content"
                             android:text="Ruta"
                             android:textColor="@android:color/black"
-                            android:textSize="12dp" />
+                            android:textSize="12dp"
+                            android:gravity="start"
+                            android:layout_gravity="center_vertical"/>
 
                     </LinearLayout>
 
@@ -220,6 +233,7 @@
                             android:layout_height="wrap_content"
                             android:text="Tiempo:"
                             android:textColor="@color/lavender"
+                            android:layout_marginRight="6dp"
                             android:textSize="14dp" />
 
                         <!-- Título "Tiempo" en negro -->
@@ -251,6 +265,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Distancia:"
+                            android:layout_marginRight="6dp"
                             android:textColor="@color/lavender"
                             android:textSize="14dp" />
 
@@ -282,6 +297,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Velocidad:"
+                            android:layout_marginRight="6dp"
                             android:textColor="@color/lavender"
                             android:textSize="14dp" />
 

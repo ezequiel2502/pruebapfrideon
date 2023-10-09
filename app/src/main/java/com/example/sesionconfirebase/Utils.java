@@ -48,12 +48,13 @@ public class Utils {
         // Convertimos las horas y minutos a horas decimales
         float tiempoEnHoras = horas + (float) minutos / 60;
 
-        // Calculamos la velocidad
-        float velocidad = distancia / tiempoEnHoras;
+        // Calculamos la velocidad en m/s
+        float velocidadMs = distancia / (tiempoEnHoras * 3600); // 1 hora = 3600 segundos
+
 
         // Convertimos la velocidad a String
 //        return String.format("%.2f", velocidad) + " km/h";
-            return String.format("%.2f", velocidad);
+            return String.format("%.2f", velocidadMs);
     }
 
 }

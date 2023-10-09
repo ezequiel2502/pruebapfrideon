@@ -6,10 +6,10 @@ public class ModelEstadistica {
     private String organizadorUsername;
     private String eventoId;
     private String nombreEvento;
+    private String nombreRuta;
     private String userId;
     private String userName;
     private String imageUrl;
-
     private String distanciaRecorrida;
     private String tiempo;
     private String velocidadPromEvento;
@@ -19,19 +19,29 @@ public class ModelEstadistica {
     }
 
     public ModelEstadistica(String organizadorId,
-                            String organizadorUsername, String eventoId, String nombreEvento,
+                            String organizadorUsername, String eventoId, String nombreEvento,String nombreRuta,
                             String userId, String userName, String imageUrl, String distanciaRecorrida,
                             String tiempo, String velocidadPromEvento) {
         this.organizadorId = organizadorId;
         this.organizadorUsername = organizadorUsername;
         this.eventoId = eventoId;
         this.nombreEvento = nombreEvento;
+        this.nombreRuta = nombreRuta;
         this.userId = userId;
         this.userName = userName;
         this.imageUrl = imageUrl;
         this.distanciaRecorrida = distanciaRecorrida;
         this.tiempo = tiempo;
         this.velocidadPromEvento = velocidadPromEvento;
+    }
+
+
+    public String getNombreRuta() {
+        return nombreRuta;
+    }
+
+    public void setNombreRuta(String nombreRuta) {
+        this.nombreRuta = nombreRuta;
     }
 
     public String getOrganizadorId() {
