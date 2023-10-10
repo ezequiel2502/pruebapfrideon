@@ -58,7 +58,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
     RatingBar rb_SingleRatingEvento;
 
-    Button btn_postularse;
+    Button btn_postularse,btn_CancelarEvento;
+
 
     ImageView image_profile;
 
@@ -76,6 +77,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
     private DatabaseReference commentsRef;
     private ValueEventListener commentsListener;
+
+    private  ModelEvento modelEventoActual;
 
     @Override
     protected void onRestart() {
@@ -115,10 +118,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         tv_SingleActivadoDescativado=findViewById(R.id.tv_SingleActivadoDescativado);
         rb_SingleRatingEvento=findViewById(R.id.rb_SingleRatingEvento);
         btn_postularse=findViewById(R.id.btn_postularse);
-
-
-
-
+        btn_CancelarEvento=findViewById(R.id.btn_CancelarEvento);
 
 
 
@@ -207,6 +207,51 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
 
 
+        //*************Para activar/desactivar el btn_CancelarEvento
+
+        // Primero obtén una instancia de la base de datos
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+
+        // Luego, obtén una referencia a la ubicación específica de la base de datos que necesitas
+        DatabaseReference eventoRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(singleIdEvento);
+
+        eventoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    //Obtengo el objeto evento
+                    ModelEvento modelEvento = dataSnapshot.getValue(ModelEvento.class);
+
+                    //Usuario logueado
+                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                    String currentUserId=currentUser.getUid();
+
+                    // Compara los IDs de usuario
+                    if (modelEvento.getUserId().equals(currentUserId)) {
+                        // Los IDs coinciden, habilita el botón, porque se trata del creador de ese evento
+                        btn_CancelarEvento.setEnabled(true);
+                        btn_CancelarEvento.setVisibility(View.VISIBLE);
+                    } else {
+                        // Los IDs no coinciden, deshabilita el botón
+                        btn_CancelarEvento.setEnabled(false);
+                        btn_CancelarEvento.setVisibility(View.INVISIBLE);
+                    }
+
+                    // Guarda el ModelEvento en un miembro de clase, para usarlo luego ese objeto
+                          modelEventoActual = modelEvento;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar error de cancelación
+            }
+        });
+
+        //**********************************************************
+
 
 
         //Para agregar un comentario
@@ -235,6 +280,16 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                 //Envia notificacion al creador del evento
                 NotificarCreadorEvento();
                 prePostularCandidato2();
+
+
+            }
+        });
+
+
+        btn_CancelarEvento.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
 
 
             }
