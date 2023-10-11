@@ -239,7 +239,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                         btn_CancelarEvento.setVisibility(View.INVISIBLE);
                     }
 
-                    // Guarda el ModelEvento en un miembro de clase, para usarlo luego ese objeto
+                    // Guarda el ModelEvento en un miembro de clase, para usar luego ese objeto
                           modelEventoActual = modelEvento;
                 }
             }
@@ -289,6 +289,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         btn_CancelarEvento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
 
 
 

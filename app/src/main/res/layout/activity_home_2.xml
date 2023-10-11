@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center">
@@ -24,22 +25,35 @@
                 android:id="@+id/profile_image"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_profile" />
+                android:src="@drawable/ic_profile"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Icono para cambiar la foto de perfil -->
             <ImageView
                 android:id="@+id/change_profile_image"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_alignEnd="@id/profile_image"
-                android:layout_alignBottom="@id/profile_image"
-                android:layout_marginEnd="-5dp"
-                android:layout_marginBottom="2dp"
-                android:src="@drawable/camera" />
+                android:src="@drawable/camera"
+                app:layout_constraintEnd_toEndOf="@id/profile_image"
+                app:layout_constraintBottom_toBottomOf="@id/profile_image"
+                app:layout_constraintMarginEnd="-5dp"
+                app:layout_constraintMarginBottom="2dp" />
 
-        </RelativeLayout>
+            <ImageView
+                android:id="@+id/iv_settings"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:elevation="1dp"
+                android:src="@drawable/settings"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintMarginEnd="16dp"
+                app:layout_constraintMarginTop="16dp"
+                app:layout_constraintTop_toTopOf="parent" />
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
         android:id="@+id/tv_user_name"
@@ -144,19 +158,19 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:id="@+id/settings"
+                    android:id="@+id/reportes"
                     android:gravity="center_horizontal">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/settings"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_width="39dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/reporrte_2" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Configuraciones"
+                        android:text="Reportes"
                         android:textSize="10dp"
                         android:textColor="@color/black"
                         android:layout_gravity="center_horizontal"/>
