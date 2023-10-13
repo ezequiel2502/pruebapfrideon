@@ -15,30 +15,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp">
 
             <ImageView
                 android:id="@+id/profile_image"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/ic_profile"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true" />
 
             <ImageView
                 android:id="@+id/change_profile_image"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:layout_alignBottom="@id/profile_image"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="115dp"
+                android:layout_marginBottom="0dp"
                 android:src="@drawable/camera"
-                app:layout_constraintEnd_toEndOf="@id/profile_image"
-                app:layout_constraintBottom_toBottomOf="@id/profile_image"
-                app:layout_constraintMarginEnd="-5dp"
-                app:layout_constraintMarginBottom="2dp" />
+                app:tint="@android:color/white" />
 
             <ImageView
                 android:id="@+id/iv_settings"
@@ -48,12 +51,11 @@
                 android:layout_marginEnd="16dp"
                 android:elevation="1dp"
                 android:src="@drawable/settings"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintMarginEnd="16dp"
-                app:layout_constraintMarginTop="16dp"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                app:tint="@android:color/white"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
 
         <TextView
         android:id="@+id/tv_user_name"
@@ -165,7 +167,7 @@
                         android:layout_width="39dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center_horizontal"
-                        android:src="@drawable/reporrte_2" />
+                        android:src="@drawable/reporte_4" />
 
                     <TextView
                         android:layout_width="wrap_content"

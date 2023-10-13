@@ -107,6 +107,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
+
+                                        //si salio bien lo postula
                                         postularCandidato2(context,idEvento, userId, tokenFcmPostulante);
                                     } else {
                                         // Manejar el error en la actualización
