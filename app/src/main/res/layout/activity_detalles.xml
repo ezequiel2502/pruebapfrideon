@@ -1,0 +1,258 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <!-- Título "Detalles" -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginBottom="16dp"
+        android:text="Detalles"
+        android:textSize="24sp" />
+
+    <!-- Campo para el nombre -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#CFD8DC"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+
+            />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Campo para el apellido -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#ECEFF1"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <EditText
+            android:id="@+id/editTextLastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Apellido"
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- Campo para la fecha de nacimiento -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#CFD8DC"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+
+        <!-- Botón y campo de texto para la fecha de encuentro -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <Button
+                android:id="@+id/btn_FechaNacimiento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha de Nacimiento" />
+
+            <EditText
+                android:id="@+id/txt_FechaNacimiento"
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:hint="Fecha de nacimiento"
+                android:textColor="#616161"
+                android:textColorHint="#616161"
+
+                />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- Campo para la ciudad -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#ECEFF1"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <EditText
+            android:id="@+id/editTextCity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ciudad"
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- Campo para el país -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#CFD8DC"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <EditText
+            android:id="@+id/editTextCountry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="País"
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- Campo para Facebook -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#ECEFF1"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <EditText
+            android:id="@+id/editTextFacebook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Facebook"
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- Campo para Twitter -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#CFD8DC"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <EditText
+            android:id="@+id/editTextTwitter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Twitter"
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Campo para Instagram -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="#ECEFF1"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <EditText
+            android:id="@+id/editTextInstagram"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Instagram"
+            android:padding="12dp"
+            android:textColor="#616161"
+            android:textColorHint="#616161"
+
+            />
+    </androidx.cardview.widget.CardView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView_guardarDetalles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:cardBackgroundColor="#7986CB"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/save"
+                    app:tint="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Guardar Detalles"
+                    android:textColor="@color/white"
+                    android:textSize="16dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
+</ScrollView>
+

@@ -3,6 +3,7 @@ package com.example.sesionconfirebase;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,10 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +27,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class SingleEventoPostuladosActivity extends AppCompatActivity {
+
 
     TextView tv_SingleEvento, tv_SingleRuta, tv_SingleDescripcion, tv_SingleFechaEncuentro,
             tv_SingleHoraEncuentro, tv_SingleCupoMinimo, tv_SingleCupoMaximo,
@@ -108,6 +120,11 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                // Obtener el ID del usuario actual
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String userName=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+
+
                 // Buscar el evento
                 DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(singleIdEvento);
 
@@ -140,6 +157,10 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
                                                                 if (task.isSuccessful()) {
                                                                     // Cancelación exitosa
                                                                     Toast.makeText(getApplicationContext(), "Has cancelado tu postulación al evento", Toast.LENGTH_SHORT).show();
+
+                                                                    //Agregar notificacion al creador de evento
+                                                                    notificarPostulacionCancelada(evento.getTokenFCM(),evento.getNombreEvento(),userName);
+
                                                                 } else {
                                                                     // Error en la modificación del evento
                                                                     Toast.makeText(getApplicationContext(), "Error al modificar el evento", Toast.LENGTH_SHORT).show();
@@ -164,5 +185,46 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
         });
 
 
+    }//fin OnCReate
+
+
+    private void notificarPostulacionCancelada(String tokenCreador,String nombreEvento,String userName){
+
+
+        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject notificacion = new JSONObject();
+            notificacion.put("titulo", "Se cancelo postulacion de: "+ userName);
+            notificacion.put("detalle", nombreEvento);
+            notificacion.put("tipo", "cancela_postulante_evento");
+
+
+            json.put("to", tokenCreador);
+            json.put("data", notificacion); // Cambio de "data" a "notification"
+
+
+            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+            String URL = "https://fcm.googleapis.com/fcm/send";
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header = new HashMap<>();
+                    header.put("Content-Type", "application/json");
+                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    return header;
+                }
+            };
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
     }
+
+
 }

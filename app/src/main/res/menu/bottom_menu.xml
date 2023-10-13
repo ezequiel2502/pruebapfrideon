@@ -20,6 +20,10 @@
     <item
         android:id="@+id/btn_lista_postulados"
         android:icon="@drawable/baseline_add_task_24"
+        android:title="Eventos" />
+    <item
+        android:id="@+id/btn_lista_rutas"
+        android:icon="@drawable/baseline_route_24"
         android:title="Rutas" />
 
 

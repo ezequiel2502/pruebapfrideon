@@ -10,9 +10,9 @@ import kotlin.time.Duration.Companion.milliseconds
  class Location_Variables {
     val androidLocationProviderConfig = AndroidLocationProviderConfig(
 
-            minTimeInterval = 250L.milliseconds,
+            minTimeInterval = 150L.milliseconds,
 
-            minDistance = Distance.meters(20.0)
+            minDistance = Distance.meters(2.5)
 
     )
 

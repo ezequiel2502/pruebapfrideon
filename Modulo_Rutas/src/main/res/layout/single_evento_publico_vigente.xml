@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SingleEventoPublicoActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Evento-->
+            <ImageView
+                android:id="@+id/singleImage"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/baseline_post_add_24">
+
+            </ImageView>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaEvento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Evento:"
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleEvento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  Evento"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!--UserName-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="UserName:"
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  UserName"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!--UserId-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaUserId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="UserId:"
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleUserId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  UserId"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Ruta-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaRuta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Ruta:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleRuta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  Ruta"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Descripcion-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaDescripcion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Descripcion:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleDescripcion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  Descripcion"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Fecha de Encunetro-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaFechaEncuentro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Fecha de Encuentro:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleFechaEncuentro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  Fecha"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Hora de Encunetro-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaHoraEncuentro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Hora de Encuentro:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleHoraEncuentro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  Hora"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Cupo Minimo -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaCupoMinimo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Cupo Minimo:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleCupoMinimo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  Cupo Minimo"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Cupo Maximo -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaCupoMaximo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Cupo Maximo:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleCupoMaximo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  CupoMaximo"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Categoria -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaCategoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Categoria:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleCategoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  Categoria"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Publico/Privado -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaPublicoPrivado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Publico/Privado:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SinglePublicoPrivado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  Pub/Priv"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!-- Activado/Desactivado -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/tv_etiquetaActivadoDesactivado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Activado/Desactivado:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/tv_SingleActivadoDescativado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:text="  A/D"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <!--RatingBar-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_etiquetaRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="RatingBar:  "
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+                <RatingBar
+                    android:id="@+id/rb_SingleRatingEvento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="10dp"
+                    android:numStars="5"
+                    android:stepSize="1" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_postularse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Postularse"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

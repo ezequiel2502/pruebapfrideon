@@ -2,6 +2,7 @@ package com.example.sesionconfirebase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -28,6 +29,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,17 +46,16 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     GoogleSignInClient mGoogleSignInClient;
 
+//controles activity_main
+//    EditText mEditTextEmail;
+//    EditText mEditTextPass;
+//    Button mButtonInicio;
+//    TextView mTextViewIrRegistrar;
+//    TextView mTextViewRespuesta;
+//    TextView mTextViewForgotPassword;
+//    SignInButton mSignInButtonGoogle;
 
-    EditText mEditTextEmail;
-    EditText mEditTextPass;
-    Button mButtonInicio;
-    TextView mTextViewIrRegistrar;
-    TextView mTextViewRespuesta;
-
-    TextView mTextViewForgotPassword;
     FirebaseAuth mAuth;
-
-    SignInButton mSignInButtonGoogle;
 
     String email;
     String pass;
@@ -63,27 +69,56 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog mProgressBar;
 
+    //**************Controles login2**************
+
+    CardView cardview_registrarseUsuarioYPass;
+    CardView cardview_registrarseGoogle;
+    EditText editTextEmail;
+    EditText editTextPass;
+    TextView textViewRespuesta;
+    private static boolean first_Entrance = false;
+    Button btn_olvidaste_contrasena,btn_iniciar_sesion;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.login2);
+        if (first_Entrance == false) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            first_Entrance = true;
+        }
+        //*********Controles de activity_main
+//        mEditTextEmail = findViewById(R.id.editTextEmail);
+//        mEditTextPass = findViewById(R.id.editTextPass);
+//        mButtonInicio = findViewById(R.id.btnInicio);
+//        mTextViewRespuesta = findViewById(R.id.textViewRespuesta);
+//        mTextViewIrRegistrar = findViewById(R.id.textViewIrRegistrar);
+//        mTextViewForgotPassword=findViewById(R.id.forgotPassword);
+//        mSignInButtonGoogle = findViewById(R.id.btnGoogle);
+//        mTextViewRespuesta = findViewById(R.id.textViewRespuesta);
 
-        mEditTextEmail = findViewById(R.id.editTextEmail);
-        mEditTextPass = findViewById(R.id.editTextPass);
-        mButtonInicio = findViewById(R.id.btnInicio);
-        mTextViewRespuesta = findViewById(R.id.textViewRespuesta);
-        mTextViewIrRegistrar = findViewById(R.id.textViewIrRegistrar);
-        mTextViewForgotPassword=findViewById(R.id.forgotPassword);
+
+        //************controles login2
+        cardview_registrarseUsuarioYPass=findViewById(R.id.cardview_registrarseUsuarioYPass);
+        cardview_registrarseGoogle=findViewById(R.id.cardview_registrarseGoogle);
+        btn_olvidaste_contrasena=findViewById(R.id.btn_olvidaste_contrasena);
+        btn_iniciar_sesion=findViewById(R.id.btn_iniciar_sesion);
+        editTextEmail=findViewById(R.id.editTextEmail);
+        editTextPass=findViewById(R.id.editTextPass);
+        textViewRespuesta=findViewById(R.id.textViewRespuesta);
+
+
+
 
         mProgressBar = new ProgressDialog(MainActivity.this);
 
         //Objeto de firebase
         mAuth = FirebaseAuth.getInstance();
 
-        //Tomamos control del boton en el layout
-        mSignInButtonGoogle = findViewById(R.id.btnGoogle);
-        mTextViewRespuesta = findViewById(R.id.textViewRespuesta);
+
 
         //*****Configuraciones de firebase para google SIGNIN
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -100,8 +135,10 @@ public class MainActivity extends AppCompatActivity {
         password = getIntent().getStringExtra("password");
         esLoginConEmailYPass=getIntent().getBooleanExtra("esLoginConEmailYPass",false);
 
+
+
           //Para registrarse por primera vez, te manda al RegistroActivity
-          mTextViewIrRegistrar.setOnClickListener(new View.OnClickListener() {
+        cardview_registrarseUsuarioYPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
@@ -110,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Para reestablecer contraseña
-        mTextViewForgotPassword.setOnClickListener(new View.OnClickListener() {
+        btn_olvidaste_contrasena.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ResetPasswordActivity.class);
@@ -119,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Para loguearse una veza registrado...
-        mButtonInicio.setOnClickListener(new View.OnClickListener() {
+        btn_iniciar_sesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 verificarCredenciales();
@@ -127,14 +164,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Le damos fuuncionalidad al boton de GOOGLE, que llama al método  que esta abajo signIn..
-        mSignInButtonGoogle.setOnClickListener(new View.OnClickListener() {
+        cardview_registrarseGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 esLoginConEmailYPass=false;
                 signIn();
             }
         });
-
 
 
 
@@ -156,12 +192,12 @@ public class MainActivity extends AppCompatActivity {
     }//fin OnCreate
 
     public void verificarCredenciales(){
-        String email = mEditTextEmail.getText().toString();
-        String password = mEditTextPass.getText().toString();
+        String email = editTextEmail.getText().toString();
+        String password = editTextPass.getText().toString();
         if(email.isEmpty() || !emailValido(email)){
-            showError(mEditTextEmail, "Email no valido");
+            showError(editTextEmail, "Email no valido");
         }else if(password.isEmpty()|| password.length()<7){
-            showError(mEditTextPass, "Password invalida");
+            showError(editTextPass, "Password invalida");
         }else{
             //Mostrar ProgressBar
             mProgressBar.setTitle("Login");
@@ -174,41 +210,98 @@ public class MainActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
                         if(mAuth.getCurrentUser().isEmailVerified()){
+
+
                             //ocultar progressBar
                             mProgressBar.dismiss();
+
                             //Obtengo los datos que guardaron en sharedpreferences del RegistroActivity...
                             SharedPreferences prefs=getSharedPreferences("MyPreferences",Context.MODE_PRIVATE);
                             String username_guardado=prefs.getString("username","");
                             String password_guardada=prefs.getString("password","");
+                            String email_guardado=prefs.getString("email","");
                             Boolean esLoginConEmailYpass_guardado=prefs.getBoolean("esLoginConEmailYPass",true);
 
-                            mTextViewRespuesta.setText("CORRECTO");
-                            mTextViewRespuesta.setTextColor(Color.GREEN);
+                            textViewRespuesta.setText("CORRECTO");
+                            textViewRespuesta.setTextColor(Color.GREEN);
+
+                            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+                            // Obtener el token de FCM
+                            FirebaseMessaging.getInstance().getToken()
+                                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<String> task) {
+                                            if (task.isSuccessful() && task.getResult() != null) {
+
+                                                //Este es el token que pido desde firebase,comparo este con el que esta en la base de datos cada vez que me logueo
+                                                String tokenFcm = task.getResult();
+
+                                                // Verificar si existe un token FCM en la base de datos
+                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                                                DatabaseReference perfilRef = databaseReference.child("Perfil").child(userId);
+
+                                                perfilRef.child("tokenFcm").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        String tokenFromDatabase = dataSnapshot.getValue(String.class);
+
+                                                        // si el token cambio lo actualizo en la base de datos
+                                                        if (tokenFromDatabase != null && !tokenFromDatabase.equals(tokenFcm)) {
+                                                            perfilRef.child("tokenFcm").setValue(tokenFcm);
+                                                        }
+
+
+
+                                                        // Resto del código para redirigir o realizar otras acciones
+
+                                                        // Guardar datos en SharedPreferences
+                                                        SharedPreferences prefs = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                                                        SharedPreferences.Editor editor = prefs.edit();
+                                                        editor.putString("email", email);
+                                                        editor.putString("username", username);
+                                                        editor.putString("userId", userId);
+                                                        editor.putBoolean("esLoginConEmailYPass", true); // Esto indica que se hizo login con email y contraseña
+                                                        editor.putBoolean("getPhoto", false);
+                                                        editor.putString("fcmToken", tokenFcm);
+                                                        editor.apply();
+
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                        // Manejar el error, si es necesario
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+
                             //redireccionar - intent a HomeActivity...
                             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                             intent.putExtra("getPhoto", false);
                             intent.putExtra("username", username_guardado);//envio el username
                             intent.putExtra("password", password_guardada);//envio el password
+                            intent.putExtra("userId", userId);//envio el userId
                             intent.putExtra("esLoginConEmailYPass",esLoginConEmailYpass_guardado);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-                        }else{
-                            mProgressBar.dismiss();
-                            Toast.makeText(MainActivity.this,"Por favor verifica tu mail!!",Toast.LENGTH_SHORT).show();
-                        }
-                        
-                    }else{
-                        mProgressBar.dismiss();
-                        mTextViewRespuesta.setText("No se pudo iniciar Sesión Verifique correo/contraseña");
-                        mTextViewRespuesta.setTextColor(Color.RED);
-                        Toast.makeText(MainActivity.this, "No se pudo iniciar Sesión Verifique correo/contraseña", Toast.LENGTH_LONG).show();
 
+                        } else {
+                            mProgressBar.dismiss();
+                            Toast.makeText(MainActivity.this, "Por favor verifica tu correo!!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else {
+                        mProgressBar.dismiss();
+                        textViewRespuesta.setText("No se pudo iniciar Sesión. Verifica correo/contraseña");
+                        textViewRespuesta.setTextColor(Color.RED);
+                        Toast.makeText(MainActivity.this, "No se pudo iniciar Sesión. Verifica correo/contraseña", Toast.LENGTH_LONG).show();
                     }
                 }
             });
-
-
-
         }
     }
 
@@ -252,8 +345,10 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("password", password_guardada);//envio el password
             intent.putExtra("esLoginConEmailYPass",esLoginConEmailYpass_guardado);
             intent.putExtra("getPhoto",getPhoto_guardado);
+            intent.putExtra("userId",user.getUid());
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+
 
         }
         super.onStart();
@@ -280,10 +375,12 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                mTextViewRespuesta.setText(e.getMessage());
+                textViewRespuesta.setText(e.getMessage());
             }
         }
     }
+
+    // ...
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
@@ -291,33 +388,83 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+                            // Obtener datos del usuario de la cuenta de Google
+                            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+                            String username = account.getDisplayName();
+                            String email = account.getEmail();
+                            String userId = mAuth.getCurrentUser().getUid();
 
-                            //guardar datos en sharedpreferences
-                            SharedPreferences prefs = getSharedPreferences(
-                                    "MyPreferences", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor=prefs.edit();
-                            editor.putBoolean("esLoginConEmailYPass", false);
-                            editor.putBoolean("getPhoto", true);
-                            editor.commit();
+                            // Obtener el token de FCM
+                            FirebaseMessaging.getInstance().getToken()
+                                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<String> task) {
+                                            if (task.isSuccessful() && task.getResult() != null) {
 
-                            //Para que actualice la foto de la cuenta de google en HomeActivity
-                            Intent home = new Intent(MainActivity.this, HomeActivity.class);
-                            home.putExtra("getPhoto", true);
-                            home.putExtra("esLoginConEmailYPass", false);
-                            startActivity(home);
-                            MainActivity.this.finish();
+                                                //Si lo obtuvo lo almaceno
+                                                String tokenFcm= task.getResult();
 
+                                               // Obtener una referencia a la base de datos
+                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+                                                // Verificar si existe un usuario con ese ID
+                                                databaseReference.child("Perfil").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if (dataSnapshot.exists()) {
+                                                            // El usuario ya existe, verificar y actualizar el tokenFcm
+                                                            String tokenFromDatabase = dataSnapshot.child("tokenFcm").getValue(String.class);
+                                                            if (tokenFromDatabase != null && !tokenFromDatabase.equals(tokenFcm)) {
+                                                                // Actualizar el token FCM en la base de datos
+                                                                databaseReference.child("Perfil").child(userId).child("tokenFcm").setValue(tokenFcm);
+                                                            }
+                                                        } else {
+                                                            // El usuario no existe, crear uno nuevo
+                                                            ModelUsuario usuario = new ModelUsuario(email, null, username, userId, tokenFcm, false);
+                                                            databaseReference.child("Perfil").child(userId).setValue(usuario);
+                                                        }
+
+
+
+
+                                                        // Guardar datos en SharedPreferences
+                                                        SharedPreferences prefs = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                                                        SharedPreferences.Editor editor = prefs.edit();
+                                                        editor.putString("email", email);
+                                                        editor.putString("username", username);
+                                                        editor.putString("userId", userId);
+                                                        editor.putBoolean("esLoginConEmailYPass", false);
+                                                        editor.putBoolean("getPhoto", true);
+                                                        editor.putString("fcmToken", tokenFcm);
+                                                        editor.apply();
+
+                                                        // Redireccionar a HomeActivity
+                                                        Intent home = new Intent(MainActivity.this, HomeActivity.class);
+                                                        home.putExtra("getPhoto", true);
+                                                        home.putExtra("esLoginConEmailYPass", false);
+                                                        startActivity(home);
+                                                        finish();
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                        // Manejar el error, si es necesario
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
                         } else {
-                            // If sign in fails, display a message to the user.
-                            mTextViewRespuesta.setText(task.getException().toString());
-
+                            textViewRespuesta.setText(task.getException().toString());
                         }
                     }
                 });
     }
+
+// ...
+
+
 
 
 }

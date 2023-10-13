@@ -23,16 +23,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListaEventos extends AppCompatActivity {
 
     Button btnAgregarEvento;
     RecyclerView recyclerViewEventos;
     ArrayList<ModelEvento> recycleList;
+    Spinner spnFiltro;
 
     FirebaseDatabase firebaseDatabase;
 
-    Spinner spnFiltro;
     ArrayList<String> filtroList=new ArrayList<String>();
 
 

@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="395dp"
+        android:layout_height="405dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:id="@+id/layoutHorizonatlPrincipal"
+                android:layout_width="match_parent"
+                android:layout_height="337dp"
+                android:orientation="horizontal">
+
+                <!-- Parte Izquierda (ImageView y Título "Ruta") -->
+
+
+                <!-- Parte Derecha (Otros Campos) -->
+
+                <LinearLayout
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- TextView adicional "Evento" en negro -->
+                    <TextView
+                        android:id="@+id/tv_etiquetaEvento"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="4dp"
+                        android:text="Evento:"
+                        android:textColor="@color/lavender"
+                        android:textSize="14dp" />
+
+                    <!-- Título "Evento" -->
+                    <TextView
+                        android:id="@+id/tv_tituloEvento"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Evento"
+                        android:textColor="@android:color/black"
+                        android:textSize="12dp" />
+
+                    <!--UserName-->
+                    <!-- TextView adicional "Evento" en negro -->
+                    <TextView
+                        android:id="@+id/tv_etiquertaUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="4dp"
+                        android:text="UserName:"
+                        android:textColor="@color/lavender"
+                        android:textSize="14dp" />
+
+                    <!-- Título "Evento" -->
+                    <TextView
+                        android:id="@+id/tv_UserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="UserName"
+                        android:textColor="@android:color/black"
+                        android:textSize="12dp" />
+
+
+                    <!-- ImageView -->
+                    <ImageView
+                        android:id="@+id/imvEvento"
+                        android:layout_width="182dp"
+                        android:layout_height="222dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:src="@drawable/baseline_upload_file_24" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+
+                    <!-- TextView adicional "Ruta" en negro -->
+                    <TextView
+                        android:id="@+id/tv_etiquetaRuta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="4dp"
+                        android:text="Ruta:"
+                        android:textColor="@color/lavender"
+                        android:textSize="14dp" />
+
+                    <!-- Título "Ruta" -->
+                    <TextView
+                        android:id="@+id/tv_Ruta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Ruta"
+                        android:textColor="@android:color/black"
+                        android:textSize="12dp" />
+
+                    <!--UserId -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- TextView adicional "Descripcion" en negro -->
+                        <TextView
+                            android:id="@+id/tv_etiquetaUserId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="UserId:"
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+
+                        <!-- Título "Descripcion" subrayado -->
+                        <TextView
+                            android:id="@+id/tv_UserId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="  UserId"
+                            android:textSize="8sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- TextView adicional "Descripcion" en negro -->
+                        <TextView
+                            android:id="@+id/tv_etiquetaDescripcion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="Descripcion:"
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+
+                        <!-- Título "Descripcion" subrayado -->
+                        <TextView
+                            android:id="@+id/tv_Descripcion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="  Descripción"
+                            android:textSize="8sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- TextView adicional "Fecha Encuentro" en negro -->
+                        <TextView
+                            android:id="@+id/tv_etiquetaFechaEncuentro"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="Fecha:  "
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+
+                        <!-- Subtítulos "Fecha Encuentro" -->
+                        <TextView
+                            android:id="@+id/tv_FechaEncuentro"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="Fecha Encuentro"
+                            android:textSize="8sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- TextView adicional "Hora Encuentro" en negro -->
+                        <TextView
+                            android:id="@+id/tv_etiquetaHoraEncuentro"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="Hora:  "
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+
+                        <!-- Subtítulo "Hora Encuentro" -->
+                        <TextView
+                            android:id="@+id/tv_HoraEncuentro"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="8dp"
+                            android:text="Hora"
+                            android:textSize="8sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- TextView adicional "Cupo Mínimo" en negro -->
+                        <TextView
+                            android:id="@+id/tv_etiquetaCupoMinimo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="4dp"
+                            android:text="Cupo Mínimo:  "
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+
+                        <!-- Subtítulo "Cupo Mínimo" -->
+                        <TextView
+                            android:id="@+id/tv_CupoMinimo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="Cupo Mínimo"
+                            android:textSize="8sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- TextView adicional "Cupo Máximo" en negro -->
+                        <TextView
+                            android:id="@+id/tv_etiquetaCupoMaximo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="4dp"
+                            android:text="Cupo Máximo:  "
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+
+                        <!-- Subtítulo "Cupo Máximo" -->
+                        <TextView
+                            android:id="@+id/tv_CupoMaximo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="Cupo Máximo"
+                            android:textSize="8sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- TextView adicional "Categoría" en negro -->
+                        <TextView
+                            android:id="@+id/tv_etiquetaCategoria"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="4dp"
+                            android:text="Categoría:  "
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+
+                        <!-- Subtítulo "Categoría" -->
+                        <TextView
+                            android:id="@+id/tv_Categoria"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="Categoría"
+                            android:textSize="8sp" />
+
+                    </LinearLayout>
+
+                    <!--Activar/Descativar-->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- TextView adicional "Categoría" en negro -->
+                        <TextView
+                            android:id="@+id/tv_etiquetaActivar_Descativar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="4dp"
+                            android:text="Activar/Descativar:  "
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+
+                        <!-- Subtítulo "Categoría" -->
+                        <TextView
+                            android:id="@+id/tv_ActivarDescativar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="Act/Desact"
+                            android:textSize="8sp" />
+
+                    </LinearLayout>
+
+                    <!--Publico/Privado-->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- TextView adicional "Categoría" en negro -->
+                        <TextView
+                            android:id="@+id/tv_etiquetaPublicoPrivado"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="4dp"
+                            android:text="Publico/Privado:  "
+                            android:textColor="@android:color/black"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+
+                        <!-- Subtítulo "Categoría" -->
+                        <TextView
+                            android:id="@+id/tv_PublicoPrivado"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginTop="10dp"
+                            android:text="Publico/Privado"
+                            android:textSize="8sp" />
+
+                    </LinearLayout>
+
+
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layoutRating"
+                android:layout_width="match_parent"
+                android:layout_height="59dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5">
+
+                <!-- Etiqueta "Calificación" -->
+                <TextView
+                    android:id="@+id/tv_etiquetaCalificacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="33dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="Calificación:"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:textSize="14dp" />
+
+                <!-- RatingBar para la calificación -->
+                <RatingBar
+                    android:id="@+id/rb_calificacionEvento"
+                    style="@style/Widget.AppCompat.RatingBar.Indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:numStars="5"
+                    android:stepSize="1" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+
+</RelativeLayout>

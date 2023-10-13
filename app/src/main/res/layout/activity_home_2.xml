@@ -10,9 +10,11 @@
     tools:context=".MainActivity">
 
     <LinearLayout
+        android:id="@+id/contenedorPrincipal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,7 +42,7 @@
 
 
         <TextView
-        android:id="@+id/user_name"
+        android:id="@+id/tv_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nombre de Usuario"
@@ -49,11 +51,20 @@
         android:layout_marginBottom="8dp"/>
 
         <TextView
-            android:id="@+id/user_email"
+            android:id="@+id/tv_user_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="correo@ejemplo.com"
             android:textSize="14sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_UserId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UserId"
+            android:textSize="10sp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp" />
 
@@ -118,6 +129,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="Notificaciones"
+                        android:textSize="10dp"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center_horizontal"/>
                         android:layout_gravity="center_horizontal"
                         android:text="Notificaciones" />
                 </LinearLayout>
@@ -127,6 +142,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:id="@+id/analytics"
+                    android:gravity="center_horizontal">
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
 
@@ -141,6 +159,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:text="Estadísticas" />
+                        android:text="Estadísticas"
+                        android:textSize="10dp"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center_horizontal"/>
                 </LinearLayout>
 
                 <!-- Configuraciones -->
@@ -150,6 +172,9 @@
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/settings"
+                    android:gravity="center_horizontal">
 
                     <ImageView
                         android:layout_width="42dp"
@@ -162,6 +187,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:text="Configuraciones" />
+                        android:text="Configuraciones"
+                        android:textSize="10dp"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center_horizontal"/>
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -193,6 +222,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Eventos"
+                    android:textColor="@color/black"
                     android:textSize="24sp"
                     android:layout_gravity="start"/>
 
@@ -204,7 +234,7 @@
 
                 <!-- Icono de signo más -->
                 <ImageView
-                    android:id="@+id/add_icon"
+                    android:id="@+id/add_evento"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/add"
@@ -224,10 +254,11 @@
                     android:background="#DDDDDD" />
 
                 <TextView
-                    android:id="@+id/privados"
+                    android:id="@+id/tv_privados"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Privados: 0"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp" />
 
@@ -236,10 +267,11 @@
                     android:layout_height="1dp"
                     android:background="#DDDDDD" />
                 <TextView
-                    android:id="@+id/Publicos"
+                    android:id="@+id/tv_publicos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Publicos: 0"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp" />
 
@@ -249,10 +281,11 @@
                     android:background="#DDDDDD" />
 
                 <TextView
-                    android:id="@+id/postulados"
+                    android:id="@+id/tv_postulados"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Postulados: 0"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp" />
 
@@ -262,10 +295,11 @@
                     android:background="#DDDDDD" />
 
                 <TextView
-                    android:id="@+id/completados"
+                    android:id="@+id/tv_completados"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Completados: 0"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp" />
             </LinearLayout>
@@ -299,6 +333,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Amigos"
+                        android:textColor="@color/black"
                         android:textSize="24sp"
                         android:layout_gravity="start"/>
 
@@ -308,16 +343,18 @@
                     android:layout_height="1dp"
                     android:background="#DDDDDD" />
                 <TextView
-                    android:id="@+id/following"
+                    android:id="@+id/tv_following"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Siguiendo: 0"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
+            android:id="@+id/linearLayoutBotones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -325,13 +362,14 @@
 
             <!-- Añadir Detalles -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_detalles"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="8dp"
                 android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#7986CB">
+                android:layout_weight="1"
+                app:cardBackgroundColor="#7986CB"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -341,6 +379,7 @@
                     android:gravity="center">
 
                     <ImageView
+                        android:id="@+id/icono"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/edit"
@@ -348,6 +387,7 @@
                         app:tint="@android:color/white" />
 
                     <TextView
+                        android:id="@+id/texto"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Añadir Detalles"
@@ -356,71 +396,101 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+
             <!-- Cierre de Sesión -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_cerrarSesion"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="8dp"
                 android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#7986CB">
+                android:layout_weight="1"
+                app:cardBackgroundColor="#7986CB"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:android="http://schemas.android.com/apk/res/android">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp"
                     android:gravity="center">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/close"
-                        android:layout_gravity="center_horizontal"
                         app:tint="@android:color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cerrar Sesión"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+
             <!-- Eliminar Cuenta -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_EliminarCuenta"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:cardElevation="4dp"
+                app:cardBackgroundColor="#7986CB"
                 app:cardCornerRadius="8dp"
-                app:cardBackgroundColor="#7986CB">
+                app:cardElevation="4dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:android="http://schemas.android.com/apk/res/android">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp"
                     android:gravity="center">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/delete"
-                        android:layout_gravity="center_horizontal"
                         app:tint="@color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Eliminar Cuenta"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+
+
+
         </LinearLayout>
 
-</LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="145dp">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="30dp"
+                android:layout_below="@id/linearLayoutBotones"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/bottom_background"
+                android:elevation="2dp"
+                app:itemIconSize="30dp"
+                app:itemIconTint="@drawable/item_selector"
+                app:itemRippleColor="@android:color/transparent"
+                app:labelVisibilityMode="unlabeled"
+                app:menu="@menu/bottom_menu" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
 </ScrollView>
