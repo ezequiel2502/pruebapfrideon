@@ -185,7 +185,6 @@ public class Fcm extends FirebaseMessagingService {
                 // Generar un ID único para la notificación
                 Random random = new Random();
                 int uniqueNotificationId = random.nextInt(10000);
-
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
             }

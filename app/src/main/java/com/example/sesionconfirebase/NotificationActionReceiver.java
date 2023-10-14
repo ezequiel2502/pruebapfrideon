@@ -37,9 +37,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
 
         // Guardar el contexto cuando se recibe la notificación
         mContext = context.getApplicationContext();
-
         String action = intent.getStringExtra("ACTION");
-
         if ("Botón 1".equals(action)) {
             // Aquí puedes enviar un broadcast específico para capturar la acción en la SingleEventoPublicoActivity
 //            Intent broadcastIntent = new Intent("com.example.sesionconfirebase.ACTION_POSTULAR");
@@ -64,7 +62,6 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             editor.putString("nombreEvento", nombreEvento);
             editor.putString("tokenCreador", tokenCreador);
             editor.putString("tokenPostulante", tokenPostulante);
-
             // Aplica los cambios
             editor.apply();
 
@@ -269,6 +266,4 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         NotificationCounter notificacion = new NotificationCounter();
         notificacion.registrarNotificacionDenegacionPostulanteEvento("Denegaron tu postulacion a : ",nombreEvento,"denegacion_postulante_evento",IdEvento,postulanteId,nombreEvento);
     }
-
-    
 }//fin NotificactionActionReceiver

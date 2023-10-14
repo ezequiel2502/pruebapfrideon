@@ -86,6 +86,43 @@ public class NotificationCounter {
         });
         return ban[0];
     }
+
+    public boolean registrarNotificacionPostulacionCancelada(String titulo, String detalle,String tipoNotificacion,String idEvento,String postulanteId,String IdOrganizador,String nombreEvento)
+    {
+        FirebaseDatabase database;
+        FirebaseStorage firebaseStorage;
+        final Boolean[] ban = {false};
+        database=FirebaseDatabase.getInstance();
+        firebaseStorage=FirebaseStorage.getInstance();
+        ModelNotificacion notificacion = new ModelNotificacion();
+        notificacion.setDetalle(detalle);
+        notificacion.setTipoNotificacion(tipoNotificacion);
+        notificacion.setTitulo(titulo);
+        notificacion.setIdEvento(idEvento);
+        notificacion.setNombreEvento(nombreEvento);
+        notificacion.setPostulanteId(postulanteId);
+        notificacion.setIdOrganizador(IdOrganizador);
+        DatabaseReference notificacionRef = database.getReference().child("Notificaciones");
+
+        DatabaseReference nuevonotificacionRef = notificacionRef.push();
+        String nuevoNotificacionId = nuevonotificacionRef.getKey();
+        notificacion.setIdNotificacion(nuevoNotificacionId);
+        nuevonotificacionRef.setValue(notificacion).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // La inserción fue exitosa
+                ban[0] = true;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // La inserción falló
+                ban[0] = false;
+            }
+        });
+        return ban[0];
+    }
+
     public boolean registrarNotificacionPostulanteEvento(String titulo, String detalle,String tipoNotificacion,String idEvento,String idPostulante,String nombreEvento)
     {
         FirebaseDatabase database;

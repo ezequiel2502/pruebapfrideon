@@ -124,14 +124,12 @@ public class HomeActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 //finish();
                 return true;
-            }
-            else if (itemId == R.id.btn_lista_postulados) {
+            } else if (itemId == R.id.btn_lista_postulados) {
                 startActivity(new Intent(getApplicationContext(), ListaEventoPostulados.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 //finish();
                 return true;
-            }
-            else if (itemId == R.id.btn_lista_rutas) {
+            } else if (itemId == R.id.btn_lista_rutas) {
                 startActivity(new Intent(getApplicationContext(), Rutas.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 //finish();
@@ -148,13 +146,12 @@ public class HomeActivity extends AppCompatActivity {
         tv_user_name = findViewById(R.id.tv_user_name);
         tv_user_email = findViewById(R.id.tv_user_email);
         tv_completados = findViewById(R.id.tv_completados);
-        rating_bar=findViewById(R.id.rating_bar);
+        rating_bar = findViewById(R.id.rating_bar);
         cardView_detalles = findViewById(R.id.cardView_detalles);
         cardView_cerrarSesion = findViewById(R.id.cardView_cerrarSesion);
         cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
-        analytics=findViewById(R.id.analytics);
-
-
+        analytics = findViewById(R.id.analytics);
+        notificactionBadge=findViewById(R.id.badge);
 
 //********************************************************************************************************************************
         //Creamos el objeto de Firebase, si paso el login,  entonces existe un currentuser
@@ -163,7 +160,9 @@ public class HomeActivity extends AppCompatActivity {
         if (currentUser != null) {
             String userId = currentUser.getUid();
             DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
+            final FirebaseUser user = mAuth.getCurrentUser();
 
+            contarNotificaciones(user);
             perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -214,7 +213,7 @@ public class HomeActivity extends AppCompatActivity {
         tv_completados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(HomeActivity.this,ListaEventoCompletados.class);
+                Intent intent = new Intent(HomeActivity.this, ListaEventoCompletados.class);
                 startActivity(intent);
             }
         });
@@ -225,9 +224,6 @@ public class HomeActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-
-
 
 
         //Cambiar imagen de perfil
@@ -272,7 +268,6 @@ public class HomeActivity extends AppCompatActivity {
                 builder.show();
             }
         });
-
 
 
         //Agrega una pregunta antes de eliminar y no solo quita la cuenta
@@ -380,8 +375,6 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-
-
         //LLeva a la actividad que guarda detalles del usuario
         cardView_detalles.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -390,8 +383,6 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        contarNotificaciones(user);
 
         //Lleva a la actividad que lista las estadisticas
         analytics.setOnClickListener(new View.OnClickListener() {
@@ -412,26 +403,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });*/
 
-    }/* fin onCreate() */
-
-    private void contarNotificaciones(FirebaseUser user){
-                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-
-        firebaseDatabase.getReference().child("Notificaciones").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
-                    ModelNotificacion notificacion=dataSnapshot.getValue(ModelNotificacion.class);
-                    recycleList.add(notificacion);
-                }
-                NotificationCounter not = new NotificationCounter();
-                notificactionBadge.setNumber(not.obtenerCantidadNotificaciones(user.getUid(),recycleList));
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     @Override
@@ -527,6 +498,25 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+    private void contarNotificaciones(FirebaseUser user){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+
+        firebaseDatabase.getReference().child("Notificaciones").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                        ModelNotificacion notificacion=dataSnapshot.getValue(ModelNotificacion.class);
+                        recycleList.add(notificacion);
+                    }
+                    NotificationCounter not = new NotificationCounter();
+                    notificactionBadge.setNumber(not.obtenerCantidadNotificaciones(user.getUid(),recycleList));
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
 
 }
 
