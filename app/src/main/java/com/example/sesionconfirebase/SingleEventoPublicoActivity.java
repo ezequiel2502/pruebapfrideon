@@ -69,11 +69,11 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
     EditText txt_write_comment;
     TextView tv_add_comment;
 
-   RecyclerView recyclerViewComments;
+    RecyclerView recyclerViewComments;
 
     ArrayList<ModelComentario> recycleList;
 
-   private CommentAdapter commentAdapter;
+    private CommentAdapter commentAdapter;
 
     private DatabaseReference commentsRef;
     private ValueEventListener commentsListener;
@@ -240,7 +240,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                     }
 
                     // Guarda el ModelEvento en un miembro de clase, para usar luego ese objeto
-                          modelEventoActual = modelEvento;
+                    modelEventoActual = modelEvento;
                 }
             }
 
@@ -287,14 +287,68 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
 
         btn_CancelarEvento.setOnClickListener(new View.OnClickListener() {
+
+            //Tengo que encontrar los pre-postulados en true, osea aceptados por el organizador que despues se mueven a postulaciones en el metodo postularCandidatos2
             @Override
             public void onClick(View view) {
+                DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
+
+                String idEvento = modelEventoActual.getIdEvento();
+                DatabaseReference eventoRef = prePostulacionesRef.child(idEvento);
+
+                eventoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                            //Por cada pre-postulacion cambia la postulacion a false
+                            PrePostulacion prePostulacion = snapshot.getValue(PrePostulacion.class);
+
+                            if (prePostulacion != null && prePostulacion.getAceptado()) {
+
+                                String userId = prePostulacion.getUserId();
+                                String eventoId = prePostulacion.getEventoId();
+
+                                DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Postulaciones");
+
+                                // Cambia el valor de la postulación a false
+                                postulacionesRef.child(userId).child(eventoId).setValue(false);
+
+                                // Llama al método para notificar cancelación del evento
+                                notificarCancelacion(prePostulacion.getTokenFcmPostulante());
+                            }
+                        }
 
 
+                        // Mueve el evento de "Eventos Publicos" a "Cancelados", para que no se liste mas en la lista de publicos
+                        DatabaseReference eventosPublicosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEvento);
+                        DatabaseReference canceladosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Cancelados").child(idEvento);
 
+                        eventosPublicosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
+                                    canceladosRef.setValue(evento);
+                                    eventosPublicosRef.removeValue();
+                                }
+                            }
 
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                // Manejar error de cancelación
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Manejar error de cancelación
+                    }
+                });
             }
         });
+
 
 
 
@@ -504,7 +558,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                     // Agregar la información de pre-postulación al nodo "Pre-Postulaciones"
 
                     DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
-                    prePostulacionesRef.child(idEventoRecuperado).child(userId).setValue(new PrePostulacion(tokenFcmPostulante,false))
+                    prePostulacionesRef.child(idEventoRecuperado).child(userId).setValue(new PrePostulacion(tokenFcmPostulante,false,userId,evento.getIdEvento()))
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -674,6 +728,44 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
 
     }
+
+
+
+
+    //Para notificar cuando un organizador cancela un evento
+    private void notificarCancelacion(String tokenPostulante) {
+
+
+        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject notificacion = new JSONObject();
+            notificacion.put("titulo", "Evento cancelado: ");
+            notificacion.put("detalle", modelEventoActual.getNombreEvento());
+            notificacion.put("tipo", "postulante_evento");//Para que reutilice el mismo formato que esta en el FCM, ya que es una notificacion a un postulante
+
+            json.put("to", tokenPostulante);
+            json.put("data", notificacion);
+
+            String URL = "https://fcm.googleapis.com/fcm/send";
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header = new HashMap<>();
+                    header.put("Content-Type", "application/json");
+                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    return header;
+                }
+            };
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     private void addComment(String idEvento) {
@@ -849,5 +941,38 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
             });
         }
     }
+
+
+
+    private void listarParticipantes() {
+        DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
+
+        // Obtén el ID del evento del objeto ModelEvento guardado como miembro de clase
+        String idEvento = modelEventoActual.getIdEvento();
+
+        DatabaseReference eventoRef = prePostulacionesRef.child(idEvento);
+
+        eventoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<PrePostulacion> participantesAceptados = new ArrayList<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    PrePostulacion prePostulacion = snapshot.getValue(PrePostulacion.class);
+                    if (prePostulacion != null && prePostulacion.getAceptado()) {
+                        participantesAceptados.add(prePostulacion);
+                    }
+                }
+
+                // Aquí tendrás la lista de participantes aceptados, puedes hacer lo que necesites con ella
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar error de cancelación
+            }
+        });
+    }
+
 
 }//Fin Appp
