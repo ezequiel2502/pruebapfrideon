@@ -136,6 +136,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
     private final Handler h = new Handler(); //Necesario para controlar la fecha cada segundo
     private static Date currentTime = null;
     private boolean navStart = false;
+    private boolean abandono = true;
     private double distanciaRecorrida = 0;
     CardView backgroundCard;
     ImageView instructionsViewer;
@@ -229,6 +230,15 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 String EventoId = intent.getStringExtra("Evento");
                 database.getReference().child("Events_Data").child(userId).child(EventoId).child("finalizacion").setValue(finalizacion);
                 database.getReference().child("Events_Data").child(userId).child(EventoId).child("distanciaCubierta").setValue(distancia);
+                if (!abandono)
+                {
+                    database.getReference().child("Events_Data").child(userId).child(EventoId).child("abandono").setValue("No");
+                }
+                else
+                {
+                    database.getReference().child("Events_Data").child(userId).child(EventoId).child("abandono").setValue("Si");
+                }
+                abandono = true;
             }
 
         });
@@ -675,6 +685,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
 
                 if (distance(CurrentPosition.getLatitude(), meta.getLatitude(), CurrentPosition.getLongitude(), meta.getLongitude()) < 30)
                 {
+                    abandono = false;
                     TerminarEvento.performClick();
                 }
             }
