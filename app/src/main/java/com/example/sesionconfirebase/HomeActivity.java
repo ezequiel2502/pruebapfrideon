@@ -2,6 +2,7 @@ package com.example.sesionconfirebase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.cardview.widget.CardView;
 
 import android.app.AlertDialog;
@@ -45,9 +46,19 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.nex3z.notificationbadge.NotificationBadge;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicMarkableReference;
 
 public class HomeActivity extends AppCompatActivity {
 
+    NotificationBadge notificactionBadge;
     Button mButtonCerrarSesion;
     Button mButtonEliminarCuenta;
 
@@ -63,6 +74,7 @@ public class HomeActivity extends AppCompatActivity {
     ImageView add_evento;
     TextView tv_privados,tv_publicos,tv_postulados,tv_completados,tv_following;
     CardView cardView_detalles,cardView_cerrarSesion,cardView_EliminarCuenta;
+    LinkedList<ModelNotificacion> recycleList = new LinkedList<>();
     FirebaseAuth mAuth;
 
 
@@ -378,6 +390,8 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        contarNotificaciones(user);
 
         //Lleva a la actividad que lista las estadisticas
         analytics.setOnClickListener(new View.OnClickListener() {
@@ -398,9 +412,27 @@ public class HomeActivity extends AppCompatActivity {
             }
         });*/
 
+    }/* fin onCreate() */
 
-    }//fin onCreate()
+    private void contarNotificaciones(FirebaseUser user){
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
+        firebaseDatabase.getReference().child("Notificaciones").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    ModelNotificacion notificacion=dataSnapshot.getValue(ModelNotificacion.class);
+                    recycleList.add(notificacion);
+                }
+                NotificationCounter not = new NotificationCounter();
+                notificactionBadge.setNumber(not.obtenerCantidadNotificaciones(user.getUid(),recycleList));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
