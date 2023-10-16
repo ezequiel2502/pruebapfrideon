@@ -43,11 +43,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.nex3z.notificationbadge.NotificationBadge;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
-
+    NotificationBadge notificactionBadge;
     Button mButtonCerrarSesion;
     Button mButtonEliminarCuenta;
 
@@ -142,7 +144,7 @@ public class HomeActivity extends AppCompatActivity {
         cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
         analytics=findViewById(R.id.analytics);
         reportes=findViewById(R.id.reportes);
-
+        notificactionBadge=findViewById(R.id.badge);
 
 
 //********************************************************************************************************************************
@@ -152,7 +154,9 @@ public class HomeActivity extends AppCompatActivity {
         if (currentUser != null) {
             String userId = currentUser.getUid();
             DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
+            final FirebaseUser user = mAuth.getCurrentUser();
 
+            contarNotificaciones(user);
             perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -455,7 +459,6 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
     }
-
     private void subirNuevaImagen(Uri uri, String userId,String userName) {
 
         //Elijo el nombre con el que guardo la foto(username + timeStamp)
@@ -486,10 +489,6 @@ public class HomeActivity extends AppCompatActivity {
                     Toast.makeText(HomeActivity.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
                 });
     }
-
-
-
-
     private void signOut() {
         //sign out de firebase
         FirebaseAuth.getInstance().signOut();
@@ -505,6 +504,26 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    private void contarNotificaciones(FirebaseUser user){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        LinkedList<ModelNotificacion> recycleList = new LinkedList<ModelNotificacion>();
+        firebaseDatabase.getReference().child("Notificaciones").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    ModelNotificacion notificacion=dataSnapshot.getValue(ModelNotificacion.class);
+                    recycleList.add(notificacion);
+                }
+                NotificationCounter not = new NotificationCounter();
+                notificactionBadge.setNumber(not.obtenerCantidadNotificaciones(user.getUid(),recycleList));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }
 
 

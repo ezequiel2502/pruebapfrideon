@@ -128,11 +128,7 @@ public class Fcm extends FirebaseMessagingService {
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
             }
-
-
         } else if ("cupo-maximo".equals(tipoNotificacion)) {
-
-
             // Notificación para el creador de evento si se alcanza cupo maximo
             Intent intent = new Intent(this, ListaEventosPublicosVigentes.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -189,13 +185,7 @@ public class Fcm extends FirebaseMessagingService {
                 // Notificar utilizando el ID único
                 notificationManager.notify(uniqueNotificationId, builder.build());
             }
-
-
-
-
         }
-
-
     }
 
 }
