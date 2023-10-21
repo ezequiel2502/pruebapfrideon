@@ -400,7 +400,13 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
-
+        btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, ListadoNotificacionesActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         /*btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {

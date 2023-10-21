@@ -34,7 +34,7 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
 
     Context context;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference refRoutes = database.getReference().child("Route");
+
     public NotificacionesAdapter(ArrayList<ModelNotificacion> list, Context context) {
         this.list = list;
         this.context = context;
@@ -43,13 +43,16 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
     @NonNull
     @Override
     public NotificacionesAdapter.ViewHolderNotificacion onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(context).inflate(R.layout.item_evento,parent,false);
-        return new NotificacionesAdapter.ViewHolderNotificacion(view);
+        View view= LayoutInflater.from(context).inflate(R.layout.item_notificacion,parent,false);
+        return new ViewHolderNotificacion(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NotificacionesAdapter.ViewHolderNotificacion holder, int position) {
         ModelNotificacion notificacion = list.get(position);
+        holder.tv_MensajeNotificacion.setText(notificacion.getDetalle());
+        holder.tv_TipoNotificacion.setText(notificacion.getTipoNotificacion());
+
     }
 
     @Override
@@ -60,10 +63,12 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
     public class ViewHolderNotificacion extends RecyclerView.ViewHolder {
 
         //Son los controles del itemEvento
+        TextView tv_TipoNotificacion,tv_NombreUsuario,tv_MensajeNotificacion;
 
         public ViewHolderNotificacion(@NonNull View itemView) {
             super(itemView);
-
+            tv_TipoNotificacion=itemView.findViewById(R.id.tv_TipoNotificacion);
+            tv_MensajeNotificacion=itemView.findViewById(R.id.tv_MensajeNotificacion);
 
         }
     }

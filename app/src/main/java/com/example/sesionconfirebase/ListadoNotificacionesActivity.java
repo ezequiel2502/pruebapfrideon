@@ -29,7 +29,7 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         //Creo una instancia del adapter
-        NotificacionesAdapter recyclerAdapter = new NotificacionesAdapter(recycleList, ListaNotificaciones.this);
+        NotificacionesAdapter recyclerAdapter = new NotificacionesAdapter(recycleList, ListadoNotificacionesActivity.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerViewNotificaciones.setLayoutManager(linearLayoutManager);
         recyclerViewNotificaciones.addItemDecoration(new DividerItemDecoration(recyclerViewNotificaciones.getContext(), DividerItemDecoration.VERTICAL));

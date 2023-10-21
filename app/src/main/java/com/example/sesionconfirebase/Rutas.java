@@ -79,9 +79,6 @@ public class Rutas extends AppCompatActivity {
                 }
                 adapter.notifyDataSetChanged();
             }
-
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
