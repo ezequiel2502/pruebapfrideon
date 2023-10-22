@@ -50,11 +50,10 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
     @Override
     public void onBindViewHolder(@NonNull NotificacionesAdapter.ViewHolderNotificacion holder, int position) {
         ModelNotificacion notificacion = list.get(position);
-        holder.tv_MensajeNotificacion.setText(notificacion.getDetalle());
+        String mensaje = notificacion.getTitulo() + " " + notificacion.getDetalle();
+        holder.tv_MensajeNotificacion.setText(mensaje);
         holder.tv_TipoNotificacion.setText(notificacion.getTipoNotificacion());
-
     }
-
     @Override
     public int getItemCount() {
         return list.size();

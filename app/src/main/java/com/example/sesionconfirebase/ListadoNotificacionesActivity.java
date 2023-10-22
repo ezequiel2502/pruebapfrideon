@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -27,6 +29,8 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
          recycleList = new ArrayList<>();
         //Creo la instancia de la base de datos
         firebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
         //Creo una instancia del adapter
         NotificacionesAdapter recyclerAdapter = new NotificacionesAdapter(recycleList, ListadoNotificacionesActivity.this);
@@ -42,7 +46,12 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     ModelNotificacion Notificacion = dataSnapshot.getValue(ModelNotificacion.class);
-                    recycleList.add(Notificacion);
+                    if (currentUser != null) {
+                        String userID = currentUser.getUid();
+                        if(Notificacion.getIdOrganizador().equals(userID) || Notificacion.getPostulanteId().equals(userID)) {
+                            recycleList.add(Notificacion);
+                        }
+                    }
                 }
                 recyclerAdapter.notifyDataSetChanged();
             }

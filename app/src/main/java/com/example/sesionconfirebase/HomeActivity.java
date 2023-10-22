@@ -400,13 +400,13 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
-        btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
+      /*  btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, ListadoNotificacionesActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
 
         /*btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {
@@ -420,7 +420,11 @@ public class HomeActivity extends AppCompatActivity {
 
     }//fin onCreate()
 
-
+    public void redirectToOtherActivity(View view) {
+        // Crea un Intent para abrir la otra actividad
+        Intent intent = new Intent(this, ListadoNotificacionesActivity.class);
+        startActivity(intent);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
