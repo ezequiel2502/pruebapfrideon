@@ -12,6 +12,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Modulo_Rutas" />
+            <option value="$PROJECT_DIR$/PantallasCompartidas" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>

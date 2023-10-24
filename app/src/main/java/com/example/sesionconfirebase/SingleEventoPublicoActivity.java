@@ -190,7 +190,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         recycleList=new ArrayList<>();
 
         //Creo una instancia del adapter para los comentarios
-        commentAdapter = new CommentAdapter(recycleList, SingleEventoPublicoActivity.this);
+        commentAdapter = new CommentAdapter(recycleList, SingleEventoPublicoActivity.this, FirebaseAuth.getInstance().getCurrentUser().getUid());
         //Seteo los listener de las interfaces de comunicacion para el adapter
         commentAdapter.setOnCommentDeleteListener(this);
         commentAdapter.setOnResponseDeleteListener(this);

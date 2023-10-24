@@ -442,6 +442,109 @@
 
             </LinearLayout>
 
+            <!--        Comments-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@android:color/darker_gray" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4"
+                    android:text="Comentarios:"
+                    android:textColor="#607D8B"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@android:color/darker_gray" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Define tu RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bottom"
+                    android:background="#fff"
+                    android:paddingTop="4dp"
+                    android:layout_alignParentBottom="true">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_height="40dp"
+                        android:layout_width="40dp"
+                        android:id="@+id/image_profile">
+                    </de.hdodenhof.circleimageview.CircleImageView>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_toRightOf="@id/image_profile"
+                        android:hint="Escribe un comentario"
+                        android:id="@+id/txt_write_comment"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@color/fui_transparent"
+                        android:textColorHint="#666666"
+                        android:layout_toLeftOf="@+id/tv_add_comment">
+
+                    </EditText>
+
+                    <TextView
+                        android:id="@+id/tv_add_comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="4dp"
+                        android:text="comentar"
+                        android:textColor="@color/design_default_color_primary">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
 
         </LinearLayout>
 

@@ -1,32 +1,53 @@
 package com.example.sesionconfirebase;
 
+import static androidx.activity.result.ActivityResultCallerKt.registerForActivityResult;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.gps_test.BuscarEventosMapaActivity;
+import com.example.gps_test.Ruta;
+import com.example.gps_test.ui.map.TupleDouble;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostuladoAdapter.ViewHolder> {
 
     ArrayList<ModelEvento> list;
     Context context;
-
+    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference refRoutes = database.getReference().child("Route");
     public EventoPostuladoAdapter(ArrayList<ModelEvento> list, Context context) {
         this.list = list;
         this.context = context;
@@ -91,6 +112,65 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
             }
         });
 
+        holder.routePreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ActivityResultLauncher<Intent> callLauncher = ((AppCompatActivity)context).registerForActivityResult(
+                        new ActivityResultContracts.StartActivityForResult(),
+                        new ActivityResultCallback<ActivityResult>() {
+                            @Override
+                            public void onActivityResult(ActivityResult result) {
+                                if (result.getResultCode() == Activity.RESULT_OK) {
+                                    // There are no request codes
+                                    Intent data = result.getData();
+                                    if (data.getStringExtra("Result").equals("Calificar"))
+                                    {
+                                        Intent intent = new Intent(context, CalificarActivity.class);
+                                        context.startActivity(intent);
+                                    }
+                                    else
+                                    {
+                                        Intent intent = new Intent(context, HomeActivity.class);
+                                        context.startActivity(intent);
+                                    }
+                                }
+                            }
+                        });
+
+                try {
+                    double d = Double.parseDouble(evento.getRuta());
+                    refRoutes.child(evento.getRuta()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Ruta ruta_actual = snapshot.getValue(Ruta.class);
+                            List<TupleDouble> camino = ruta_actual.routePoints;
+                            List<com.example.gps_test.ui.recyclerView.MyListData> resumen = ruta_actual.routeResumeData;
+
+                            Toast.makeText(view.getContext(),"click on item: "+ ruta_actual.routeName,Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(context, BuscarEventosMapaActivity.class);
+                            intent.putExtra("List_Of_Points", (Serializable) camino);
+                            intent.putExtra("List_Navigation", (Serializable) ruta_actual.routePointsNavigation);
+                            intent.putExtra("Resume_Data", (Serializable) resumen);
+                            intent.putExtra("Fecha_Hora", (evento.getFechaEncuentro() + " " + evento.getHoraEncuentro()).toString());
+                            intent.putExtra("Start_Point", ruta_actual.routePoints.get(0));
+                            intent.putExtra("Evento", evento.getIdEvento());
+                            context.startActivity(intent);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                } catch (NumberFormatException nfe) {
+
+                }
+
+
+            }
+        });
+
     }
 
     @Override
@@ -104,6 +184,7 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
         TextView tv_tituloEvento,tv_Ruta,tv_Descripcion,tv_FechaEncuentro,tv_HoraEncuentro,
                 tv_CupoMinimo,tv_CupoMaximo,tv_Categoria,tv_UserName,tv_UserId,tv_PublicoPrivado,tv_ActivarDescativar;
         ImageView imvEvento;
+        ImageButton routePreview;
 
         //RatingBar rb_calificacionEvento;
         public ViewHolder(@NonNull View itemView) {
@@ -124,6 +205,7 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
             tv_PublicoPrivado=itemView.findViewById(R.id.tv_PublicoPrivado);
             tv_ActivarDescativar=itemView.findViewById(R.id.tv_ActivarDescativar);
             imvEvento=itemView.findViewById(R.id.imvEvento);
+            this.routePreview = (ImageButton) itemView.findViewById(R.id.previewRoute);
 
 
         }

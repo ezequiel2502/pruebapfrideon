@@ -36,12 +36,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
 
 
     ArrayList<ModelComentario>list;
     Context context;
+    String userId;
 
     //**************Interfaz para eliminar respuesta del lado de la SingleEventoPublicoActivity
     private OnResponseDeleteListener onResponseDeleteListener;
@@ -71,9 +73,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     //*******************************************************************************************
 
 
-    public CommentAdapter(ArrayList<ModelComentario> list, Context context) {
+    public CommentAdapter(ArrayList<ModelComentario> list, Context context, String UserId) {
         this.list = list;
         this.context = context;
+        this.userId = UserId;
     }
 
 
@@ -244,6 +247,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             }
         });
 
+        if (!Objects.equals(list.get(holder.getAbsoluteAdapterPosition()).getPublisherId(), userId))
+        {
+            holder.btn_delete.setVisibility(View.GONE);
+        }
 
 
 

@@ -147,6 +147,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
     FloatingActionButton ComenzarEvento;
     FloatingActionButton TerminarEvento;
     DecimalFormat df;
+    Date horaInicio;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     DatabaseReference refRoutes = database.getReference().child("Route");
@@ -202,6 +203,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
                 cronometro.setBase(SystemClock.elapsedRealtime());
                 cronometro.start();
+                horaInicio = Calendar.getInstance().getTime();
                 String comienzo = dateFormat.format(Calendar.getInstance().getTime());
                 DatosParticipacionEvento datos = new DatosParticipacionEvento(comienzo, "pending", "pending");
                 Intent intent = getIntent();
@@ -233,10 +235,12 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 if (!abandono)
                 {
                     database.getReference().child("Events_Data").child(userId).child(EventoId).child("abandono").setValue("No");
+                    showFinishPopUp(Calendar.getInstance().getTime(), distancia, "Terminado");
                 }
                 else
                 {
                     database.getReference().child("Events_Data").child(userId).child(EventoId).child("abandono").setValue("Si");
+                    showFinishPopUp(Calendar.getInstance().getTime(), distancia, "Abandonó");
                 }
                 abandono = true;
             }
@@ -290,6 +294,55 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
 
 
 
+
+    }
+
+    public void showFinishPopUp(Date finalizacion, String distancia, String abandono)
+    {
+        Dialog dialogEvents = new Dialog(BuscarEventosMapaActivity.this);
+        dialogEvents.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogEvents.setContentView(R.layout.stats_event_finished);
+        dialogEvents.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogEvents.setCancelable(true);
+        dialogEvents.getWindow().getAttributes().windowAnimations = com.example.gps_test.R.style.animation;
+
+        TextView tiempo, estado, finalizado, distancia_recorrida, okay_text, cancel_text;
+        okay_text = dialogEvents.findViewById(R.id.okay_text);
+        cancel_text = dialogEvents.findViewById(R.id.cancel_text);
+        tiempo = dialogEvents.findViewById(R.id.tv_tiempo);
+        estado = dialogEvents.findViewById(R.id.tv_Estado);
+        finalizado = dialogEvents.findViewById(R.id.tv_Finalizado);
+        distancia_recorrida = dialogEvents.findViewById(R.id.tv_Distancia);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss",
+                Locale.getDefault());
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
+        long crono = finalizacion.getTime() - horaInicio.getTime();
+        tiempo.setText(String.valueOf(crono));
+        estado.setText(abandono);
+        finalizado.setText(dateFormat.format(finalizacion));
+        distancia_recorrida.setText(distancia);
+
+        okay_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Si queremos retornar resultados
+                Intent data = new Intent();
+                data.putExtra("Result","Calificar");
+                setResult(RESULT_OK, data);
+                finish();
+            }
+        });
+        cancel_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Si queremos retornar resultados
+                Intent data = new Intent();
+                data.putExtra("Result","Salir");
+                setResult(RESULT_OK, data);
+                finish();
+            }
+        });
 
     }
 

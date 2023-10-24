@@ -60,7 +60,7 @@ public class ListaEventoPostulados extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         // Crear una instancia del adaptador
-        recyclerAdapter = new EventoPostuladoAdapter(recycleList, getApplicationContext());
+        recyclerAdapter = new EventoPostuladoAdapter(recycleList, ListaEventoPostulados.this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerViewEventosPostulados.setLayoutManager(linearLayoutManager);
         recyclerViewEventosPostulados.addItemDecoration(new DividerItemDecoration(recyclerViewEventosPostulados.getContext(), DividerItemDecoration.VERTICAL));
