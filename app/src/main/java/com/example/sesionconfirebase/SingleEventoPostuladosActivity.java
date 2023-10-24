@@ -135,31 +135,31 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference refRoutes = database.getReference().child("Route");
+
+        ActivityResultLauncher<Intent> callLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // There are no request codes
+                            Intent data = result.getData();
+                            if (data.getStringExtra("Result").equals("Calificar"))
+                            {
+                                Intent intent = new Intent(SingleEventoPostuladosActivity.this, CalificarActivity.class);
+                                startActivity(intent);
+                            }
+                            else
+                            {
+                                Intent intent = new Intent(SingleEventoPostuladosActivity.this, HomeActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                    }
+                });
         singleImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                ActivityResultLauncher<Intent> callLauncher = registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        new ActivityResultCallback<ActivityResult>() {
-                            @Override
-                            public void onActivityResult(ActivityResult result) {
-                                if (result.getResultCode() == Activity.RESULT_OK) {
-                                    // There are no request codes
-                                    Intent data = result.getData();
-                                    if (data.getStringExtra("Result").equals("Calificar"))
-                                    {
-                                        Intent intent = new Intent(SingleEventoPostuladosActivity.this, CalificarActivity.class);
-                                        startActivity(intent);
-                                    }
-                                    else
-                                    {
-                                        Intent intent = new Intent(SingleEventoPostuladosActivity.this, HomeActivity.class);
-                                        startActivity(intent);
-                                    }
-                                }
-                            }
-                        });
 
                 try {
                     double d = Double.parseDouble(singleRuta);

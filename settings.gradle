@@ -22,4 +22,3 @@ dependencyResolutionManagement {
 rootProject.name = "Sesion con Firebase"
 include ':app'
 include ':Modulo_Rutas'
-include ':PantallasCompartidas'

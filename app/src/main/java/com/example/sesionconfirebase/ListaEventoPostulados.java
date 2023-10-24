@@ -1,11 +1,16 @@
 package com.example.sesionconfirebase;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -59,8 +64,29 @@ public class ListaEventoPostulados extends AppCompatActivity {
         // Crear una instancia de la base de datos
         firebaseDatabase = FirebaseDatabase.getInstance();
 
+        ActivityResultLauncher<Intent> callLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // There are no request codes
+                            Intent data = result.getData();
+                            if (data.getStringExtra("Result").equals("Calificar"))
+                            {
+                                Intent intent = new Intent(ListaEventoPostulados.this, CalificarActivity.class);
+                                startActivity(intent);
+                            }
+                            else
+                            {
+                                Intent intent = new Intent(ListaEventoPostulados.this, HomeActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                    }
+                });
         // Crear una instancia del adaptador
-        recyclerAdapter = new EventoPostuladoAdapter(recycleList, ListaEventoPostulados.this);
+        recyclerAdapter = new EventoPostuladoAdapter(recycleList, ListaEventoPostulados.this, callLauncher);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerViewEventosPostulados.setLayoutManager(linearLayoutManager);
         recyclerViewEventosPostulados.addItemDecoration(new DividerItemDecoration(recyclerViewEventosPostulados.getContext(), DividerItemDecoration.VERTICAL));

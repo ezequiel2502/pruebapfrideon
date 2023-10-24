@@ -46,11 +46,13 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
 
     ArrayList<ModelEvento> list;
     Context context;
+    ActivityResultLauncher<Intent> launcher;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refRoutes = database.getReference().child("Route");
-    public EventoPostuladoAdapter(ArrayList<ModelEvento> list, Context context) {
+    public EventoPostuladoAdapter(ArrayList<ModelEvento> list, Context context, ActivityResultLauncher<Intent> launcher) {
         this.list = list;
         this.context = context;
+        this.launcher = launcher;
     }
 
     @NonNull
@@ -107,7 +109,7 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
                 intent.putExtra("singleActivarDesactivar",evento.getActivadoDescativado());
                 intent.putExtra("EventoId",evento.getIdEvento());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                launcher.launch(intent);
 
             }
         });
@@ -115,28 +117,6 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
         holder.routePreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                ActivityResultLauncher<Intent> callLauncher = ((AppCompatActivity)context).registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        new ActivityResultCallback<ActivityResult>() {
-                            @Override
-                            public void onActivityResult(ActivityResult result) {
-                                if (result.getResultCode() == Activity.RESULT_OK) {
-                                    // There are no request codes
-                                    Intent data = result.getData();
-                                    if (data.getStringExtra("Result").equals("Calificar"))
-                                    {
-                                        Intent intent = new Intent(context, CalificarActivity.class);
-                                        context.startActivity(intent);
-                                    }
-                                    else
-                                    {
-                                        Intent intent = new Intent(context, HomeActivity.class);
-                                        context.startActivity(intent);
-                                    }
-                                }
-                            }
-                        });
 
                 try {
                     double d = Double.parseDouble(evento.getRuta());
