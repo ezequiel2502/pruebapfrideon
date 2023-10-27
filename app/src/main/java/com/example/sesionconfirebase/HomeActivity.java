@@ -88,7 +88,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Acá decimos que queremos que firebase guarde los datos de forma local aunque se pierda la conexión
         //solo hace falte activarlo una vez, preferentemente acá que entramos siempre
-
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.btn_perfil);
