@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="365dp"
+        android:layout_height="415dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layoutTitulo"
+                android:layout_width="346dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#5E35B1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+
+                android:padding="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5">
+
+                <!-- Etiqueta "Calificación" con fuente y color personalizado -->
+                <TextView
+                    android:id="@+id/tv_etiquetaTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="33dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="Reporte"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+
+                    />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layoutHorizonatlPrincipal"
+                android:layout_width="match_parent"
+                android:layout_height="337dp"
+                android:orientation="horizontal">
+
+
+                <LinearLayout
+                    android:layout_width="180dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- TextView adicional "Evento" en lavanda -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_etiquetaEvento"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Evento:"
+                            android:textColor="@color/lavender"
+                            android:textSize="14dp"
+                            />
+
+
+
+                        <!-- Título "Evento" en negro -->
+                        <TextView
+                            android:id="@+id/tv_tituloEvento"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Evento"
+                            android:textColor="@android:color/black"
+                            android:textSize="12dp"
+                            android:gravity="start"
+                            android:layout_gravity="center_vertical"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray" />
+
+
+                    <!-- TextView adicional "UserName" en lavanda -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_etiquertaUserName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Organizador:"
+                            android:textColor="@color/lavender"
+                            android:textSize="14dp" />
+
+
+
+                        <!-- Título "UserName" en negro -->
+                        <TextView
+                            android:id="@+id/tv_UserNameOrganizador"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="UserName"
+                            android:textColor="@android:color/black"
+                            android:textSize="12dp"
+                            android:gravity="start"
+                            android:layout_gravity="center_vertical"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray" />
+
+
+                    <!-- TextView adicional "Ruta" en lavanda -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_etiquetaRuta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ruta:"
+                            android:textColor="@color/lavender"
+                            android:textSize="14dp" />
+
+
+
+                        <!-- Título "Ruta" en negro -->
+                        <TextView
+                            android:id="@+id/tv_Ruta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ruta"
+                            android:textColor="@android:color/black"
+                            android:textSize="12dp"
+                            android:gravity="start"
+                            android:layout_gravity="center_vertical"/>
+
+                    </LinearLayout>
+
+                    <!-- ImageView -->
+                    <ImageView
+                        android:id="@+id/imvEvento"
+                        android:layout_width="150dp"
+                        android:layout_height="220dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:src="@drawable/baseline_upload_file_24" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/darker_gray" />
+
+
+
+                <!-- Layout izquierdo -->
+                <LinearLayout
+                    android:layout_width="180dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Agrega un título -->
+                    <LinearLayout
+                        android:layout_width="137dp"
+                        android:layout_height="37dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="#4A148C"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Resultados :"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp" />
+
+                    </LinearLayout>
+
+
+                    <!-- Gráfico de Torta -->
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/pieChart"
+                        android:layout_width="138dp"
+                        android:layout_height="134dp" />
+
+                    <!-- TextView adicional "Abandonados" en lavanda -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_etiquetaAbandonados"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Abandonos:"
+                            android:textColor="@color/lavender"
+                            android:layout_marginRight="6dp"
+                            android:textSize="14dp" />
+
+                        <!-- Cantidad de abandonados -->
+                        <TextView
+                            android:id="@+id/tv_Abandonos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@android:color/black"
+                            android:textSize="12dp" />
+
+                    </LinearLayout>
+
+                    <!-- TextView adicional "Participantes" en lavanda -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_etiquetaFinalizados"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Finalizados:"
+                            android:textColor="@color/lavender"
+                            android:layout_marginRight="6dp"
+                            android:textSize="14dp" />
+
+                        <!-- Cantidad de participantes -->
+                        <TextView
+                            android:id="@+id/tv_Finalizados"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@android:color/black"
+                            android:textSize="12dp" />
+
+                    </LinearLayout>
+
+                    <!-- TextView adicional "Participantes" en lavanda -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_etiquetaParticipantes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Participantes:"
+                            android:textColor="@color/lavender"
+                            android:layout_marginRight="6dp"
+                            android:textSize="14dp" />
+
+                        <!-- Cantidad de participantes -->
+                        <TextView
+                            android:id="@+id/tv_Participantes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@android:color/black"
+                            android:textSize="12dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

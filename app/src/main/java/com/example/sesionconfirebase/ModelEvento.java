@@ -22,6 +22,10 @@ private String idEvento;
 private String tokenFCM;
 private ArrayList<ModelCalificacion> calificaciones;
 
+private ArrayList<String>ListaParticipantes;
+private ArrayList<String>ListaParticipantesFinalizados;
+private ArrayList<String>ListaParticipantesConAbandono;
+
 private float calificacionGeneral;
 
 
@@ -57,6 +61,9 @@ private float calificacionGeneral;
         this.tokenFCM = tokenFCM;
         this.calificaciones = null;
         calificacionGeneral = 0.0f;
+        this.ListaParticipantes=null;
+        this.ListaParticipantesFinalizados=null;
+        this.ListaParticipantesConAbandono=null;
     }
 
     public ModelEvento(String nombreEvento, String ruta, String descripcion,
@@ -65,7 +72,10 @@ private float calificacionGeneral;
                        String horaFinalizacion, String imagenEvento,
                        boolean activarDesactivar, String userId, String userName,
                        String publicoPrivado, String activadoDescativado, String idEvento,
-                       String tokenFCM, ArrayList<ModelCalificacion>calificaciones,Float calificacionGeneral) {
+                       String tokenFCM, ArrayList<ModelCalificacion>calificaciones,
+                       Float calificacionGeneral,ArrayList<String> ListaParticipantes,
+                       ArrayList<String>  ListaParticipantesFinalizados,
+                       ArrayList<String>  ListaParticipantesConAbandono) {
         this.nombreEvento = nombreEvento;
         Ruta = ruta;
         this.descripcion = descripcion;
@@ -86,9 +96,32 @@ private float calificacionGeneral;
         this.tokenFCM = tokenFCM;
         this.calificaciones = calificaciones;
         this.calificacionGeneral=calificacionGeneral;
+        this.ListaParticipantes=ListaParticipantes;
+        this.ListaParticipantesFinalizados=ListaParticipantesFinalizados;
+        this.ListaParticipantesConAbandono=ListaParticipantesConAbandono;
     }
 
 
+    public void agregarParticipante(String userId) {
+        if (ListaParticipantes == null) {
+            ListaParticipantes = new ArrayList<>();
+        }
+        ListaParticipantes.add(userId);
+    }
+
+    public void agregarParticipanteFinalizado(String userId) {
+        if (ListaParticipantesFinalizados == null) {
+            ListaParticipantesFinalizados = new ArrayList<>();
+        }
+        ListaParticipantesFinalizados.add(userId);
+    }
+
+    public void agregarParticipanteConAbandono(String userId) {
+        if (ListaParticipantesConAbandono == null) {
+            ListaParticipantesConAbandono = new ArrayList<>();
+        }
+        ListaParticipantesConAbandono.add(userId);
+    }
 
     public void agregarCalificacion(ModelCalificacion calificacion) {
         if (calificaciones == null) {
@@ -147,6 +180,18 @@ private float calificacionGeneral;
     //********Getters
 
 
+    public ArrayList<String> getListaParticipantes() {
+        return ListaParticipantes;
+    }
+
+    public ArrayList<String> getListaParticipantesFinalizados() {
+        return ListaParticipantesFinalizados;
+    }
+
+    public ArrayList<String> getListaParticipantesConAbandono() {
+        return ListaParticipantesConAbandono;
+    }
+
     public float getCalificacionGeneral() {
         return calificacionGeneral;
     }
@@ -168,7 +213,6 @@ private float calificacionGeneral;
     }
 
 
-
     public String getUserId() {
         return userId;
     }
@@ -178,11 +222,9 @@ private float calificacionGeneral;
     }
 
 
-
     public boolean isActivarDesactivar() {
         return activarDesactivar;
     }
-
 
 
     public String getNombreEvento() {
@@ -233,7 +275,25 @@ private float calificacionGeneral;
         return calificaciones;
     }
 
+
+
+
+
     //******Setters
+
+
+    public void setListaParticipantes(ArrayList<String> listaParticipantes) {
+        ListaParticipantes = listaParticipantes;
+    }
+
+    public void setListaParticipantesFinalizados(ArrayList<String> listaParticipantesFinalizados) {
+        ListaParticipantesFinalizados = listaParticipantesFinalizados;
+    }
+
+    public void setListaParticipantesConAbandono(ArrayList<String> listaParticipantesConAbandono) {
+        ListaParticipantesConAbandono = listaParticipantesConAbandono;
+    }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }

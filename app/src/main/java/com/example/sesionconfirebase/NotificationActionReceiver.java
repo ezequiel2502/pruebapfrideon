@@ -132,6 +132,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+
                     ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
 
                     int cupoMaximo = Integer.parseInt(evento.getCupoMaximo());
@@ -145,6 +146,11 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+
+                                            // Agregamos al participante a la lista
+                                            evento.agregarParticipante(userId);
+
+                                            // Guardamos los cambios en el evento
                                             eventosRef.setValue(evento)
                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override

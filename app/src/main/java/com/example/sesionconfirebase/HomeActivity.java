@@ -398,6 +398,14 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
+        reportes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, ListaReportes.class);
+                startActivity(intent);
+            }
+        });
+
 
         /*btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {
             @Override
