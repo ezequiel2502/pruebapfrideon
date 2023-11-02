@@ -204,8 +204,8 @@
 
                     <!-- Agrega un título -->
                     <LinearLayout
-                        android:layout_width="137dp"
-                        android:layout_height="37dp"
+                        android:layout_width="128dp"
+                        android:layout_height="36dp"
                         android:layout_marginBottom="16dp"
                         android:background="#4A148C"
                         android:gravity="center"
@@ -214,14 +214,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:gravity="center"
                             android:text="Resultados :"
                             android:textColor="@android:color/white"
-                            android:textStyle="bold"
                             android:textSize="16sp"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginEnd="8dp" />
+                            android:textStyle="bold" />
 
                     </LinearLayout>
 

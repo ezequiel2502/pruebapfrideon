@@ -3,6 +3,7 @@ package com.example.sesionconfirebase;
 import static com.example.sesionconfirebase.Utils.calcularTiempo;
 import static com.example.sesionconfirebase.Utils.calcularVelocidad;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -14,6 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gps_test.DatosParticipacionEvento;
 import com.example.gps_test.Ruta;
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,27 +39,13 @@ public class ListaReportes extends AppCompatActivity {
 
     ReportesAdapter recyclerAdapter;
 
-    TextView tvEventos,tvAbandonos,tvFinalizados;
+    TextView tvEventos, tvAbandonos, tvFinalizados, tvParticipantes;
 
-
-
-    ArrayList<String>abandonosLista;
-    ArrayList<String>finalizadosLista;
-
-    ArrayList<ModelEstadistica> listaEstadisticasPorEvento;
-
-    int totalParticipantesEvento;
-
+    PieChart pieChart;
+    ArrayList<PieEntry> entries;
     int totalAbandonos;
     int totalFinalizados;
-
-
     String userNameCustom;
-    String nombreRuta;
-
-    ModelEvento eventoCompletado;
-
-
 
 
 
@@ -67,7 +60,14 @@ public class ListaReportes extends AppCompatActivity {
         tvEventos=findViewById(R.id.tvEventos);
         tvAbandonos=findViewById(R.id.tvAbandonos);
         tvFinalizados=findViewById(R.id.tvFinalizados);
+        tvParticipantes=findViewById(R.id.tvParticipantes);
+        pieChart=findViewById(R.id.pieChart);
 
+
+
+
+
+        //creo la lista para el recycler
         recycleList = new ArrayList<>();
 
         //Creo la instancia de la base de datos
@@ -192,6 +192,24 @@ public class ListaReportes extends AppCompatActivity {
                                                                 // Agrega el objeto reporte a recycler
                                                                 recycleList.add(reporte);
                                                                 recyclerAdapter.notifyDataSetChanged();
+
+                                                                //Para calcular los totales
+                                                                calcularTotales();
+
+                                                                // Configurar el PieChart, para los totales
+                                                                PieDataSet dataSet = new PieDataSet(generarDatosParaPieChart(), "");
+                                                                dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+                                                                dataSet.setValueTextColor(Color.BLACK);
+                                                                dataSet.setValueTextSize(12f);
+
+                                                                PieData data = new PieData(dataSet);
+
+                                                                pieChart.setData(data);
+                                                                pieChart.getDescription().setEnabled(false);
+                                                                pieChart.animateY(1000, Easing.EaseInOutCubic);
+                                                                pieChart.setEntryLabelColor(Color.BLACK);
+
+
                                                             }
                                                         }
                                                     }
@@ -210,10 +228,10 @@ public class ListaReportes extends AppCompatActivity {
                                         // Manejar error de cancelación
                                     }
                                 });
-                            }
+                            }//fin for(listaParticipantes)
                         }
                     }
-                }
+                }//fin for(evento completados)
 
             }
 
@@ -224,13 +242,90 @@ public class ListaReportes extends AppCompatActivity {
         });
 
 
-
-
-
-
     }//fin onCreate()
 
 
+
+    private void calcularTotales() {
+        int totalParticipantes = 0;
+        int totalAbandonos = 0;
+        int totalFinalizados = 0;
+        int totalEventos = 0;
+
+        // Iterar a través de la lista de reportes
+        for (ModelReporteAbandonosYFinalizados reporte : recycleList) {
+            totalParticipantes += reporte.getTotalParticipantes();
+            totalAbandonos += reporte.getTotalAbandonos();
+            totalFinalizados += reporte.getTotalFinalizados();
+        }
+
+        // Ahora, fuera del bucle, calculamos el total de eventos
+        totalEventos = recycleList.size();
+
+        // Mostrar los resultados
+        tvEventos.setText(String.valueOf(totalEventos));
+        tvParticipantes.setText(String.valueOf(totalParticipantes));
+        tvAbandonos.setText(String.valueOf(totalAbandonos));
+        tvFinalizados.setText(String.valueOf(totalFinalizados));
+    }
+
+    private ArrayList<PieEntry> generarDatosParaPieChart() {
+
+
+        // Inicializar la lista de entradas
+        entries = new ArrayList<>();
+
+        float porcentajeAbandonos = calcularPorcentajeAbandonos();
+        float porcentajeFinalizados = calcularPorcentajeFinalizados();
+
+        if (porcentajeAbandonos > 0) {
+            entries.add(new PieEntry(porcentajeAbandonos, "Abandonos"));
+        }
+
+        if (porcentajeFinalizados > 0) {
+            entries.add(new PieEntry(porcentajeFinalizados, "Finalizados"));
+        }
+
+        return entries;
+    }
+
+
+
+    private float calcularPorcentajeAbandonos() {
+
+        int totalParticipantes = 0;
+        int totalAbandonos = 0;
+
+        // Iterar a través de la lista de reportes
+        for (ModelReporteAbandonosYFinalizados reporte : recycleList) {
+            totalParticipantes += reporte.getTotalParticipantes();
+            totalAbandonos += reporte.getTotalAbandonos();
+        }
+
+        if (totalParticipantes > 0) {
+            return ((float) totalAbandonos / totalParticipantes) * 100;
+        } else {
+            return 0;
+        }
+    }
+
+    private float calcularPorcentajeFinalizados() {
+
+        int totalParticipantes = 0;
+        int totalFinalizados = 0;
+
+
+        // Iterar a través de la lista de reportes
+        for (ModelReporteAbandonosYFinalizados reporte : recycleList) {
+            totalParticipantes += reporte.getTotalParticipantes();
+            totalFinalizados += reporte.getTotalFinalizados();
+        }
+        if (totalParticipantes > 0) {
+            return ((float) totalFinalizados / totalParticipantes) * 100;
+        } else {
+            return 0;
+        }
+    }
 
 
 

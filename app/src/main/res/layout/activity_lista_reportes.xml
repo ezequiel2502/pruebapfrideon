@@ -53,7 +53,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -61,79 +61,113 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Totales"
+                android:layout_gravity="center"
                 android:layout_marginBottom="16dp"
+                android:text="Totales"
                 android:textColor="@color/black"
-                android:textSize="24sp"
-                android:layout_gravity="center"/>
+                android:textSize="14sp" />
 
             <!-- Gráfico de Torta -->
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/pieChart"
-                android:layout_width="305dp"
-                android:layout_height="163dp"
+                android:layout_width="124dp"
+                android:layout_height="119dp"
                 android:layout_gravity="center" />
 
             <!-- Etiquetas -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="Eventos:"
                     android:textColor="@color/black"
-                    android:textSize="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp" />
+                    android:textSize="12dp"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/tvEventos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="0"
                     android:textColor="@color/black"
-                    android:textSize="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp" />
+                    android:textSize="13dp" />
+
+
+            </LinearLayout>
+
+            <!-- Etiquetas -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Participantes:"
+                    android:textColor="@color/black"
+                    android:textSize="12dp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tvParticipantes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="0"
+                    android:textColor="@color/black"
+                    android:textSize="13dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="Abandonos:"
                     android:textColor="@color/black"
-                    android:textSize="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp" />
+                    android:textSize="12dp"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/tvAbandonos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="0"
                     android:textColor="@color/black"
-                    android:textSize="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp" />
+                    android:textSize="13dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:text="Finalizados:"
                     android:textColor="@color/black"
-                    android:textSize="16dp"
-                    android:layout_marginTop="8dp" />
+                    android:textSize="12dp"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/tvFinalizados"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:text="0"
                     android:textColor="@color/black"
-                    android:textSize="16dp"
-                    android:layout_marginTop="8dp" />
+                    android:textSize="13dp" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
