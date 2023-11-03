@@ -1,57 +1,63 @@
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SingleReporteActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Tarjeta con el título y el icono de impresión -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_margin="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#5E35B1">
 
-        <!-- Tarjeta con el título y el icono de impresión -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
-            android:layout_width="0dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="#5E35B1">
+            android:padding="16dp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvTitulo"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:text="Reporte del Evento"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="#ffffff" />
 
-                <TextView
-                    android:id="@+id/tvTitulo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Reporte del evento"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:textColor="#ffffff" />
+            <ImageView
+                android:id="@+id/ivImpresion"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/print"
+                app:tint="#ffffff" />
+        </RelativeLayout>
 
-                <ImageView
-                    android:id="@+id/ivImpresion"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/print"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="4dp"
-                    app:tint="#ffffff" />
-            </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
-        </androidx.cardview.widget.CardView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <!-- Aquí se incluyen las tarjetas para cada participante -->
+        <!--Contenedor para los item_posicion_reporte-->
+        <LinearLayout
+            android:id="@+id/llContenedorEstadisticas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+
+
+    </ScrollView>
+
+
+</LinearLayout>

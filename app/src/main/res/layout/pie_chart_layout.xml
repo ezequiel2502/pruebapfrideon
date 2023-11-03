@@ -1,0 +1,82 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <!-- Gráfico de Torta -->
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="138dp"
+        android:layout_height="134dp" />
+
+    <!-- LinearLayout para los campos -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+        <!-- Abandonos -->
+        <TextView
+            android:id="@+id/tv_etiquetaAbandonados"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Abandonos:"
+            android:textColor="@color/lavender"
+            android:layout_marginRight="6dp"
+            android:textSize="14dp" />
+
+        <!-- Cantidad de abandonados -->
+        <TextView
+            android:id="@+id/tv_Abandonos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@android:color/black"
+            android:textSize="12dp"
+            android:layout_marginRight="8dp"/>
+
+        <!-- Finalizados -->
+        <TextView
+            android:id="@+id/tv_etiquetaFinalizados"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Finalizados:"
+            android:textColor="@color/lavender"
+            android:layout_marginRight="6dp"
+            android:textSize="14dp"
+            />
+
+        <!-- Cantidad de finalizados -->
+        <TextView
+            android:id="@+id/tv_Finalizados"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@android:color/black"
+            android:textSize="12dp"
+            android:layout_marginRight="8dp"/>
+
+        <!-- Participantes -->
+        <TextView
+            android:id="@+id/tv_etiquetaParticipantes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Participantes:"
+            android:textColor="@color/lavender"
+            android:layout_marginRight="6dp"
+            android:textSize="14dp" />
+
+        <!-- Cantidad de participantes -->
+        <TextView
+            android:id="@+id/tv_Participantes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@android:color/black"
+            android:textSize="12dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

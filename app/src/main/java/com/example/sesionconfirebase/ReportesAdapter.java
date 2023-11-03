@@ -1,6 +1,7 @@
 package com.example.sesionconfirebase;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +74,19 @@ public class ReportesAdapter extends RecyclerView.Adapter<ReportesAdapter.ViewHo
         holder.tv_Finalizados.setText(String.valueOf(reporte.getTotalFinalizados()));
         holder.tv_Participantes.setText( String.valueOf(reporte.getTotalParticipantes()));
 
+
+        //Agrego un listener para cuando cliquee sobre el reporte,
+        // me lleve a los detalles que permiten imprimir el reporte(crear Pdf)
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent=new Intent(context, SingleReporteActivity.class);
+                intent.putExtra("EventoId",reporte.getEventoId());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
 
 
     }

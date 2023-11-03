@@ -93,4 +93,50 @@
             android:textSize="16sp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/llTiempo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvTiempoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiempo: "
+            android:textSize="16sp"
+             />
+
+        <TextView
+            android:id="@+id/tvTiempo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiempo"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llAbandono"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvAbandonoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Abandono: "
+            android:textSize="16sp"
+             />
+
+        <TextView
+            android:id="@+id/tvAbandono"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Abandono"
+            android:textSize="16sp" />
+    </LinearLayout>
+
 </LinearLayout>

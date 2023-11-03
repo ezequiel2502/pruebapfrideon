@@ -21,12 +21,13 @@ private String idEvento;
 
 private String tokenFCM;
 private ArrayList<ModelCalificacion> calificaciones;
-
 private ArrayList<String>ListaParticipantes;
 private ArrayList<String>ListaParticipantesFinalizados;
 private ArrayList<String>ListaParticipantesConAbandono;
 
 private float calificacionGeneral;
+
+
 
 
 
