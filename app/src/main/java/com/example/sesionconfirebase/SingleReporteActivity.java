@@ -44,10 +44,13 @@ import android.widget.Toast;
 public class SingleReporteActivity extends AppCompatActivity {
 
     private String eventoId;
+    private String nombreEvento;
     LinearLayout llContenedorEstadisticas;
     CardView cardViewImpresion;
     private static final int REQUEST_CODE_SAVE_PDF = 1;
     private PdfDocument document;
+
+    TextView tvSubtitulo;
 
 
     @Override
@@ -55,20 +58,38 @@ public class SingleReporteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_reporte);
 
+        // Obtener el Intent desde el adapter
+        Intent intent = getIntent();
+
         // Obtener el contenedor
         llContenedorEstadisticas = findViewById(R.id.llContenedorEstadisticas);
+
+        //Otros controles de la vista
+        tvSubtitulo = findViewById(R.id.tvSubtitulo);
+
 
         //Obtengo el boton de impresion
         cardViewImpresion=findViewById(R.id.cardViewImpresion);
 
-        // Obtener el eventoId del Intent
-        Intent intent = getIntent();
+        // Inflar la vista del título y el logo
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View tituloAppView = inflater.inflate(R.layout.layout_titulo_app, null);
+        llContenedorEstadisticas.addView(tituloAppView);
+
+        // Obtener una referencia al TextView dentro de la vista inflada
+        TextView tv_tituloEvento = tituloAppView.findViewById(R.id.tv_tituloEvento);
+
+        // Establecer el texto para el titulo del evento
+        tv_tituloEvento.setText("Evento: "+intent.getStringExtra("NombreEvento"));
+
+
 
 
 
         //Busco en la base de datos el reporte usando el EventoId
         if (intent != null) {
             eventoId = intent.getStringExtra("EventoId");
+
             if (eventoId != null) {
 
                 // Ahora uso el eventoId para buscar el reporte en la base de datos
@@ -82,7 +103,11 @@ public class SingleReporteActivity extends AppCompatActivity {
 
                             // Ahora puedo usar el reporte
                             if (reporte != null) {
+
+                                tvSubtitulo.setText(reporte.getNombreEvento());
+
                                 List<ModelEstadistica> estadisticas = reporte.getEstadisticas();
+
                                 if (estadisticas != null) {
 
                                     // Ordenar las estadísticas por tiempo (tiempo es una cadena en formato "hh:mm")

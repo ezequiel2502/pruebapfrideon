@@ -83,6 +83,7 @@ public class ReportesAdapter extends RecyclerView.Adapter<ReportesAdapter.ViewHo
 
                 Intent intent=new Intent(context, SingleReporteActivity.class);
                 intent.putExtra("EventoId",reporte.getEventoId());
+                intent.putExtra("NombreEvento",reporte.getNombreEvento());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }

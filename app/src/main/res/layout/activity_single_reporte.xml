@@ -28,7 +28,7 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/tvTitulo"
+                    android:id="@+id/tvTituloEncabezado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Reporte del Evento"
@@ -40,7 +40,7 @@
                     android:id="@+id/tvSubtitulo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tvTitulo"
+                    android:layout_below="@id/tvTituloEncabezado"
                     android:text="Nombre del Evento"
                     android:textSize="12dp"
                     android:textColor="#ffffff" />
@@ -49,8 +49,7 @@
         </androidx.cardview.widget.CardView>
 
         <!-- Tarjeta con el icono de impresión y el subtítulo -->
-        <!-- Tarjeta con el icono de impresión y el subtítulo -->
-        <androidx.cardview.widget.CardView
+          <androidx.cardview.widget.CardView
             android:id="@+id/cardViewImpresion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,6 +91,7 @@
 
     </LinearLayout>
 
+<!--Dentro de este scrollview esta llContenedorEstadisticas donde se inflan las vistas-->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
