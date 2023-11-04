@@ -82,6 +82,12 @@ dependencies {
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
+    //para crear pdf
+    implementation 'com.itextpdf:itext7-core:7.1.16'
+    implementation 'com.itextpdf:itext7-core:7.1.15'
+    implementation 'com.itextpdf:html2pdf:3.0.2'
+
+
 
 
 
