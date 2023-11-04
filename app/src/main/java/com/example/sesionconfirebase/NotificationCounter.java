@@ -199,10 +199,19 @@ public class NotificationCounter {
         int cantidadNotificaciones = 0;
         for(int i=0;i< lista.size();i++)
             {
-                if(userId.equals(lista.get(i).getIdOrganizador()) || userId.equals(lista.get(i).getPostulanteId()))
-                {
-                cantidadNotificaciones++;
+                if(lista.get(i).getIdOrganizador()!=null)
+                    {
+                        if(userId.equals(lista.get(i).getIdOrganizador()) || userId.equals(lista.get(i).getPostulanteId()))
+                        {
+                            cantidadNotificaciones++;
+                        }
+                    }else{
+                    if(userId.equals(lista.get(i).getPostulanteId()))
+                    {
+                        cantidadNotificaciones++;
+                    }
                 }
+
             }
         return cantidadNotificaciones;
     }

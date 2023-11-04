@@ -46,10 +46,17 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     ModelNotificacion Notificacion = dataSnapshot.getValue(ModelNotificacion.class);
-                    if (currentUser != null) {
+                    if (currentUser != null && Notificacion !=null) {
                         String userID = currentUser.getUid();
-                        if(Notificacion.getIdOrganizador().equals(userID) || Notificacion.getPostulanteId().equals(userID)) {
-                            recycleList.add(Notificacion);
+                        if(Notificacion.getIdOrganizador() != null) {
+                            if(Notificacion.getIdOrganizador().equals(userID) || Notificacion.getPostulanteId().equals(userID)) {
+                                recycleList.add(Notificacion);
+                            }
+                        } else if ( Notificacion.getPostulanteId()!=null) {
+                            if(Notificacion.getPostulanteId().equals(userID))
+                            {
+                                recycleList.add(Notificacion);
+                            }
                         }
                     }
                 }
