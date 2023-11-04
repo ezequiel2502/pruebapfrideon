@@ -13,8 +13,7 @@ public class ModelEstadistica {
     private String distanciaRecorrida;
     private String tiempo;
     private String velocidadPromEvento;
-    private Boolean abandono;
-    private Boolean finalizo;
+    private String abandonoSIoNO;
 
 
     public ModelEstadistica() {
@@ -35,14 +34,13 @@ public class ModelEstadistica {
         this.distanciaRecorrida = distanciaRecorrida;
         this.tiempo = tiempo;
         this.velocidadPromEvento = velocidadPromEvento;
-        this.abandono=null;
-        this.finalizo=null;
+        this.abandonoSIoNO=null;
     }
 
     public ModelEstadistica(String organizadorId,
                             String organizadorUsername, String eventoId, String nombreEvento,String nombreRuta,
                             String userId, String userName, String imageUrl, String distanciaRecorrida,
-                            String tiempo, String velocidadPromEvento, Boolean abandono,Boolean finalizo) {
+                            String tiempo, String velocidadPromEvento, String abandonoSIoNO) {
         this.organizadorId = organizadorId;
         this.organizadorUsername = organizadorUsername;
         this.eventoId = eventoId;
@@ -54,19 +52,15 @@ public class ModelEstadistica {
         this.distanciaRecorrida = distanciaRecorrida;
         this.tiempo = tiempo;
         this.velocidadPromEvento = velocidadPromEvento;
-        this.abandono=abandono;
-        this.finalizo=finalizo;
+        this.abandonoSIoNO=abandonoSIoNO;
+
     }
 
     //Getters
 
 
-    public Boolean getAbandono() {
-        return abandono;
-    }
-
-    public Boolean getFinalizo() {
-        return finalizo;
+    public String getAbandonoSIoNO() {
+        return abandonoSIoNO;
     }
 
     public String getNombreRuta() {
@@ -117,13 +111,8 @@ public class ModelEstadistica {
     //Setters
 
 
-    public void setAbandono(Boolean abandono) {
-        this.abandono = abandono;
-    }
-
-    public void setFinalizo(Boolean finalizo) {
-        this.finalizo = finalizo;
-    }
+    public void setAbandonoSIoNO(String abandonoSIoNO) {
+        this.abandonoSIoNO = abandonoSIoNO;    }
 
     public void setNombreRuta(String nombreRuta) {
         this.nombreRuta = nombreRuta;

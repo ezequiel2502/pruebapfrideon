@@ -131,12 +131,16 @@ public class SingleReporteActivity extends AppCompatActivity {
                                         TextView tvNombreCompetidor = itemView.findViewById(R.id.tvNombreCompetidor);
                                         TextView tvDistancia = itemView.findViewById(R.id.tvDistancia);
                                         TextView tvVelocidad = itemView.findViewById(R.id.tvVelocidad);
+                                        TextView tvTiempo = itemView.findViewById(R.id.tvTiempo);
+                                        TextView tvAbandono = itemView.findViewById(R.id.tvAbandono);
 
                                         // Configurar los valores de los TextView con los datos de la estadística
                                         tvPosicion.setText(String.valueOf(i + 1)); // La posición es 1-indexed
                                         tvNombreCompetidor.setText( estadistica.getUserName());
                                         tvDistancia.setText(estadistica.getDistanciaRecorrida());
                                         tvVelocidad.setText(estadistica.getVelocidadPromEvento());
+                                        tvTiempo.setText(estadistica.getTiempo());
+                                        tvAbandono.setText(estadistica.getAbandonoSIoNO());
 
                                         // Obtener el contenedor y agregar la vista inflada
 

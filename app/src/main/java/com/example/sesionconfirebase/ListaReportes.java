@@ -125,7 +125,10 @@ public class ListaReportes extends AppCompatActivity {
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.exists()) {
 
+                                            //Pregunto si es un abandono
                                             String abandono = dataSnapshot.child("abandono").getValue(String.class);
+
+                                            //Obtengo los otros datos departicipacion
                                             DatosParticipacionEvento datosParticipacion = dataSnapshot.getValue(DatosParticipacionEvento.class);
 
                                             if (datosParticipacion != null) {
@@ -168,7 +171,8 @@ public class ListaReportes extends AppCompatActivity {
                                                                                     eventoCompletado.getImagenEvento(),
                                                                                     distanciaCubierta,
                                                                                     calcularTiempo(comienzo, finalizacion),
-                                                                                    calcularVelocidad(distanciaCubierta, calcularTiempo(comienzo, finalizacion))
+                                                                                    calcularVelocidad(distanciaCubierta, calcularTiempo(comienzo, finalizacion)),
+                                                                                    abandono
                                                                             );
 
                                                                             listaEstadisticas.add(estadistica);
