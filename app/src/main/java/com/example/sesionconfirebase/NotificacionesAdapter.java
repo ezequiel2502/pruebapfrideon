@@ -1,5 +1,6 @@
 package com.example.sesionconfirebase;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -56,6 +57,11 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
         String mensaje = notificacion.getTitulo() + " " + notificacion.getDetalle();
         holder.tv_MensajeNotificacion.setText(mensaje);
         holder.tv_TipoNotificacion.setText(notificacion.getTipoNotificacion());
+        if(!notificacion.getTipoNotificacion().equals("creador_evento"))
+        {
+            holder.btnAceptar.setVisibility(View.GONE);
+            holder.btnCancelar.setVisibility(View.GONE);
+        }
         // Configura el clic del botón "Aceptar"
         holder.btnAceptar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +71,12 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                 String IdEvento = notificacion.getIdEvento();
                 buscarNoAceptadoPorEventoYUsuario(context,IdEvento,IdPostulante);
                 notificarPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
+                DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
+                // Eliminar la notificación
+                notificacionRef.removeValue();
+                Intent intent = new Intent(v.getContext(), HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
+                v.getContext().startActivity(intent);
             }
         });
         // Configura el clic del botón "Aceptar"
@@ -75,6 +87,23 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                 String IdPostulante = notificacion.getPostulanteId();
                 String IdEvento = notificacion.getIdEvento();
                 notificarDenegacionPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
+                DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
+                // Eliminar la notificación
+                notificacionRef.removeValue();
+                Intent intent = new Intent(v.getContext(), HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
+                v.getContext().startActivity(intent);
+            }
+        });
+        holder.btnBorrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
+                // Eliminar la notificación
+                notificacionRef.removeValue();
+                Intent intent = new Intent(v.getContext(), HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
+                v.getContext().startActivity(intent);
             }
         });
     }
@@ -87,13 +116,14 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
 
         //Son los controles del itemEvento
         TextView tv_TipoNotificacion,tv_NombreUsuario,tv_MensajeNotificacion;
-        Button btnAceptar, btnCancelar;
+        Button btnAceptar, btnCancelar,btnBorrar;
         public ViewHolderNotificacion(@NonNull View itemView) {
             super(itemView);
             tv_TipoNotificacion=itemView.findViewById(R.id.tv_TipoNotificacion);
             tv_MensajeNotificacion=itemView.findViewById(R.id.tv_MensajeNotificacion);
             btnAceptar=itemView.findViewById(R.id.tv_BotonAceptar);
             btnCancelar=itemView.findViewById(R.id.tv_BotonCancelar);
+            btnBorrar=itemView.findViewById(R.id.tv_BotonBorrar);
         }
     }
     private void notificarDenegacionPostulanteEvento( String IdEvento,String nombreEvento, String postulanteId) {
