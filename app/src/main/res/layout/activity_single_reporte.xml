@@ -34,7 +34,8 @@
                     android:text="Reporte del Evento"
                     android:textSize="20dp"
                     android:textStyle="bold"
-                    android:textColor="#ffffff" />
+                    android:textColor="#ffffff"
+                    android:layout_centerHorizontal="true" /> <!-- Centra el texto horizontalmente -->
 
                 <TextView
                     android:id="@+id/tvSubtitulo"
@@ -43,13 +44,15 @@
                     android:layout_below="@id/tvTituloEncabezado"
                     android:text="Nombre del Evento"
                     android:textSize="12dp"
-                    android:textColor="#ffffff" />
+                    android:textColor="#ffffff"
+                    android:layout_centerHorizontal="true" /> <!-- Centra el texto horizontalmente -->
             </RelativeLayout>
-
         </androidx.cardview.widget.CardView>
 
+
         <!-- Tarjeta con el icono de impresión y el subtítulo -->
-          <androidx.cardview.widget.CardView
+        <!-- Tarjeta con el icono de impresión y el subtítulo -->
+        <androidx.cardview.widget.CardView
             android:id="@+id/cardViewImpresion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,31 +64,32 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:padding="8dp">
 
                 <ImageView
                     android:id="@+id/ivImpresionSubtitulo"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="30dp"
+                    android:layout_height="36dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginStart="24dp"
-                    android:src="@drawable/print"
+                    android:layout_marginStart="28dp"
+                    android:layout_marginBottom="2dp"
+                    android:src="@drawable/pdf2"
                     app:tint="#ffffff" />
 
                 <TextView
-                    android:id="@+id/tvImpresionSubtitulo"
+                    android:id="@+id/tvDescargarSubtitulo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/ivImpresionSubtitulo"
                     android:layout_marginTop="4dp"
                     android:layout_marginStart="8dp"
-                    android:text="Imprimir"
+                    android:text="Descargar"
                     android:textColor="#ffffff"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>
-
         </androidx.cardview.widget.CardView>
+
 
 
 
