@@ -71,8 +71,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             // Ejecuta tu método para aceptar
 
             //buscarPrimerNoAceptado(context);
-            buscarNoAceptadoPorEventoYUsuario(context,idEvento,postulanteId);
-            notificarPostulanteEvento(context,nombreEvento,tokenPostulante);
+            buscarNoAceptadoPorEventoYUsuario(context,idEvento,nombreEvento,postulanteId);
+            //notificarPostulanteEvento(context,nombreEvento,tokenPostulante);
 
         } else if ("Botón 2".equals(action)) {
 
@@ -88,7 +88,9 @@ public class NotificationActionReceiver extends BroadcastReceiver {
     }
 
 
-    private void buscarNoAceptadoPorEventoYUsuario(Context context,String idEvento, String userId) {
+
+
+    private void buscarNoAceptadoPorEventoYUsuario(Context context,String idEvento,String nombreEvento,String userId) {
         DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
 
         DatabaseReference eventoRef = prePostulacionesRef.child(idEvento);
@@ -108,7 +110,9 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
 
-                                        //si salio bien lo postula
+                                        //si salio bien notifica y postula.
+                                        notificarPostulanteEvento(context,nombreEvento,tokenFcmPostulante);
+
                                         postularCandidato2(context,idEvento, userId, tokenFcmPostulante);
                                     } else {
                                         // Manejar el error en la actualización
@@ -188,7 +192,6 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             }
         });
     }
-
 
 
 
