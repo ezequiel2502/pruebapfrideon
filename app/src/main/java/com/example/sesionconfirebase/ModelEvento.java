@@ -110,6 +110,13 @@ private float calificacionGeneral;
         ListaParticipantes.add(userId);
     }
 
+    public void eliminarParticipante(String userId) {
+        if (ListaParticipantes != null) {
+            ListaParticipantes.remove(userId);
+        }
+    }
+
+
     public void agregarParticipanteFinalizado(String userId) {
         if (ListaParticipantesFinalizados == null) {
             ListaParticipantesFinalizados = new ArrayList<>();

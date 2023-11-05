@@ -122,8 +122,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
 
                 // Obtener el ID del usuario actual
                 String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                String userName=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-
+                String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
 
                 // Buscar el evento
                 DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(singleIdEvento);
@@ -142,6 +141,9 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
                             // Obtener el ID del usuario actual
                             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+                            // Eliminar al usuario de la lista de participantes
+                            evento.eliminarParticipante(userId);
+
                             // Eliminar la referencia de postulación del evento específico
                             DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Postulaciones");
                             postulacionesRef.child(userId).child(singleIdEvento).removeValue()
@@ -159,7 +161,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
                                                                     Toast.makeText(getApplicationContext(), "Has cancelado tu postulación al evento", Toast.LENGTH_SHORT).show();
 
                                                                     //Agregar notificacion al creador de evento
-                                                                    notificarPostulacionCancelada(evento.getTokenFCM(),evento.getNombreEvento(),userName);
+                                                                    notificarPostulacionCancelada(evento.getTokenFCM(), evento.getNombreEvento(), userName);
 
                                                                 } else {
                                                                     // Error en la modificación del evento
@@ -183,6 +185,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
                 });
             }
         });
+
 
 
     }//fin OnCReate
