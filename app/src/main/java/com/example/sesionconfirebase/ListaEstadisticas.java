@@ -1,7 +1,9 @@
 package com.example.sesionconfirebase;
 
 import static com.example.sesionconfirebase.Utils.calcularTiempo;
+import static com.example.sesionconfirebase.Utils.calcularTiempo2;
 import static com.example.sesionconfirebase.Utils.calcularVelocidad;
+import static com.example.sesionconfirebase.Utils.calcularVelocidad2;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -177,10 +179,10 @@ public class ListaEstadisticas extends AppCompatActivity {
                                                                     nombreRuta,
                                                                     userId,//del usuario que participó
                                                                     userNameCustom,
-                                                                    evento.getImagenEvento(), // No tengo acceso a este dato, reemplázalo con la URL de la imagen
+                                                                    evento.getImagenEvento(),
                                                                     distanciaCubierta,
-                                                                    calcularTiempo(comienzo, finalizacion),
-                                                                    calcularVelocidad(distanciaCubierta, calcularTiempo(comienzo, finalizacion))
+                                                                    calcularTiempo2(comienzo, finalizacion),
+                                                                    calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion))
 
                                                             );
 
@@ -236,7 +238,8 @@ public class ListaEstadisticas extends AppCompatActivity {
     private String convertirSegundosATiempo(int segundos) {
         int horas = segundos / 3600;
         int minutos = (segundos % 3600) / 60;
-        return String.format("%02d:%02d", horas, minutos);
+        int segundosRestantes = segundos % 60;
+        return String.format("%02d:%02d:%02d", horas, minutos, segundosRestantes);
     }
 
     // Método para calcular totales y promedios
@@ -268,12 +271,14 @@ public class ListaEstadisticas extends AppCompatActivity {
     }
 
 
+
     // Método para convertir tiempo a segundos (formato HH:mm)
     private int convertirTiempoASegundos(String tiempo) {
         String[] partes = tiempo.split(":");
         int horas = Integer.parseInt(partes[0]);
         int minutos = Integer.parseInt(partes[1]);
-        return horas * 3600 + minutos * 60;
+        int segundos = Integer.parseInt(partes[2]);
+        return horas * 3600 + minutos * 60 + segundos;
     }
 
 

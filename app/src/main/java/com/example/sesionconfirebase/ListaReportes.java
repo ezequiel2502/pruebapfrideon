@@ -1,7 +1,9 @@
 package com.example.sesionconfirebase;
 
 import static com.example.sesionconfirebase.Utils.calcularTiempo;
+import static com.example.sesionconfirebase.Utils.calcularTiempo2;
 import static com.example.sesionconfirebase.Utils.calcularVelocidad;
+import static com.example.sesionconfirebase.Utils.calcularVelocidad2;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -170,8 +172,8 @@ public class ListaReportes extends AppCompatActivity {
                                                                                     userNameCustom,
                                                                                     eventoCompletado.getImagenEvento(),
                                                                                     distanciaCubierta,
-                                                                                    calcularTiempo(comienzo, finalizacion),
-                                                                                    calcularVelocidad(distanciaCubierta, calcularTiempo(comienzo, finalizacion)),
+                                                                                    calcularTiempo2(comienzo, finalizacion),
+                                                                                    calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion)),
                                                                                     abandono
                                                                             );
 
