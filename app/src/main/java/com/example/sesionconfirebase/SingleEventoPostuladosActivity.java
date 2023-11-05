@@ -116,6 +116,8 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
 
 
         //Botón Cancelar Postulación
+//        Además de eliminar al usuario de la lista de participantes y la referencia de postulación,
+//        también elimina la referencia de pre-postulación.
         btn_CancelarPostulacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,21 +153,34 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-                                                // Actualizar el evento modificado en la base de datos
-                                                eventosRef.setValue(evento)
+                                                // Eliminar la referencia de pre-postulación del evento específico
+                                                DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
+                                                prePostulacionesRef.child(singleIdEvento).child(userId).removeValue()
                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                 if (task.isSuccessful()) {
-                                                                    // Cancelación exitosa
-                                                                    Toast.makeText(getApplicationContext(), "Has cancelado tu postulación al evento", Toast.LENGTH_SHORT).show();
+                                                                    // Actualizar el evento modificado en la base de datos
+                                                                    eventosRef.setValue(evento)
+                                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                                    if (task.isSuccessful()) {
+                                                                                        // Cancelación exitosa
+                                                                                        Toast.makeText(getApplicationContext(), "Has cancelado tu postulación al evento", Toast.LENGTH_SHORT).show();
 
-                                                                    //Agregar notificacion al creador de evento
-                                                                    notificarPostulacionCancelada(evento.getTokenFCM(), evento.getNombreEvento(), userName);
+                                                                                        //Agregar notificacion al creador de evento
+                                                                                        notificarPostulacionCancelada(evento.getTokenFCM(), evento.getNombreEvento(), userName);
 
+                                                                                    } else {
+                                                                                        // Error en la modificación del evento
+                                                                                        Toast.makeText(getApplicationContext(), "Error al modificar el evento", Toast.LENGTH_SHORT).show();
+                                                                                    }
+                                                                                }
+                                                                            });
                                                                 } else {
-                                                                    // Error en la modificación del evento
-                                                                    Toast.makeText(getApplicationContext(), "Error al modificar el evento", Toast.LENGTH_SHORT).show();
+                                                                    // Error al eliminar la referencia de pre-postulación
+                                                                    Toast.makeText(getApplicationContext(), "Error al cancelar la pre-postulación al evento", Toast.LENGTH_SHORT).show();
                                                                 }
                                                             }
                                                         });
@@ -185,6 +200,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity {
                 });
             }
         });
+
 
 
 

@@ -99,9 +99,11 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         usuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 PrePostulacion prePostulacion = dataSnapshot.getValue(PrePostulacion.class);
 
                 if (prePostulacion != null && !prePostulacion.getAceptado()) {
+
                     String tokenFcmPostulante = prePostulacion.getTokenFcmPostulante();
 
                     usuarioRef.child("aceptado").setValue(true)
