@@ -35,7 +35,9 @@ import java.util.List;
 public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAdapter.ViewHolderNotificacion>  {
 
     ArrayList <ModelNotificacion> list;
-
+    String nombreEvento = "";
+    String IdPostulante = "";
+    String IdEvento = "";
     Context context;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -66,33 +68,29 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
         holder.btnAceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nombreEvento = notificacion.getNombreEvento();
-                String IdPostulante = notificacion.getPostulanteId();
-                String IdEvento = notificacion.getIdEvento();
+                 nombreEvento = notificacion.getNombreEvento();
+                 IdPostulante = notificacion.getPostulanteId();
+                 IdEvento = notificacion.getIdEvento();
                 buscarNoAceptadoPorEventoYUsuario(context,IdEvento,IdPostulante);
-                notificarPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
+
                 DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
                 // Eliminar la notificación
                 notificacionRef.removeValue();
-                Intent intent = new Intent(v.getContext(), HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
-                v.getContext().startActivity(intent);
             }
         });
         // Configura el clic del botón "Aceptar"
         holder.btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nombreEvento = notificacion.getNombreEvento();
-                String IdPostulante = notificacion.getPostulanteId();
-                String IdEvento = notificacion.getIdEvento();
+                 nombreEvento = notificacion.getNombreEvento();
+                 IdPostulante = notificacion.getPostulanteId();
+                 IdEvento = notificacion.getIdEvento();
                 notificarDenegacionPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
+                Toast.makeText(context, "Denegaste la Postulación", Toast.LENGTH_SHORT).show();
                 DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
                 // Eliminar la notificación
                 notificacionRef.removeValue();
-                Intent intent = new Intent(v.getContext(), HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
-                v.getContext().startActivity(intent);
+
             }
         });
         holder.btnBorrar.setOnClickListener(new View.OnClickListener() {
@@ -101,9 +99,11 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                 DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
                 // Eliminar la notificación
                 notificacionRef.removeValue();
-                Intent intent = new Intent(v.getContext(), HomeActivity.class);
+                Toast.makeText(context, "Notificacion Borrada", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(v.getContext(), ListadoNotificacionesActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
                 v.getContext().startActivity(intent);
+
             }
         });
     }
@@ -129,6 +129,9 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
     private void notificarDenegacionPostulanteEvento( String IdEvento,String nombreEvento, String postulanteId) {
         NotificationCounter notificacion = new NotificationCounter();
         notificacion.registrarNotificacionDenegacionPostulanteEvento("Denegaron tu postulacion a : ",nombreEvento,"denegacion_postulante_evento",IdEvento,postulanteId,nombreEvento);
+        Intent intent = new Intent(context, ListadoNotificacionesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
+        context.startActivity(intent);
     }
     private void buscarNoAceptadoPorEventoYUsuario(Context context,String idEvento, String userId) {
         DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
@@ -191,9 +194,12 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             if (task.isSuccessful()) {
-                                                                if (nuevoCupoMaximo == 0) {
+                                                                if (0 >= nuevoCupoMaximo) {
                                                                     // Notificar al creador del evento
                                                                     notificarCupoMaximoAlcanzado(evento.getNombreEvento(),evento.getIdEvento());
+                                                                    Toast.makeText(context, "Se alcanzó el cupo máximo", Toast.LENGTH_SHORT).show();
+                                                                }else{
+                                                                    notificarPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
                                                                 }
 
                                                                 // Realizar la postulación exitosa
@@ -212,6 +218,7 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                                 });
                     } else {
                         // No hay cupo disponible
+                        notificarCupoMaximoAlcanzado(evento.getNombreEvento(),evento.getIdEvento());
                         Toast.makeText(context, "Se alcanzó el cupo máximo", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -244,6 +251,9 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                     // Ahora puedes obtener el idOrganizador
                     String idOrganizador = dataSnapshot.child("userId").getValue(String.class);
                     notificacion.registrarNotificacionCupoMaximoAlcanzado("Cupo Máximo Alcanzado en:",nombreEvento,"cupo-maximo",idEvento,idOrganizador,nombreEvento);
+                    Intent intent = new Intent(context, ListadoNotificacionesActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(intent);
                 } else {
                     // El evento no existe en la base de datos
                 }
@@ -258,5 +268,9 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
     private void notificarPostulanteEvento( String IdEvento,String nombreEvento,String postulanteId) {
         NotificationCounter notificacion = new NotificationCounter();
         notificacion.registrarNotificacionPostulanteEvento("Aceptaron tu postulacion a :",nombreEvento,"postulante_evento",IdEvento,postulanteId,nombreEvento);
+        Toast.makeText(context, "Aceptaste la Postulación", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(context, ListadoNotificacionesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
     }
 }

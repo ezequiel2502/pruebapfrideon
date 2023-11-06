@@ -315,7 +315,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                                 postulacionesRef.child(userId).child(eventoId).setValue(false);
 
                                 // Llama al método para notificar cancelación del evento
-                                notificarCancelacion(prePostulacion.getTokenFcmPostulante());
+                                notificarCancelacion(prePostulacion.getUserId(),eventoId);
                             }
                         }
 
@@ -732,37 +732,10 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
 
     //Para notificar cuando un organizador cancela un evento
-    private void notificarCancelacion(String tokenPostulante) {
-
-
-        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
-        JSONObject json = new JSONObject();
-
-        try {
-            JSONObject notificacion = new JSONObject();
-            notificacion.put("titulo", "Evento cancelado: ");
-            notificacion.put("detalle", modelEventoActual.getNombreEvento());
-            notificacion.put("tipo", "postulante_evento");//Para que reutilice el mismo formato que esta en el FCM, ya que es una notificacion a un postulante
-
-            json.put("to", tokenPostulante);
-            json.put("data", notificacion);
-
-            String URL = "https://fcm.googleapis.com/fcm/send";
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
-                @Override
-                public Map<String, String> getHeaders() {
-                    Map<String, String> header = new HashMap<>();
-                    header.put("Content-Type", "application/json");
-                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
-                    return header;
-                }
-            };
-            myrequest.add(request);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void notificarCancelacion(String PostulanteId,String EventoId) {
+        NotificationCounter notificacion = new NotificationCounter();
+        notificacion.registrarNotificacionCancelacionEvento("Evento cancelado: ",modelEventoActual.getNombreEvento(),"cancelacion_evento",EventoId,PostulanteId);
+        Toast.makeText(SingleEventoPublicoActivity.this, "Se cancelo el evento "+modelEventoActual.getNombreEvento(), Toast.LENGTH_SHORT).show();
     }
 
 

@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -60,7 +62,14 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
                         }
                     }
                 }
-                recyclerAdapter.notifyDataSetChanged();
+                // Verificar si la lista está vacía y redirigir si es necesario
+                if (recycleList.isEmpty()) {
+                    Intent intent = new Intent(ListadoNotificacionesActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(ListadoNotificacionesActivity.this, "No hay más Notificaciones", Toast.LENGTH_SHORT).show();
+                } else {
+                    recyclerAdapter.notifyDataSetChanged();
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

@@ -47,7 +47,10 @@ import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import com.google.firebase.auth.FirebaseUser;
 public class HomeActivity extends AppCompatActivity {
     NotificationBadge notificactionBadge;
     Button mButtonCerrarSesion;
@@ -155,8 +158,14 @@ public class HomeActivity extends AppCompatActivity {
             String userId = currentUser.getUid();
             DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
             final FirebaseUser user = mAuth.getCurrentUser();
+            //contarNotificaciones(currentUser);
 
-            contarNotificaciones(user);
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            Automatico aut = new Automatico(currentUser);
+            aut.setNotificactionBadge(notificactionBadge);
+            // Programa la ejecución del método contarNotificaciones cada 30 segundos
+            scheduler.scheduleAtFixedRate(aut::contarNotificaciones, 0, 20, TimeUnit.SECONDS);
+
             perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

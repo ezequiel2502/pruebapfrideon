@@ -17,6 +17,41 @@ public class NotificationCounter {
 
     // Método para registrar una notificación para un usuario
 
+    public boolean registrarNotificacionCancelacionEvento(String titulo,String nombreEvento,String tipoNotificacion,String idEvento, String idPostulante)
+    {
+        FirebaseDatabase database;
+        FirebaseStorage firebaseStorage;
+        final Boolean[] ban = {false};
+        database=FirebaseDatabase.getInstance();
+        firebaseStorage=FirebaseStorage.getInstance();
+        ModelNotificacion notificacion = new ModelNotificacion();
+        notificacion.setDetalle("Se Cancelo Evento");
+        notificacion.setTipoNotificacion(tipoNotificacion);
+        notificacion.setTitulo(titulo);
+        notificacion.setIdEvento(idEvento);
+        notificacion.setNombreEvento(nombreEvento);
+        notificacion.setPostulanteId(idPostulante);
+        DatabaseReference notificacionRef = database.getReference().child("Notificaciones");
+
+        DatabaseReference nuevonotificacionRef = notificacionRef.push();
+        String nuevoNotificacionId = nuevonotificacionRef.getKey();
+        notificacion.setIdNotificacion(nuevoNotificacionId);
+        nuevonotificacionRef.setValue(notificacion).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // La inserción fue exitosa
+                ban[0] = true;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // La inserción falló
+                ban[0] = false;
+            }
+        });
+        return ban[0];
+    }
+
     public boolean registrarNotificacionCreadorEvento(String titulo, String detalle,String tipoNotificacion,String idEvento,String idOrganizador,String postulanteId,String nombreEvento)
     {
       FirebaseDatabase database;
