@@ -25,7 +25,7 @@ public class NotificationCounter {
         database=FirebaseDatabase.getInstance();
         firebaseStorage=FirebaseStorage.getInstance();
         ModelNotificacion notificacion = new ModelNotificacion();
-        notificacion.setDetalle("Se Cancelo Evento");
+        notificacion.setDetalle(nombreEvento);
         notificacion.setTipoNotificacion(tipoNotificacion);
         notificacion.setTitulo(titulo);
         notificacion.setIdEvento(idEvento);
