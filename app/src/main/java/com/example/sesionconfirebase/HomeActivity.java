@@ -158,7 +158,6 @@ public class HomeActivity extends AppCompatActivity {
             String userId = currentUser.getUid();
             DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
             final FirebaseUser user = mAuth.getCurrentUser();
-            //contarNotificaciones(currentUser);
 
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             Automatico aut = new Automatico(currentUser);
@@ -519,27 +518,6 @@ public class HomeActivity extends AppCompatActivity {
                 Intent IntentMainActivity = new Intent(getApplicationContext(), MainActivity.class);
                 IntentMainActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(IntentMainActivity); HomeActivity.this.finish();
-            }
-        });
-    }
-
-    private void contarNotificaciones(FirebaseUser user){
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        LinkedList<ModelNotificacion> recycleList = new LinkedList<ModelNotificacion>();
-        firebaseDatabase.getReference().child("Notificaciones").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
-                    ModelNotificacion notificacion=dataSnapshot.getValue(ModelNotificacion.class);
-                    recycleList.add(notificacion);
-                }
-                NotificationCounter not = new NotificationCounter();
-                notificactionBadge.setNumber(not.obtenerCantidadNotificaciones(user.getUid(),recycleList));
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
