@@ -50,10 +50,16 @@ public class EstadisticasAdapter extends RecyclerView.Adapter<EstadisticasAdapte
         //cargamos el resto de controles
         holder.tv_tituloEvento.setText(estadistica.getNombreEvento());
         holder.tv_UserNameOrganizador.setText(estadistica.getOrganizadorUsername());
-        holder.tv_Ruta.setText("Ruta");//revisar esto
-        holder.tv_Tiempo.setText(estadistica.getTiempo());
-        holder.tv_Distancia.setText(estadistica.getDistanciaRecorrida());
-        holder.tv_Velocidad.setText(estadistica.getVelocidadPromEvento());
+        holder.tv_Ruta.setText(estadistica.getNombreRuta());
+        holder.tv_Tiempo.setText(estadistica.getTiempo()+ " (H:m)");
+
+        //holder.tv_Distancia.setText(estadistica.getDistanciaRecorrida() + " mts");
+        String distanciaTexto = estadistica.getDistanciaRecorrida();
+        double distancia = Double.parseDouble(distanciaTexto);
+        String distanciaFormateada = String.format("%.2f", distancia);
+        holder.tv_Distancia.setText(distanciaFormateada + " mts");
+
+        holder.tv_Velocidad.setText(estadistica.getVelocidadPromEvento() + " mts/s");
 
 
 

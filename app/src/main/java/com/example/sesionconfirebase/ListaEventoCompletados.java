@@ -87,6 +87,7 @@ public class ListaEventoCompletados extends AppCompatActivity {
         eventsDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 for (DataSnapshot eventoSnapshot : dataSnapshot.getChildren()) {
 
 

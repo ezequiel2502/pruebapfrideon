@@ -4,13 +4,15 @@
     package="com.example.sesionconfirebase">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"   />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"   />
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"   />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -18,6 +20,8 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+<!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+
 
     <application android:largeHeap="true"
         android:allowBackup="false"
@@ -31,33 +35,42 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup"
         tools:targetApi="31">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
+        <activity
+            android:name=".SingleReporteActivity"
+            android:exported="false" />
         <activity
             android:name=".RespuestaComentarioActivity"
             android:exported="false" />
         <activity
             android:name=".DetallesActivity"
             android:exported="false" />
-
         <activity
             android:name=".SingleEventoCompletadoActivity"
-            android:exported="false">
-        </activity>
-
+            android:exported="false"></activity>
+        <activity
+            android:name=".ListaReportes"
+            android:exported="false" />
         <activity
             android:name=".ListaEventoCompletados"
-            android:exported="false">
-        </activity>
-
+            android:exported="false"></activity>
         <activity
             android:name=".ListaEstadisticas"
-            android:exported="false">
-        </activity>
-
+            android:exported="false"></activity>
         <activity
             android:name=".CalificarActivity"
-            android:exported="false">
-        </activity>
-
+            android:exported="false"></activity>
 
         <receiver
             android:name=".NotificationActionReceiver"

@@ -59,7 +59,7 @@ public class HomeActivity extends AppCompatActivity {
     ImageView change_profile_image;
     TextView tv_user_name,tv_user_email,tv_UserId;
     RatingBar rating_bar;
-    LinearLayout notification_bell,analytics,settings;
+    LinearLayout notification_bell,analytics,settings,reportes;
     ImageView add_evento;
     TextView tv_privados,tv_publicos,tv_postulados,tv_completados,tv_following;
     CardView cardView_detalles,cardView_cerrarSesion,cardView_EliminarCuenta;
@@ -141,6 +141,7 @@ public class HomeActivity extends AppCompatActivity {
         cardView_cerrarSesion = findViewById(R.id.cardView_cerrarSesion);
         cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
         analytics=findViewById(R.id.analytics);
+        reportes=findViewById(R.id.reportes);
 
 
 
@@ -388,6 +389,22 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        //llevo a la actividad que lista los reportes para el organizador
+        reportes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+
+        reportes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, ListaReportes.class);
+                startActivity(intent);
+            }
+        });
 
 
         /*btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {

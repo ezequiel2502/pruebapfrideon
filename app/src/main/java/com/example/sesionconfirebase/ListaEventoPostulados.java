@@ -140,6 +140,7 @@ public class ListaEventoPostulados extends AppCompatActivity {
         // Obtener el ID del usuario actualmente logueado
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+
         // Acceder al nodo de "postulaciones" del usuario
         DatabaseReference postulacionesRef = firebaseDatabase.getReference().child("Postulaciones").child(userId);
 
@@ -147,26 +148,34 @@ public class ListaEventoPostulados extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postulacionSnapshot : dataSnapshot.getChildren()) {
-                    String idEventoPostulado = postulacionSnapshot.getKey();
 
-                    // Buscar y listar los detalles de los eventos públicos correspondientes con idEventoPostulado
-                    DatabaseReference eventosPublicosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos");
-                    eventosPublicosRef.child(idEventoPostulado).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot eventoSnapshot) {
-                            if (eventoSnapshot.exists()) {
-                                ModelEvento evento = eventoSnapshot.getValue(ModelEvento.class);
-                                // Agregar el evento a la lista
-                                recycleList.add(evento);
-                                recyclerAdapter.notifyDataSetChanged();
+                    Boolean postulacionAceptada = postulacionSnapshot.getValue(Boolean.class);
+
+                    // Verificar si la postulación está aceptada (true)
+                    if (postulacionAceptada != null && postulacionAceptada) {
+
+                        //tomo el id de ese evento guardado en postulaciones exitosas
+                        String idEventoPostulado = postulacionSnapshot.getKey();
+
+                        // Buscar y listar los detalles de los eventos públicos correspondientes con idEventoPostulado
+                        DatabaseReference eventosPublicosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos");
+                        eventosPublicosRef.child(idEventoPostulado).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot eventoSnapshot) {
+                                if (eventoSnapshot.exists()) {
+                                    ModelEvento evento = eventoSnapshot.getValue(ModelEvento.class);
+                                    // Agregar el evento a la lista
+                                    recycleList.add(evento);
+                                    recyclerAdapter.notifyDataSetChanged();
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            // Manejar error de cancelación
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                // Manejar error de cancelación
+                            }
+                        });
+                    }
                 }
             }
 

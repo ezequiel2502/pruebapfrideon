@@ -1,0 +1,113 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <!-- Contenedor para las dos tarjetas -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="16dp">
+
+        <!-- Tarjeta con el título -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewTitutlo"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#4A148C"
+            android:layout_marginRight="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvTituloEncabezado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reporte del Evento"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:textColor="#ffffff"
+                    android:layout_centerHorizontal="true" /> <!-- Centra el texto horizontalmente -->
+
+                <TextView
+                    android:id="@+id/tvSubtitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvTituloEncabezado"
+                    android:text="Nombre del Evento"
+                    android:textSize="12dp"
+                    android:textColor="#ffffff"
+                    android:layout_centerHorizontal="true" /> <!-- Centra el texto horizontalmente -->
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <!-- Tarjeta con el icono de impresión y el subtítulo -->
+        <!-- Tarjeta con el icono de impresión y el subtítulo -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewImpresion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#D81B60"
+            android:layout_marginLeft="4dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+
+                <ImageView
+                    android:id="@+id/ivImpresionSubtitulo"
+                    android:layout_width="30dp"
+                    android:layout_height="36dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="28dp"
+                    android:layout_marginBottom="2dp"
+                    android:src="@drawable/pdf2"
+                    app:tint="#ffffff" />
+
+                <TextView
+                    android:id="@+id/tvDescargarSubtitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ivImpresionSubtitulo"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="8dp"
+                    android:text="Descargar"
+                    android:textColor="#ffffff"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+
+
+
+    </LinearLayout>
+
+<!--Dentro de este scrollview esta llContenedorEstadisticas donde se inflan las vistas-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!--Contenedor para los item_posicion_reporte-->
+        <LinearLayout
+            android:id="@+id/llContenedorEstadisticas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

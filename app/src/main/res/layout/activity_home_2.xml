@@ -18,28 +18,44 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp">
 
             <ImageView
                 android:id="@+id/profile_image"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_profile" />
+                android:src="@drawable/ic_profile"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true" />
 
-            <!-- Icono para cambiar la foto de perfil -->
             <ImageView
                 android:id="@+id/change_profile_image"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_alignEnd="@id/profile_image"
                 android:layout_alignBottom="@id/profile_image"
-                android:layout_marginEnd="-5dp"
-                android:layout_marginBottom="2dp"
-                android:src="@drawable/camera" />
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="115dp"
+                android:layout_marginBottom="0dp"
+                android:src="@drawable/camera"
+                app:tint="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/iv_settings"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:elevation="1dp"
+                android:src="@drawable/settings"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                app:tint="@android:color/white"/>
 
         </RelativeLayout>
-
 
         <TextView
         android:id="@+id/tv_user_name"
@@ -144,19 +160,19 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:id="@+id/settings"
+                    android:id="@+id/reportes"
                     android:gravity="center_horizontal">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/settings"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_width="39dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/reporte_4" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Configuraciones"
+                        android:text="Reportes"
                         android:textSize="10dp"
                         android:textColor="@color/black"
                         android:layout_gravity="center_horizontal"/>

@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <!-- Logo de la aplicación -->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/logo_rideon" />
+
+    <!-- Título de la aplicación -->
+    <TextView
+        android:id="@+id/tv_tituloEvento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Título de tu Aplicación"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+</LinearLayout>

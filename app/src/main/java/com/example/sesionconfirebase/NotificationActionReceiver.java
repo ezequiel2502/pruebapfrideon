@@ -71,8 +71,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             // Ejecuta tu método para aceptar
 
             //buscarPrimerNoAceptado(context);
-            buscarNoAceptadoPorEventoYUsuario(context,idEvento,postulanteId);
-            notificarPostulanteEvento(context,nombreEvento,tokenPostulante);
+            buscarNoAceptadoPorEventoYUsuario(context,idEvento,nombreEvento,postulanteId);
+            //notificarPostulanteEvento(context,nombreEvento,tokenPostulante);
 
         } else if ("Botón 2".equals(action)) {
 
@@ -88,7 +88,9 @@ public class NotificationActionReceiver extends BroadcastReceiver {
     }
 
 
-    private void buscarNoAceptadoPorEventoYUsuario(Context context,String idEvento, String userId) {
+
+
+    private void buscarNoAceptadoPorEventoYUsuario(Context context,String idEvento,String nombreEvento,String userId) {
         DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
 
         DatabaseReference eventoRef = prePostulacionesRef.child(idEvento);
@@ -97,9 +99,11 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         usuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 PrePostulacion prePostulacion = dataSnapshot.getValue(PrePostulacion.class);
 
                 if (prePostulacion != null && !prePostulacion.getAceptado()) {
+
                     String tokenFcmPostulante = prePostulacion.getTokenFcmPostulante();
 
                     usuarioRef.child("aceptado").setValue(true)
@@ -107,6 +111,10 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
+
+                                        //si salio bien notifica y postula.
+                                        notificarPostulanteEvento(context,nombreEvento,tokenFcmPostulante);
+
                                         postularCandidato2(context,idEvento, userId, tokenFcmPostulante);
                                     } else {
                                         // Manejar el error en la actualización
@@ -130,6 +138,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+
                     ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
 
                     int cupoMaximo = Integer.parseInt(evento.getCupoMaximo());
@@ -143,6 +152,11 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+
+                                            // Agregamos al participante a la lista
+                                            evento.agregarParticipante(userId);
+
+                                            // Guardamos los cambios en el evento
                                             eventosRef.setValue(evento)
                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
@@ -180,7 +194,6 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             }
         });
     }
-
 
 
 

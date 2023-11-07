@@ -1,7 +1,9 @@
 package com.example.sesionconfirebase;
 
 import static com.example.sesionconfirebase.Utils.calcularTiempo;
+import static com.example.sesionconfirebase.Utils.calcularTiempo2;
 import static com.example.sesionconfirebase.Utils.calcularVelocidad;
+import static com.example.sesionconfirebase.Utils.calcularVelocidad2;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gps_test.DatosParticipacionEvento;
+import com.example.gps_test.Ruta;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -91,7 +94,7 @@ public class ListaEstadisticas extends AppCompatActivity {
 
                     if (modelUsuario != null) {
                         // Obtiene el userNameCustom
-                         userNameCustom = modelUsuario.getUserNameCustom();
+                        userNameCustom = modelUsuario.getUserNameCustom();
 
 
 
@@ -122,10 +125,10 @@ public class ListaEstadisticas extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot eventoSnapshot : dataSnapshot.getChildren()) {
 
-                    //Tomo la key del evento que me va a servir para buscarlo en el nodo de completados
+                    // Tomo la key del evento que me va a servir para buscarlo en el nodo de completados
                     String eventoId = eventoSnapshot.getKey();
 
-                    //Recojo todos los datos de finalizacion para armar la estadistica
+                    // Recojo todos los datos de finalización para armar la estadística
                     DatabaseReference datosParticipacionRef = firebaseDatabase.getReference().child("Events_Data").child(userId).child(eventoId);
 
                     datosParticipacionRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -133,7 +136,7 @@ public class ListaEstadisticas extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
 
-                                //Datos de participacion
+                                // Datos de participación
                                 DatosParticipacionEvento datosParticipacion = dataSnapshot.getValue(DatosParticipacionEvento.class);
                                 if (datosParticipacion != null) {
 
@@ -141,8 +144,7 @@ public class ListaEstadisticas extends AppCompatActivity {
                                     String finalizacion = datosParticipacion.getFinalizacion();
                                     String distanciaCubierta = datosParticipacion.getDistanciaCubierta();
 
-
-                                    //Ahora entro en el nodo de completados para obtener el resto de datos para armar la estadistica
+                                    // Ahora entro en el nodo de completados para obtener el resto de datos para armar la estadística
                                     DatabaseReference eventosCompletadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
 
                                     eventosCompletadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -150,31 +152,54 @@ public class ListaEstadisticas extends AppCompatActivity {
                                         public void onDataChange(@NonNull DataSnapshot eventoSnapshot) {
                                             if (eventoSnapshot.exists()) {
 
-
-                                                //Datos del evento completado
+                                                // Datos del evento completado
                                                 ModelEvento evento = eventoSnapshot.getValue(ModelEvento.class);
 
-                                                // Aquí se usa comienzo, finalizacion, distanciaCubierta y evento para crear ModelEstadistica
-                                                ModelEstadistica estadistica = new ModelEstadistica(
-                                                        evento.getUserId(),//del organizador
-                                                        evento.getUserName(),//del organizador
-                                                        eventoId,
-                                                        evento.getNombreEvento(),
-                                                        userId,//del usuario que participo
-                                                        userNameCustom,
-                                                        evento.getImagenEvento(), // No tengo acceso a este dato, reemplázalo con la URL de la imagen
-                                                        distanciaCubierta,
+                                                // Obtener el ID de la ruta
+                                                String rutaId = evento.getRuta();
 
-                                                        calcularTiempo(comienzo,finalizacion),
-                                                        calcularVelocidad(distanciaCubierta,calcularTiempo(comienzo,finalizacion))//metodo de la clase static Utils
-                                                );
+                                                // Acceder a los datos de la ruta
+                                                DatabaseReference rutaRef = firebaseDatabase.getReference().child("Route").child(rutaId);
 
-                                                // Agrega estadistica a tu lista
-                                                recycleList.add(estadistica);
-                                                recyclerAdapter.notifyDataSetChanged();
+                                                rutaRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if (dataSnapshot.exists()) {
+                                                            Ruta ruta = dataSnapshot.getValue(Ruta.class);
 
-                                                //Para que se actualicen los promedios y totales de la lista
-                                                calcularTotalesYPromedios();
+                                                            // Obtener el nombre de la ruta
+                                                            String nombreRuta = ruta.getRouteName();
+
+                                                            // Aquí se usa comienzo, finalizacion, distanciaCubierta y evento para crear ModelEstadistica
+                                                            ModelEstadistica estadistica = new ModelEstadistica(
+                                                                    evento.getUserId(),//del organizador
+                                                                    evento.getUserName(),//del organizador
+                                                                    eventoId,
+                                                                    evento.getNombreEvento(),
+                                                                    nombreRuta,
+                                                                    userId,//del usuario que participó
+                                                                    userNameCustom,
+                                                                    evento.getImagenEvento(),
+                                                                    distanciaCubierta,
+                                                                    calcularTiempo2(comienzo, finalizacion),
+                                                                    calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion))
+
+                                                            );
+
+                                                            // Agrega estadistica a tu lista
+                                                            recycleList.add(estadistica);
+                                                            recyclerAdapter.notifyDataSetChanged();
+
+                                                            // Para que se actualicen los promedios y totales de la lista
+                                                            calcularTotalesYPromedios();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                        // Manejar error de cancelación
+                                                    }
+                                                });
                                             }
                                         }
 
@@ -205,14 +230,16 @@ public class ListaEstadisticas extends AppCompatActivity {
 
 
 
-    }//fin onCReate()
+
+    }//fin onCreate()
 
 
     // Método para convertir tiempo en formato "HH:mm"
     private String convertirSegundosATiempo(int segundos) {
         int horas = segundos / 3600;
         int minutos = (segundos % 3600) / 60;
-        return String.format("%02d:%02d", horas, minutos);
+        int segundosRestantes = segundos % 60;
+        return String.format("%02d:%02d:%02d", horas, minutos, segundosRestantes);
     }
 
     // Método para calcular totales y promedios
@@ -239,16 +266,19 @@ public class ListaEstadisticas extends AppCompatActivity {
 
         // Mostrar los resultados
         tvTiempoTotal.setText(convertirSegundosATiempo(totalTiempo) + " (H:m)");
-        tvDistanciaTotal.setText(totalDistancia + " mts");
-        tvVelocidadPromedio.setText(promedioVelocidad + " m/s");
+        tvDistanciaTotal.setText(String.format("%.2f", totalDistancia) + " mts"); // Formatear a dos decimales
+        tvVelocidadPromedio.setText(String.format("%.2f", promedioVelocidad) + " mts/s"); // Formatear a dos decimales
     }
+
+
 
     // Método para convertir tiempo a segundos (formato HH:mm)
     private int convertirTiempoASegundos(String tiempo) {
         String[] partes = tiempo.split(":");
         int horas = Integer.parseInt(partes[0]);
         int minutos = Integer.parseInt(partes[1]);
-        return horas * 3600 + minutos * 60;
+        int segundos = Integer.parseInt(partes[2]);
+        return horas * 3600 + minutos * 60 + segundos;
     }
 
 

@@ -43,4 +43,8 @@ public class Ruta {
         this.routeResumeData = routeResumeData;
         this.routePointsNavigation = routePointsNavigation;
     }
+
+    public String getRouteName() {
+        return routeName;
+    }
 }

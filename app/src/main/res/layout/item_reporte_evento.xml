@@ -52,7 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="33dp"
                     android:layout_gravity="center_vertical"
-                    android:text="Estadísticas"
+                    android:text="Reporte"
                     android:textColor="#ffffff"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -89,7 +89,7 @@
                             android:text="Evento:"
                             android:textColor="@color/lavender"
                             android:textSize="14dp"
-                             />
+                            />
 
 
 
@@ -180,7 +180,7 @@
                     <ImageView
                         android:id="@+id/imvEvento"
                         android:layout_width="150dp"
-                        android:layout_height="222dp"
+                        android:layout_height="220dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="8dp"
                         android:src="@drawable/baseline_upload_file_24" />
@@ -193,7 +193,8 @@
                     android:background="@android:color/darker_gray" />
 
 
-                <!--Layout izquierdo-->
+
+                <!-- Layout izquierdo -->
                 <LinearLayout
                     android:layout_width="180dp"
                     android:layout_height="match_parent"
@@ -203,117 +204,114 @@
 
                     <!-- Agrega un título -->
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="67dp"
+                        android:layout_width="128dp"
+                        android:layout_height="36dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#7C4DFF"
+                        android:background="#4A148C"
                         android:gravity="center"
                         android:orientation="vertical">
 
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:gravity="center"
                             android:text="Resultados :"
                             android:textColor="@android:color/white"
-                            android:textSize="18sp" /> <!-- Personaliza el texto según tus preferencias -->
-
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
                     </LinearLayout>
 
-                    <!-- TextView adicional "Tiempo" en lavanda -->
+
+                    <!-- Gráfico de Torta -->
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/pieChart"
+                        android:layout_width="138dp"
+                        android:layout_height="134dp" />
+
+                    <!-- TextView adicional "Abandonados" en lavanda -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tv_etiquetaTiempo"
+                            android:id="@+id/tv_etiquetaAbandonados"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tiempo:"
+                            android:text="Abandonos:"
                             android:textColor="@color/lavender"
                             android:layout_marginRight="6dp"
                             android:textSize="14dp" />
 
-                        <!-- Título "Tiempo" en negro -->
+                        <!-- Cantidad de abandonados -->
                         <TextView
-                            android:id="@+id/tv_Tiempo"
+                            android:id="@+id/tv_Abandonos"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tiempo"
+                            android:text="0"
                             android:textColor="@android:color/black"
                             android:textSize="12dp" />
 
-
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@android:color/darker_gray" />
-
-                    <!-- TextView adicional "Distancia" en lavanda -->
+                    <!-- TextView adicional "Participantes" en lavanda -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tv_etiquetaDistancia"
+                            android:id="@+id/tv_etiquetaFinalizados"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Distancia:"
-                            android:layout_marginRight="6dp"
+                            android:text="Finalizados:"
                             android:textColor="@color/lavender"
+                            android:layout_marginRight="6dp"
                             android:textSize="14dp" />
 
-                        <!-- Título "Distancia" en negro -->
+                        <!-- Cantidad de participantes -->
                         <TextView
-                            android:id="@+id/tv_Distancia"
+                            android:id="@+id/tv_Finalizados"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Distancia"
+                            android:text="0"
                             android:textColor="@android:color/black"
                             android:textSize="12dp" />
 
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@android:color/darker_gray" />
-
-                    <!-- TextView adicional "Velocidad" en lavanda -->
+                    <!-- TextView adicional "Participantes" en lavanda -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tv_etiquetaVelocidad"
+                            android:id="@+id/tv_etiquetaParticipantes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Velocidad:"
-                            android:layout_marginRight="6dp"
+                            android:text="Participantes:"
                             android:textColor="@color/lavender"
+                            android:layout_marginRight="6dp"
                             android:textSize="14dp" />
 
-                        <!-- Título "Velocidad" en negro -->
+                        <!-- Cantidad de participantes -->
                         <TextView
-                            android:id="@+id/tv_Velocidad"
+                            android:id="@+id/tv_Participantes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Velocidad"
+                            android:text="0"
                             android:textColor="@android:color/black"
                             android:textSize="12dp" />
 
                     </LinearLayout>
-
 
                 </LinearLayout>
+
 
             </LinearLayout>
 
