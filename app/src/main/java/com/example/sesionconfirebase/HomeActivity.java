@@ -43,11 +43,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.nex3z.notificationbadge.NotificationBadge;
 
+import java.util.LinkedList;
 import java.util.List;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import com.google.firebase.auth.FirebaseUser;
 public class HomeActivity extends AppCompatActivity {
-
+    NotificationBadge notificactionBadge;
     Button mButtonCerrarSesion;
     Button mButtonEliminarCuenta;
 
@@ -142,7 +147,7 @@ public class HomeActivity extends AppCompatActivity {
         cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
         analytics=findViewById(R.id.analytics);
         reportes=findViewById(R.id.reportes);
-
+        notificactionBadge=findViewById(R.id.badge);
 
 
 //********************************************************************************************************************************
@@ -152,6 +157,13 @@ public class HomeActivity extends AppCompatActivity {
         if (currentUser != null) {
             String userId = currentUser.getUid();
             DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
+            final FirebaseUser user = mAuth.getCurrentUser();
+
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            Automatico aut = new Automatico(currentUser);
+            aut.setNotificactionBadge(notificactionBadge);
+            // Programa la ejecución del método contarNotificaciones cada 30 segundos
+            scheduler.scheduleAtFixedRate(aut::contarNotificaciones, 0, 20, TimeUnit.SECONDS);
 
             perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -396,7 +408,13 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
-
+      /*  btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, ListadoNotificacionesActivity.class);
+                startActivity(intent);
+            }
+        });*/
 
         reportes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -418,7 +436,11 @@ public class HomeActivity extends AppCompatActivity {
 
     }//fin onCreate()
 
-
+    public void redirectToOtherActivity(View view) {
+        // Crea un Intent para abrir la otra actividad
+        Intent intent = new Intent(this, ListadoNotificacionesActivity.class);
+        startActivity(intent);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -463,7 +485,6 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
     }
-
     private void subirNuevaImagen(Uri uri, String userId,String userName) {
 
         //Elijo el nombre con el que guardo la foto(username + timeStamp)
@@ -494,10 +515,6 @@ public class HomeActivity extends AppCompatActivity {
                     Toast.makeText(HomeActivity.this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
                 });
     }
-
-
-
-
     private void signOut() {
         //sign out de firebase
         FirebaseAuth.getInstance().signOut();
@@ -512,7 +529,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
-
 }
 
 

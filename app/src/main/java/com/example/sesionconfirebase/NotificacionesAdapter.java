@@ -1,96 +1,139 @@
 package com.example.sesionconfirebase;
 
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.example.gps_test.BuscarEventosMapaActivity;
+import com.example.gps_test.Ruta;
+import com.example.gps_test.ui.map.TupleDouble;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.HashMap;
-import java.util.Map;
+public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAdapter.ViewHolderNotificacion>  {
 
-public class NotificationActionReceiver extends BroadcastReceiver {
+    ArrayList <ModelNotificacion> list;
+    String nombreEvento = "";
+    String IdPostulante = "";
+    String IdEvento = "";
+    Context context;
+    final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    private Context mContext;
-    @Override
-    public void onReceive(Context context, Intent intent) {
-
-        // Guardar el contexto cuando se recibe la notificación
-        mContext = context.getApplicationContext();
-
-        String action = intent.getStringExtra("ACTION");
-
-        if ("Botón 1".equals(action)) {
-            // Aquí puedes enviar un broadcast específico para capturar la acción en la SingleEventoPublicoActivity
-//            Intent broadcastIntent = new Intent("com.example.sesionconfirebase.ACTION_POSTULAR");
-//            context.sendBroadcast(broadcastIntent);
-            
-            // Recuperar los datos pasados al servicio
-            String idEvento = intent.getStringExtra("idEvento");
-            String postulanteId = intent.getStringExtra("postulanteId");
-            String nombreEvento = intent.getStringExtra("nombreEvento");
-            String tokenCreador = intent.getStringExtra("tokenCreador");
-            String tokenPostulante = intent.getStringExtra("tokenPostulante");
-
-            // Obtén una referencia a tus SharedPreferences
-            SharedPreferences sharedPreferences = context.getSharedPreferences("SPNotificationActionReceiver", Context.MODE_PRIVATE);
-
-            // Obtiene un editor para modificar los valores
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-
-            // Guarda los valores
-            editor.putString("idEvento", idEvento);
-            editor.putString("postulanteId", postulanteId);
-            editor.putString("nombreEvento", nombreEvento);
-            editor.putString("tokenCreador", tokenCreador);
-            editor.putString("tokenPostulante", tokenPostulante);
-
-            // Aplica los cambios
-            editor.apply();
-
-            // Ejecuta tu método para aceptar
-
-            //buscarPrimerNoAceptado(context);
-            buscarNoAceptadoPorEventoYUsuario(context,idEvento,nombreEvento,postulanteId);
-            //notificarPostulanteEvento(context,nombreEvento,tokenPostulante);
-
-        } else if ("Botón 2".equals(action)) {
-
-            // Aquí envías un broadcast específico para capturar la acción del Botón 2 en la SingleEventoPublicoActivity
-//            Intent broadcastIntent = new Intent("com.example.sesionconfirebase.ACTION_DENEGAR_POSTULACION");
-//            context.sendBroadcast(broadcastIntent);
-
-            String nombreEvento = intent.getStringExtra("nombreEvento");
-            String IdPostulante = intent.getStringExtra("IdPostulante");
-            String IdEvento = intent.getStringExtra("IdEvento");
-            notificarDenegacionPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
-        }
+    public NotificacionesAdapter(ArrayList<ModelNotificacion> list, Context context) {
+        this.list = list;
+        this.context = context;
     }
 
+    @NonNull
+    @Override
+    public NotificacionesAdapter.ViewHolderNotificacion onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view= LayoutInflater.from(context).inflate(R.layout.item_notificacion,parent,false);
+        return new ViewHolderNotificacion(view);
+    }
 
+    @Override
+    public void onBindViewHolder(@NonNull NotificacionesAdapter.ViewHolderNotificacion holder, int position) {
+        ModelNotificacion notificacion = list.get(position);
+        String mensaje = notificacion.getTitulo() + " " + notificacion.getDetalle();
+        holder.tv_MensajeNotificacion.setText(mensaje);
+        holder.tv_TipoNotificacion.setText(notificacion.getTipoNotificacion());
+        if(!notificacion.getTipoNotificacion().equals("creador_evento"))
+        {
+            holder.btnAceptar.setVisibility(View.GONE);
+            holder.btnCancelar.setVisibility(View.GONE);
+        }
+        // Configura el clic del botón "Aceptar"
+        holder.btnAceptar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 nombreEvento = notificacion.getNombreEvento();
+                 IdPostulante = notificacion.getPostulanteId();
+                 IdEvento = notificacion.getIdEvento();
+                buscarNoAceptadoPorEventoYUsuario(context,IdEvento,IdPostulante);
 
+                DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
+                // Eliminar la notificación
+                notificacionRef.removeValue();
+            }
+        });
+        // Configura el clic del botón "Aceptar"
+        holder.btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 nombreEvento = notificacion.getNombreEvento();
+                 IdPostulante = notificacion.getPostulanteId();
+                 IdEvento = notificacion.getIdEvento();
+                notificarDenegacionPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
+                Toast.makeText(context, "Denegaste la Postulación", Toast.LENGTH_SHORT).show();
+                DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
+                // Eliminar la notificación
+                notificacionRef.removeValue();
 
-    private void buscarNoAceptadoPorEventoYUsuario(Context context,String idEvento,String nombreEvento,String userId) {
+            }
+        });
+        holder.btnBorrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
+                // Eliminar la notificación
+                notificacionRef.removeValue();
+                Toast.makeText(context, "Notificacion Borrada", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(v.getContext(), ListadoNotificacionesActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
+                v.getContext().startActivity(intent);
+
+            }
+        });
+    }
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
+    public class ViewHolderNotificacion extends RecyclerView.ViewHolder {
+
+        //Son los controles del itemEvento
+        TextView tv_TipoNotificacion,tv_NombreUsuario,tv_MensajeNotificacion;
+        Button btnAceptar, btnCancelar,btnBorrar;
+        public ViewHolderNotificacion(@NonNull View itemView) {
+            super(itemView);
+            tv_TipoNotificacion=itemView.findViewById(R.id.tv_TipoNotificacion);
+            tv_MensajeNotificacion=itemView.findViewById(R.id.tv_MensajeNotificacion);
+            btnAceptar=itemView.findViewById(R.id.tv_BotonAceptar);
+            btnCancelar=itemView.findViewById(R.id.tv_BotonCancelar);
+            btnBorrar=itemView.findViewById(R.id.tv_BotonBorrar);
+        }
+    }
+    private void notificarDenegacionPostulanteEvento( String IdEvento,String nombreEvento, String postulanteId) {
+        NotificationCounter notificacion = new NotificationCounter();
+        notificacion.registrarNotificacionDenegacionPostulanteEvento("Denegaron tu postulacion a : ",nombreEvento,"denegacion_postulante_evento",IdEvento,postulanteId,nombreEvento);
+        Intent intent = new Intent(context, ListadoNotificacionesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
+        context.startActivity(intent);
+    }
+    private void buscarNoAceptadoPorEventoYUsuario(Context context,String idEvento, String userId) {
         DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
 
         DatabaseReference eventoRef = prePostulacionesRef.child(idEvento);
@@ -99,11 +142,9 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         usuarioRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 PrePostulacion prePostulacion = dataSnapshot.getValue(PrePostulacion.class);
 
                 if (prePostulacion != null && !prePostulacion.getAceptado()) {
-
                     String tokenFcmPostulante = prePostulacion.getTokenFcmPostulante();
 
                     usuarioRef.child("aceptado").setValue(true)
@@ -112,9 +153,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
 
-                                        //si salio bien notifica y postula.
-                                        notificarPostulanteEvento(context,nombreEvento,tokenFcmPostulante);
-
+                                        //si salio bien lo postula
                                         postularCandidato2(context,idEvento, userId, tokenFcmPostulante);
                                     } else {
                                         // Manejar el error en la actualización
@@ -130,7 +169,6 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             }
         });
     }
-
     private void postularCandidato2(Context context, String idEventoRecuperado, String userId, String tokenFcmPostulante) {
         DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEventoRecuperado);
 
@@ -138,7 +176,6 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-
                     ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
 
                     int cupoMaximo = Integer.parseInt(evento.getCupoMaximo());
@@ -152,19 +189,17 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-
-                                            // Agregamos al participante a la lista
-                                            evento.agregarParticipante(userId);
-
-                                            // Guardamos los cambios en el evento
                                             eventosRef.setValue(evento)
                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             if (task.isSuccessful()) {
-                                                                if (nuevoCupoMaximo == 0) {
+                                                                if (0 >= nuevoCupoMaximo) {
                                                                     // Notificar al creador del evento
                                                                     notificarCupoMaximoAlcanzado(evento.getNombreEvento(),evento.getIdEvento());
+                                                                    Toast.makeText(context, "Se alcanzó el cupo máximo", Toast.LENGTH_SHORT).show();
+                                                                }else{
+                                                                    notificarPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
                                                                 }
 
                                                                 // Realizar la postulación exitosa
@@ -183,6 +218,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                 });
                     } else {
                         // No hay cupo disponible
+                        notificarCupoMaximoAlcanzado(evento.getNombreEvento(),evento.getIdEvento());
                         Toast.makeText(context, "Se alcanzó el cupo máximo", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -215,6 +251,9 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                     // Ahora puedes obtener el idOrganizador
                     String idOrganizador = dataSnapshot.child("userId").getValue(String.class);
                     notificacion.registrarNotificacionCupoMaximoAlcanzado("Cupo Máximo Alcanzado en:",nombreEvento,"cupo-maximo",idEvento,idOrganizador,nombreEvento);
+                    Intent intent = new Intent(context, ListadoNotificacionesActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(intent);
                 } else {
                     // El evento no existe en la base de datos
                 }
@@ -226,57 +265,12 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             }
         });
     }
-    private void buscarPrimerNoAceptado(Context context) {
-        DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
-
-        prePostulacionesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot eventoSnapshot : dataSnapshot.getChildren()) {
-                    String idEventoRecuperado = eventoSnapshot.getKey();
-
-                    for (DataSnapshot userSnapshot : eventoSnapshot.getChildren()) {
-                        String userId = userSnapshot.getKey();
-                        PrePostulacion prePostulacion = userSnapshot.getValue(PrePostulacion.class);
-
-                        if (!prePostulacion.getAceptado() && prePostulacion.getTokenFcmPostulante() != null) {
-                            String tokenFcmPostulante = prePostulacion.getTokenFcmPostulante();
-
-                            DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
-                            postulacionesRef.child(idEventoRecuperado).child(userId).child("aceptado").setValue(true)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                postularCandidato2(context,idEventoRecuperado,userId, tokenFcmPostulante);
-                                            } else {
-                                                // Manejar el error en la actualización
-                                            }
-                                        }
-                                    });
-
-                            break;
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Manejar error de cancelación
-            }
-        });
-    }
     private void notificarPostulanteEvento( String IdEvento,String nombreEvento,String postulanteId) {
         NotificationCounter notificacion = new NotificationCounter();
         notificacion.registrarNotificacionPostulanteEvento("Aceptaron tu postulacion a :",nombreEvento,"postulante_evento",IdEvento,postulanteId,nombreEvento);
+        Toast.makeText(context, "Aceptaste la Postulación", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(context, ListadoNotificacionesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
     }
-
-    private void notificarDenegacionPostulanteEvento( String IdEvento,String nombreEvento, String postulanteId) {
-        NotificationCounter notificacion = new NotificationCounter();
-        notificacion.registrarNotificacionDenegacionPostulanteEvento("Denegaron tu postulacion a : ",nombreEvento,"denegacion_postulante_evento",IdEvento,postulanteId,nombreEvento);
-    }
-
-
-    
-}//fin NotificactionActionReceiver
+}

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="395dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Título "Notificación" -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notificación:"
+                android:textColor="@color/lavender"
+                android:textSize="14dp" />
+            <TextView
+                android:id="@+id/tv_TipoNotificacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TipoNotificacion"
+                android:textColor="@android:color/black"
+                android:textSize="12dp" />
+
+            <!-- Título "Mensaje" -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Mensaje:"
+                android:textColor="@color/lavender"
+                android:textSize="14dp" />
+
+            <!-- Mensaje -->
+            <TextView
+                android:id="@+id/tv_MensajeNotificacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tu mensaje aquí"
+                android:textColor="@android:color/black"
+                android:textSize="12dp" />
+
+            <!-- Botones "Aceptar" y "Cancelar" -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    android:id="@+id/tv_BotonAceptar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aceptar" />
+
+                <Button
+                    android:id="@+id/tv_BotonCancelar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancelar" />
+                <Button
+                    android:id="@+id/tv_BotonBorrar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Borrar" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>

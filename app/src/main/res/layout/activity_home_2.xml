@@ -113,21 +113,35 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:onClick="redirectToOtherActivity">
 
-                    <ImageView
+                    <RelativeLayout
+                        android:id="@+id/Relnotification_bell"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/notification_bell"
-                        android:layout_gravity="center_horizontal"/>
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:src="@drawable/notification_bell" />
+
+                        <com.nex3z.notificationbadge.NotificationBadge
+                            android:id="@+id/badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@id/imageView2"
+                            />
+                    </RelativeLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Notificaciones"
-                        android:textSize="10dp"
-                        android:textColor="@color/black"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:text="Notificaciones" />
+
                 </LinearLayout>
 
                 <!-- Estadísticas -->
@@ -140,18 +154,17 @@
                     android:gravity="center_horizontal">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:src="@drawable/analytics"
                         android:layout_gravity="center_horizontal"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:text="Estadísticas"
-                        android:textSize="10dp"
-                        android:textColor="@color/black"
-                        android:layout_gravity="center_horizontal"/>
+                      />
                 </LinearLayout>
 
                 <!-- Configuraciones -->
@@ -164,18 +177,16 @@
                     android:gravity="center_horizontal">
 
                     <ImageView
-                        android:layout_width="39dp"
-                        android:layout_height="24dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:layout_gravity="center_horizontal"
                         android:src="@drawable/reporte_4" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Reportes"
-                        android:textSize="10dp"
-                        android:textColor="@color/black"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:text="Reportes"/>
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
