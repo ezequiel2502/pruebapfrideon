@@ -113,7 +113,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                                     if (task.isSuccessful()) {
 
                                         //si salio bien notifica y postula.
-                                        notificarPostulanteEvento(context,nombreEvento,tokenFcmPostulante);
+                                        notificarPostulanteEvento(idEvento,nombreEvento,tokenFcmPostulante);
 
                                         postularCandidato2(context,idEvento, userId, tokenFcmPostulante);
                                     } else {

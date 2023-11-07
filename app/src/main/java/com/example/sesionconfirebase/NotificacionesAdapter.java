@@ -189,6 +189,7 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+                                            evento.agregarParticipante(userId);
                                             eventosRef.setValue(evento)
                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
