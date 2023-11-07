@@ -44,6 +44,7 @@ import com.example.gps_test.ui.ActivityBuscarEventosRecycler.EventosCercanosAdap
 import com.example.gps_test.ui.ActivityBuscarEventosRecycler.ModelEvento;
 import com.example.gps_test.ui.map.Curvaturas;
 import com.example.gps_test.ui.map.Location_Variables;
+import com.example.gps_test.ui.map.Map_Camera_Settings;
 import com.example.gps_test.ui.map.Marker_Variables;
 import com.example.gps_test.ui.map.Routing_Variables;
 import com.example.gps_test.ui.map.Search_Variables;
@@ -65,6 +66,8 @@ import com.tomtom.sdk.location.OnLocationUpdateListener;
 import com.tomtom.sdk.location.android.AndroidLocationProvider;
 import com.tomtom.sdk.location.android.AndroidLocationProviderConfig;
 import com.tomtom.sdk.map.display.TomTomMap;
+import com.tomtom.sdk.map.display.camera.CameraOptions;
+import com.tomtom.sdk.map.display.camera.CameraTrackingMode;
 import com.tomtom.sdk.map.display.marker.Marker;
 import com.tomtom.sdk.map.display.marker.MarkerClickListener;
 import com.tomtom.sdk.map.display.ui.MapFragment;
@@ -191,6 +194,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 showAlertDialogButtonClicked();
             }
         });
+        findEvents.setVisibility(View.GONE);
 
 
         ComenzarEvento.setEnabled(false);
@@ -210,7 +214,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 String EventoId = intent.getStringExtra("Evento");
                 database.getReference().child("Events_Data").child(userId).child(EventoId).setValue(datos);
                 navStart = true;
-
+                new Map_Camera_Settings().setTracking(tomtomMap);
             }
         });
 
@@ -222,6 +226,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 navStart = false;
+                new Map_Camera_Settings().disableTracking(tomtomMap);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss",
                         Locale.getDefault());
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
@@ -316,9 +321,11 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss",
                 Locale.getDefault());
+        SimpleDateFormat shortHourFormat = new SimpleDateFormat("HH:mm:ss",
+                Locale.getDefault());
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
         long crono = finalizacion.getTime() - horaInicio.getTime();
-        tiempo.setText(String.valueOf(crono));
+        tiempo.setText(String.valueOf(shortHourFormat.format(crono)));
         estado.setText(abandono);
         finalizado.setText(dateFormat.format(finalizacion));
         distancia_recorrida.setText(distancia);
@@ -329,8 +336,12 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 //Si queremos retornar resultados
                 Intent data = new Intent();
                 data.putExtra("Result","Calificar");
+                Intent intent = getIntent();
+                String EventoId = intent.getStringExtra("Evento");
+                data.putExtra("EventID", EventoId);
                 setResult(RESULT_OK, data);
-                finish();
+                dialogEvents.dismiss();
+                BuscarEventosMapaActivity.this.finish();
             }
         });
         cancel_text.setOnClickListener(new View.OnClickListener() {
@@ -340,10 +351,11 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 Intent data = new Intent();
                 data.putExtra("Result","Salir");
                 setResult(RESULT_OK, data);
-                finish();
+                dialogEvents.dismiss();
+                BuscarEventosMapaActivity.this.finish();
             }
         });
-
+        dialogEvents.show();
     }
 
     public void showAlertDialogButtonClicked() {
@@ -550,7 +562,6 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
         Search_Variables searchVar = new Search_Variables();
         tomtomMap.moveCamera(searchVar.setCamera(geometry.get(0), 20, 0, 0));
 
-
     }
 
 
@@ -573,7 +584,6 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 app_Start = false;
             }
             if(navStart == true){
-
                 int currentIndex = 0;
                 int currentSegment = 0;
                 TupleDouble currentClosePosition = null;

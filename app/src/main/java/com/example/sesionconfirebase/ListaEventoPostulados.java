@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -71,16 +72,59 @@ public class ListaEventoPostulados extends AppCompatActivity {
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // There are no request codes
+                            ListaEventoCompletados.actualizarEventoCompletado();
                             Intent data = result.getData();
                             if (data.getStringExtra("Result").equals("Calificar"))
                             {
-                                Intent intent = new Intent(ListaEventoPostulados.this, CalificarActivity.class);
-                                startActivity(intent);
+                                String eventoId = data.getStringExtra("EventID");
+                                DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventoId);
+                                completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            ModelEvento evento = snapshot.getValue(ModelEvento.class);
+                                            Intent intent = new Intent(ListaEventoPostulados.this, CalificarActivity.class);
+                                            intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
+                                            intent.putExtra("EventoId", evento.getIdEvento());
+                                            intent.putExtra("OrganizadorId", evento.getUserId());
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
+                                            completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    ModelEvento evento = snapshot.getValue(ModelEvento.class);
+                                                    Intent intent = new Intent(ListaEventoPostulados.this, CalificarActivity.class);
+                                                    intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
+                                                    intent.putExtra("EventoId", evento.getIdEvento());
+                                                    intent.putExtra("OrganizadorId", evento.getUserId());
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
                             }
                             else
                             {
+                                ListaEventoCompletados.actualizarEventoCompletado();
                                 Intent intent = new Intent(ListaEventoPostulados.this, HomeActivity.class);
                                 startActivity(intent);
+                                finish();
                             }
                         }
                     }

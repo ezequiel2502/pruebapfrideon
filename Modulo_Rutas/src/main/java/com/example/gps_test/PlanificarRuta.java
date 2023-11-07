@@ -41,6 +41,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -179,7 +180,8 @@ public class PlanificarRuta extends AppCompatActivity {
     private MediaProjection mMediaProjection;
     private ImageReader mImageReader;
     private Bitmap screenshot;
-
+    private ImageButton button;
+    private ImageButton button2;
 
 
 
@@ -197,7 +199,7 @@ public class PlanificarRuta extends AppCompatActivity {
         mapFragment.getMapAsync(mapReady);
 
         //place holder button, must be changed later to context menu
-        ImageButton button = (ImageButton) findViewById(R.id.imageButton);
+        button = (ImageButton) findViewById(R.id.imageButton);
         button.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UnsafeOptInUsageError")
             public void onClick(View v) {
@@ -205,11 +207,15 @@ public class PlanificarRuta extends AppCompatActivity {
                 if (route_Points.size() >= 2) {
                     tomtomMap.addRoute(route.setRoute(route_Points));
                     tomtomMap.removeMarkers("Free Marker");
+                    button.setEnabled(false);
+                    button.setImageAlpha(75);
+                    button2.setEnabled(false);
+                    button2.setImageAlpha(75);
                 }
             }
         });
 
-        ImageButton button2 = (ImageButton) findViewById(R.id.imageButton2);
+        button2 = (ImageButton) findViewById(R.id.imageButton2);
         button2.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UnsafeOptInUsageError")
             public void onClick(View v) {
@@ -219,6 +225,10 @@ public class PlanificarRuta extends AppCompatActivity {
                     hashListRequestsCounter = new ArrayList<>();
                     routePlanner(online_Route_Points);
                     tomtomMap.removeMarkers("Route Marker");
+                    button.setEnabled(false);
+                    button.setImageAlpha(75);
+                    button2.setEnabled(false);
+                    button2.setImageAlpha(75);
                 }
             }
         });
@@ -283,6 +293,10 @@ public class PlanificarRuta extends AppCompatActivity {
                 summaryAdapter.clearData();
                 tomtomMap.removeMarkers("Route Marker");
                 tomtomMap.removeMarkers("Free Marker");
+                button.setEnabled(true);
+                button.setImageAlpha(255);
+                button2.setEnabled(true);
+                button2.setImageAlpha(255);
             }
         });
 
@@ -539,6 +553,10 @@ public class PlanificarRuta extends AppCompatActivity {
             touchPosition.add(ev.getX());
             touchPosition.add(ev.getY());
         }
+        if (ev.getActionMasked() == MotionEvent.ACTION_UP) {
+            touchPosition.add(ev.getX());
+            touchPosition.add(ev.getY());
+        }
         return super.dispatchTouchEvent(ev);
     }
 
@@ -595,10 +613,10 @@ public class PlanificarRuta extends AppCompatActivity {
                 displayed_Route = tomtomMap.addRoute(helper.setRoute(routePlanningResponse.getRoutes().get(0).getGeometry()));
                 setRouteInstructions(route_Summary, displayed_Route, 10, helper);
                 //tomtomMap.setLocationProvider(helper.simulateRoute(route_Summary));
-                Marker_Variables m = new Marker_Variables();
-                for (int i = 0; i < routePlanningResponse.getRoutes().get(0).getGeometry().size(); i++) {
-                    tomtomMap.addMarker(m.setMarkerOptions(routePlanningResponse.getRoutes().get(0).getGeometry().get(i), ImageFactory.INSTANCE.fromResource(R.drawable.outline_add_location_alt_black_18), "Free Marker"));
-                }
+//                Marker_Variables m = new Marker_Variables();
+//                for (int i = 0; i < routePlanningResponse.getRoutes().get(0).getGeometry().size(); i++) {
+//                    tomtomMap.addMarker(m.setMarkerOptions(routePlanningResponse.getRoutes().get(0).getGeometry().get(i), ImageFactory.INSTANCE.fromResource(R.drawable.outline_add_location_alt_black_18), "Free Marker"));
+//                }
                 tomtomMap.addMarkerClickListener(new MarkerClickListener() {
                     @Override
                     public void onMarkerClicked(@NonNull Marker marker) {
@@ -692,16 +710,22 @@ public class PlanificarRuta extends AppCompatActivity {
         @SuppressLint("UnsafeOptInUsageError")
         @Override
         public boolean onMapLongClicked(@NonNull GeoPoint geoPoint) {
-            if (ignoreLongClick == false) {
-                Marker_Variables m = new Marker_Variables();
-                ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getApplicationContext(), R.style.PopupMenuOverlapAnchor);
-                //PopupMenu popup = new PopupMenu(MainActivity.this, findViewById(R.id.map_fragment), Gravity.NO_GRAVITY, androidx.appcompat.R.attr.actionOverflowMenuStyle, 0);
-                //PopupMenu popup = new PopupMenu(contextThemeWrapper, findViewById(R.id.map_fragment), Gravity.END);
+            if (tomtomMap.getRoutes().size() == 0) {
+                if (ignoreLongClick == false) {
+                    Marker_Variables m = new Marker_Variables();
+                    ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getApplicationContext(), R.style.PopupMenuOverlapAnchor);
+                    //PopupMenu popup = new PopupMenu(MainActivity.this, findViewById(R.id.map_fragment), Gravity.NO_GRAVITY, androidx.appcompat.R.attr.actionOverflowMenuStyle, 0);
+                    //PopupMenu popup = new PopupMenu(contextThemeWrapper, findViewById(R.id.map_fragment), Gravity.END);
 
-                showPopup(PlanificarRuta.this, touchPosition.get(0), touchPosition.get(1), m, geoPoint);
-                touchPosition.clear();
-            } else {
-                ignoreLongClick = false;
+                    showPopup(PlanificarRuta.this, touchPosition.get(0), touchPosition.get(1), m, geoPoint);
+                    touchPosition.clear();
+                } else {
+                    ignoreLongClick = false;
+                }
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(), "Ya existe una ruta en el mapa, borre la misma para agregar una nueva", Toast.LENGTH_LONG).show();
             }
             return false;
         }

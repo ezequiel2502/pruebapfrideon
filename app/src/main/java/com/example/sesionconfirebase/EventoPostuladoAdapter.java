@@ -135,7 +135,7 @@ public class EventoPostuladoAdapter extends RecyclerView.Adapter<EventoPostulado
                             intent.putExtra("Fecha_Hora", (evento.getFechaEncuentro() + " " + evento.getHoraEncuentro()).toString());
                             intent.putExtra("Start_Point", ruta_actual.routePoints.get(0));
                             intent.putExtra("Evento", evento.getIdEvento());
-                            context.startActivity(intent);
+                            launcher.launch(intent);
                         }
 
                         @Override
