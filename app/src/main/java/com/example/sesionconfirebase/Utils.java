@@ -88,6 +88,7 @@ public static String calcularTiempo2(String fechaInicio, String fechaFinalizacio
 //    y calcula la velocidad en metros por segundo (m/s) en base a esa entrada.
     public static String calcularVelocidad2(String distanciaRecorrida, String tiempo) {
         // Convertimos la distancia a float
+
         float distancia = Float.parseFloat(distanciaRecorrida);
 
         // Dividimos el tiempo en horas, minutos y segundos

@@ -47,8 +47,7 @@ public class ListaReportes extends AppCompatActivity {
     ArrayList<PieEntry> entries;
     int totalAbandonos;
     int totalFinalizados;
-    int totalAbandonosParcial;
-    int totalFinalizadosParcial;
+
     String userNameCustom;
 
 
@@ -120,7 +119,8 @@ public class ListaReportes extends AppCompatActivity {
                             ArrayList<ModelEstadistica> listaEstadisticas = new ArrayList<>();
 
                             // Armo una estadística por cada participante de ese evento...
-
+                            final int[] totalAbandonosParcial = {0};
+                            final int[] totalFinalizadosParcial = {0};
                             for (String participante : listaParticipantes) {
 
                                 DatabaseReference participanteRef = firebaseDatabase.getReference()
@@ -186,10 +186,10 @@ public class ListaReportes extends AppCompatActivity {
                                                                             // Verifica si es un abandono o finalizado y actualiza los totales
                                                                             if (abandono.equals("Si")) {
                                                                                 totalAbandonos += 1;
-                                                                                totalAbandonosParcial += 1;
+                                                                                totalAbandonosParcial[0] += 1;
                                                                             } else {
                                                                                 totalFinalizados += 1;
-                                                                                totalFinalizadosParcial += 1;
+                                                                                totalFinalizadosParcial[0] += 1;
                                                                             }
 
                                                                             // Si es el último participante, crea el reporte
@@ -201,8 +201,8 @@ public class ListaReportes extends AppCompatActivity {
                                                                                         eventoCompletado.getNombreEvento(),
                                                                                         nombreRuta,
                                                                                         eventoCompletado.getImagenEvento(),
-                                                                                        totalAbandonosParcial,
-                                                                                        totalFinalizadosParcial,
+                                                                                        totalAbandonosParcial[0],
+                                                                                        totalFinalizadosParcial[0],
                                                                                         listaEstadisticas.size()
                                                                                 );
 
@@ -212,8 +212,8 @@ public class ListaReportes extends AppCompatActivity {
                                                                                 recycleList.add(reporte);
                                                                                 recyclerAdapter.notifyDataSetChanged();
 
-                                                                                totalAbandonosParcial = 0;
-                                                                                totalFinalizadosParcial = 0;
+                                                                                //totalAbandonosParcial[0] = 0;
+                                                                                //totalFinalizadosParcial[0] = 0;
 
                                                                                 //Guardo el reporte en un nodo nuevo llamado Reportes
                                                                                 DatabaseReference reportesRef = firebaseDatabase.getReference().child("Reportes").child(eventoCompletado.getIdEvento());

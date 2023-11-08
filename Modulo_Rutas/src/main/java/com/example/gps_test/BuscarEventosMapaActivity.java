@@ -202,6 +202,10 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
         ComenzarEvento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ComenzarEvento.setEnabled(false);
+                ComenzarEvento.setImageAlpha(75);
+                TerminarEvento.setEnabled(true);
+                TerminarEvento.setImageAlpha(255);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss",
                         Locale.getDefault());
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT-3:00"));
@@ -222,6 +226,8 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
 
         Dialog dialog = new Dialog(BuscarEventosMapaActivity.this);
 
+        TerminarEvento.setEnabled(false);
+        TerminarEvento.setImageAlpha(75);
         TerminarEvento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
