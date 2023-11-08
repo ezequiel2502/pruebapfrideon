@@ -236,17 +236,16 @@ public class NotificationCounter {
             {
                 if(lista.get(i).getIdOrganizador()!=null)
                     {
-                        if(userId.equals(lista.get(i).getIdOrganizador()) || userId.equals(lista.get(i).getPostulanteId()))
+                        if(userId.equals(lista.get(i).getIdOrganizador()) && (lista.get(i).getTipoNotificacion().equals("creador_evento") || lista.get(i).getTipoNotificacion().equals("cupo-maximo") || lista.get(i).getTipoNotificacion().equals("cancela_postulante_evento")))
                         {
                             cantidadNotificaciones++;
                         }
                     }else{
-                    if(userId.equals(lista.get(i).getPostulanteId()))
+                    if(userId.equals(lista.get(i).getPostulanteId()) && (lista.get(i).getTipoNotificacion().equals("denegacion_postulante_evento") || lista.get(i).getTipoNotificacion().equals("postulante_evento") || lista.get(i).getTipoNotificacion().equals("cancelacion_evento")))
                     {
                         cantidadNotificaciones++;
                     }
                 }
-
             }
         return cantidadNotificaciones;
     }

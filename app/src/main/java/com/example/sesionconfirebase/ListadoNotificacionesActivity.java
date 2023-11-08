@@ -51,11 +51,12 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
                     if (currentUser != null && Notificacion !=null) {
                         String userID = currentUser.getUid();
                         if(Notificacion.getIdOrganizador() != null) {
-                            if(Notificacion.getIdOrganizador().equals(userID) || Notificacion.getPostulanteId().equals(userID)) {
+                            if(Notificacion.getIdOrganizador().equals(userID) && (Notificacion.getTipoNotificacion().equals("creador_evento") || Notificacion.getTipoNotificacion().equals("cupo-maximo") || Notificacion.getTipoNotificacion().equals("cancela_postulante_evento")))
+                            {
                                 recycleList.add(Notificacion);
                             }
                         } else if ( Notificacion.getPostulanteId()!=null) {
-                            if(Notificacion.getPostulanteId().equals(userID))
+                            if(Notificacion.getPostulanteId().equals(userID) && (Notificacion.getTipoNotificacion().equals("denegacion_postulante_evento") || Notificacion.getTipoNotificacion().equals("postulante_evento") || Notificacion.getTipoNotificacion().equals("cancelacion_evento")))
                             {
                                 recycleList.add(Notificacion);
                             }

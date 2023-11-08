@@ -72,7 +72,6 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                  IdPostulante = notificacion.getPostulanteId();
                  IdEvento = notificacion.getIdEvento();
                 buscarNoAceptadoPorEventoYUsuario(context,IdEvento,IdPostulante);
-
                 DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
                 // Eliminar la notificación
                 notificacionRef.removeValue();
@@ -201,10 +200,10 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                                                                     Toast.makeText(context, "Se alcanzó el cupo máximo", Toast.LENGTH_SHORT).show();
                                                                 }else{
                                                                     notificarPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
+                                                                    Toast.makeText(context, "Aceptaste postulación", Toast.LENGTH_SHORT).show();
                                                                 }
 
-                                                                // Realizar la postulación exitosa
-                                                                Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+
                                                             } else {
                                                                 // Error en la modificación del evento
                                                                 Toast.makeText(context, "Error al modificar el evento", Toast.LENGTH_SHORT).show();
