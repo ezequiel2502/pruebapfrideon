@@ -401,20 +401,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //llevo a la actividad que lista los reportes para el organizador
-        reportes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
-      /*  btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, ListadoNotificacionesActivity.class);
-                startActivity(intent);
-            }
-        });*/
 
         reportes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -425,13 +412,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-        /*btnIrABuscarEventos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, BuscarEventosMapaActivity.class);
-                startActivity(intent);
-            }
-        });*/
+
 
 
     }//fin onCreate()

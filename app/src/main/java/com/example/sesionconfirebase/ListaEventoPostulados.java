@@ -124,7 +124,7 @@ public class ListaEventoPostulados extends AppCompatActivity {
                                 ListaEventoCompletados.actualizarEventoCompletado();
                                 Intent intent = new Intent(ListaEventoPostulados.this, HomeActivity.class);
                                 startActivity(intent);
-                                finish();
+                                //finish();
                             }
                         }
                     }
