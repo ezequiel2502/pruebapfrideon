@@ -402,12 +402,12 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         //llevo a la actividad que lista los reportes para el organizador
-        reportes.setOnClickListener(new View.OnClickListener() {
+       /* reportes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
-        });
+        });*/
       /*  btnIrANotificaciones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
