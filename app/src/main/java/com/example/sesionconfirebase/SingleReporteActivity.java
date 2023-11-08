@@ -162,9 +162,23 @@ public class SingleReporteActivity extends AppCompatActivity {
                                     }//fin for(estadisticas)
 
 
+//                                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                                    View itemView = inflater.inflate(R.layout.item_posicion_reporte, null);
+
+
                                     // Después de inflar y agregar los item_posicion_reporte, inflamos y agregamos el layout con el PieChart
                                     LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                                     View chart = inflater.inflate(R.layout.pie_chart_layout, null);
+
+
+                                    //Tomo los controles del layout del piechart
+                                    TextView tv_Abandonos = chart.findViewById(R.id.tv_Abandonos);
+                                    TextView tv_Finalizados = chart.findViewById(R.id.tv_Finalizados);
+                                    TextView tv_Participantes = chart.findViewById(R.id.tv_Participantes);
+
+                                    tv_Abandonos.setText(reporte.getTotalAbandonos());
+                                    tv_Finalizados.setText(reporte.getTotalFinalizados());
+                                    tv_Participantes.setText(reporte.getTotalParticipantes());
 
                                     // Agregar PieChart
                                     PieChart pieChart = chart.findViewById(R.id.pieChart);
@@ -182,6 +196,8 @@ public class SingleReporteActivity extends AppCompatActivity {
                                     pieChart.invalidate();
 
                                     llContenedorEstadisticas.addView(chart);
+
+
 
                                 }
                             }
