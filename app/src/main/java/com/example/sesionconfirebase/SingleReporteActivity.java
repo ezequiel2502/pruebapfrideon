@@ -137,9 +137,9 @@ public class SingleReporteActivity extends AppCompatActivity {
                                         // Configurar los valores de los TextView con los datos de la estadística
                                         tvPosicion.setText(String.valueOf(i + 1)); // La posición es 1-indexed
                                         tvNombreCompetidor.setText( estadistica.getUserName());
-                                        tvDistancia.setText(estadistica.getDistanciaRecorrida());
-                                        tvVelocidad.setText(estadistica.getVelocidadPromEvento());
-                                        tvTiempo.setText(estadistica.getTiempo());
+                                        tvDistancia.setText(estadistica.getDistanciaRecorrida() + " mts");
+                                        tvVelocidad.setText(estadistica.getVelocidadPromEvento()+ " mts/s");
+                                        tvTiempo.setText(estadistica.getTiempo()+ " (H:m:s)");
                                         tvAbandono.setText(estadistica.getAbandonoSIoNO());
 
                                         // Obtener el contenedor y agregar la vista inflada

@@ -51,7 +51,7 @@ public class EstadisticasAdapter extends RecyclerView.Adapter<EstadisticasAdapte
         holder.tv_tituloEvento.setText(estadistica.getNombreEvento());
         holder.tv_UserNameOrganizador.setText(estadistica.getOrganizadorUsername());
         holder.tv_Ruta.setText(estadistica.getNombreRuta());
-        holder.tv_Tiempo.setText(estadistica.getTiempo()+ " (H:m)");
+        holder.tv_Tiempo.setText(estadistica.getTiempo()+ " (H:m:s)");
 
         //holder.tv_Distancia.setText(estadistica.getDistanciaRecorrida() + " mts");
         String distanciaTexto = estadistica.getDistanciaRecorrida();

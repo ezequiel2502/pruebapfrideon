@@ -163,7 +163,7 @@ public class HomeActivity extends AppCompatActivity {
             Automatico aut = new Automatico(currentUser);
             aut.setNotificactionBadge(notificactionBadge);
             // Programa la ejecución del método contarNotificaciones cada 30 segundos
-            scheduler.scheduleAtFixedRate(aut::contarNotificaciones, 0, 20, TimeUnit.SECONDS);
+            scheduler.scheduleAtFixedRate(aut::contarNotificaciones, 0, 10, TimeUnit.SECONDS);
 
             perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
