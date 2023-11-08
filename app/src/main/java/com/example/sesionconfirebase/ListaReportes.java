@@ -47,6 +47,8 @@ public class ListaReportes extends AppCompatActivity {
     ArrayList<PieEntry> entries;
     int totalAbandonos;
     int totalFinalizados;
+    int totalAbandonosParcial;
+    int totalFinalizadosParcial;
     String userNameCustom;
 
 
@@ -118,7 +120,9 @@ public class ListaReportes extends AppCompatActivity {
                             ArrayList<ModelEstadistica> listaEstadisticas = new ArrayList<>();
 
                             // Armo una estadística por cada participante de ese evento...
+
                             for (String participante : listaParticipantes) {
+
                                 DatabaseReference participanteRef = firebaseDatabase.getReference()
                                         .child("Events_Data").child(participante).child(eventoCompletado.getIdEvento());
 
@@ -182,8 +186,10 @@ public class ListaReportes extends AppCompatActivity {
                                                                             // Verifica si es un abandono o finalizado y actualiza los totales
                                                                             if (abandono.equals("Si")) {
                                                                                 totalAbandonos += 1;
+                                                                                totalAbandonosParcial += 1;
                                                                             } else {
                                                                                 totalFinalizados += 1;
+                                                                                totalFinalizadosParcial += 1;
                                                                             }
 
                                                                             // Si es el último participante, crea el reporte
@@ -195,8 +201,8 @@ public class ListaReportes extends AppCompatActivity {
                                                                                         eventoCompletado.getNombreEvento(),
                                                                                         nombreRuta,
                                                                                         eventoCompletado.getImagenEvento(),
-                                                                                        totalAbandonos,
-                                                                                        totalFinalizados,
+                                                                                        totalAbandonosParcial,
+                                                                                        totalFinalizadosParcial,
                                                                                         listaEstadisticas.size()
                                                                                 );
 
@@ -205,6 +211,9 @@ public class ListaReportes extends AppCompatActivity {
                                                                                 // Agrega el objeto reporte a recycler
                                                                                 recycleList.add(reporte);
                                                                                 recyclerAdapter.notifyDataSetChanged();
+
+                                                                                totalAbandonosParcial = 0;
+                                                                                totalFinalizadosParcial = 0;
 
                                                                                 //Guardo el reporte en un nodo nuevo llamado Reportes
                                                                                 DatabaseReference reportesRef = firebaseDatabase.getReference().child("Reportes").child(eventoCompletado.getIdEvento());
