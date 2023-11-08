@@ -176,9 +176,9 @@ public class SingleReporteActivity extends AppCompatActivity {
                                     TextView tv_Finalizados = chart.findViewById(R.id.tv_Finalizados);
                                     TextView tv_Participantes = chart.findViewById(R.id.tv_Participantes);
 
-                                    tv_Abandonos.setText(reporte.getTotalAbandonos());
-                                    tv_Finalizados.setText(reporte.getTotalFinalizados());
-                                    tv_Participantes.setText(reporte.getTotalParticipantes());
+                                    tv_Abandonos.setText(String.valueOf(reporte.getTotalAbandonos()));
+                                    tv_Finalizados.setText(String.valueOf(reporte.getTotalFinalizados()));
+                                    tv_Participantes.setText(String.valueOf(reporte.getTotalParticipantes()));
 
                                     // Agregar PieChart
                                     PieChart pieChart = chart.findViewById(R.id.pieChart);
