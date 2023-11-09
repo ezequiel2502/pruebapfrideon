@@ -331,6 +331,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                                     ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
                                     canceladosRef.setValue(evento);
                                     eventosPublicosRef.removeValue();
+                                    Intent intent=new Intent(SingleEventoPublicoActivity.this,ListaEventosPublicosVigentes.class);
+                                    startActivity(intent);
                                 }
                             }
 
