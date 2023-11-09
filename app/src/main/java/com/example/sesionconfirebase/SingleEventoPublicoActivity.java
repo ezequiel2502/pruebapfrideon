@@ -567,7 +567,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                                     if (task.isSuccessful()) {
                                         // Pre-postulación exitosa
                                         Toast.makeText(getApplicationContext(), "Te has pre-postulado al evento", Toast.LENGTH_SHORT).show();
-
+                                        Intent intent=new Intent(SingleEventoPublicoActivity.this,ListaEventosPublicosVigentes.class);
+                                        startActivity(intent);
                                     } else {
                                         // Error en la pre-postulación
                                         Toast.makeText(getApplicationContext(), "Error al pre-postularte al evento", Toast.LENGTH_SHORT).show();

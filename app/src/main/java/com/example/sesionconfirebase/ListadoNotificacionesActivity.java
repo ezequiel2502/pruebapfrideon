@@ -8,12 +8,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
-
+import android.widget.Button;
+import android.widget.ImageButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -28,11 +31,41 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listado_notificaciones);
         recyclerViewNotificaciones = findViewById(R.id.recyclerViewNotificaciones);
-         recycleList = new ArrayList<>();
+        recycleList = new ArrayList<>();
         //Creo la instancia de la base de datos
         firebaseDatabase = FirebaseDatabase.getInstance();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+// Obtener referencias a los botones
+        Button btnVolver;
+        btnVolver = findViewById(R.id.btnVolver);
+        ImageButton btnActualizar;
+        btnActualizar = findViewById(R.id.btnActualizar);
 
+        // Configurar el OnClickListener para el botón "Volver"
+        btnVolver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ListadoNotificacionesActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+
+        // Configurar el OnClickListener para el botón "Actualizar"
+        btnActualizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recycleList.clear();
+                cargarDatos();
+                // Notificar al RecyclerView que los datos han cambiado
+                recyclerViewNotificaciones.getAdapter().notifyDataSetChanged();
+            }
+        });
+        cargarDatos();
+
+    }
+    private void cargarDatos() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         //Creo una instancia del adapter
         NotificacionesAdapter recyclerAdapter = new NotificacionesAdapter(recycleList, ListadoNotificacionesActivity.this);
