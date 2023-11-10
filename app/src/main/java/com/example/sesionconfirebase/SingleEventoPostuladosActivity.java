@@ -1,5 +1,7 @@
 package com.example.sesionconfirebase;
 
+import static com.example.sesionconfirebase.ListaEventoCompletados.firebaseDatabase;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -30,8 +32,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.gps_test.BuscarEventosMapaActivity;
+import com.example.gps_test.PlanificarRuta;
 import com.example.gps_test.Ruta;
 import com.example.gps_test.ui.map.TupleDouble;
+import com.example.sesionconfirebase.ActivityRutasRecyclerView.MyListAdapterActivity;
+import com.example.sesionconfirebase.ActivityRutasRecyclerView.MyListDataActivity;
+import com.example.sesionconfirebase.ActivitySingleEventoPostuladosRecycler.AssistanceAdapter;
+import com.example.sesionconfirebase.ActivitySingleEventoPostuladosRecycler.AssistanceData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,7 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SingleEventoPostuladosActivity extends AppCompatActivity implements CommentAdapter.OnResponseDeleteListener, CommentAdapter.OnCommentDeleteListener {
+public class SingleEventoPostuladosActivity extends AppCompatActivity implements CommentAdapterPostulados.OnResponseDeleteListener, CommentAdapterPostulados.OnCommentDeleteListener {
 
 
     TextView tv_SingleEvento, tv_SingleRuta, tv_SingleDescripcion, tv_SingleFechaEncuentro,
@@ -78,7 +85,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
 
     ArrayList<ModelComentario> recycleList;
 
-    private CommentAdapter commentAdapter;
+    private CommentAdapterPostulados commentAdapter;
 
     private DatabaseReference commentsRef;
 
@@ -143,16 +150,59 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // There are no request codes
+                            ListaEventoCompletados.actualizarEventoCompletado();
                             Intent data = result.getData();
                             if (data.getStringExtra("Result").equals("Calificar"))
                             {
-                                Intent intent = new Intent(SingleEventoPostuladosActivity.this, CalificarActivity.class);
-                                startActivity(intent);
+                                String eventoId = data.getStringExtra("EventID");
+                                DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventoId);
+                                completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            ModelEvento evento = snapshot.getValue(ModelEvento.class);
+                                            Intent intent = new Intent(SingleEventoPostuladosActivity.this, CalificarActivity.class);
+                                            intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
+                                            intent.putExtra("EventoId", evento.getIdEvento());
+                                            intent.putExtra("OrganizadorId", evento.getUserId());
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
+                                            completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    ModelEvento evento = snapshot.getValue(ModelEvento.class);
+                                                    Intent intent = new Intent(SingleEventoPostuladosActivity.this, CalificarActivity.class);
+                                                    intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
+                                                    intent.putExtra("EventoId", evento.getIdEvento());
+                                                    intent.putExtra("OrganizadorId", evento.getUserId());
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
                             }
                             else
                             {
+                                ListaEventoCompletados.actualizarEventoCompletado();
                                 Intent intent = new Intent(SingleEventoPostuladosActivity.this, HomeActivity.class);
                                 startActivity(intent);
+                                //finish();
                             }
                         }
                     }
@@ -306,7 +356,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
         recycleList=new ArrayList<>();
 
         //Creo una instancia del adapter para los comentarios
-        commentAdapter = new CommentAdapter(recycleList, SingleEventoPostuladosActivity.this, FirebaseAuth.getInstance().getCurrentUser().getUid());
+        commentAdapter = new CommentAdapterPostulados(recycleList, SingleEventoPostuladosActivity.this, FirebaseAuth.getInstance().getCurrentUser().getUid());
         //Seteo los listener de las interfaces de comunicacion para el adapter
         commentAdapter.setOnCommentDeleteListener(this);
         commentAdapter.setOnResponseDeleteListener(this);
@@ -330,6 +380,64 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                 }
             }
         });
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (singleUserId.equals(currentUser.getUid())) {
+
+            ArrayList<AssistanceData> data = new ArrayList<>();
+            AssistanceAdapter summaryAdapter = new AssistanceAdapter(data, SingleEventoPostuladosActivity.this, singleIdEvento);
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewAssistance);
+            //recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(SingleEventoPostuladosActivity.this));
+            recyclerView.setAdapter(summaryAdapter);
+
+            database.getReference().child("Eventos").child("Eventos Publicos").child(singleIdEvento).child("listaParticipantes").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        String participante = dataSnapshot.getValue(String.class);
+
+                        database.getReference().child("Perfil").child(participante).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ModelUsuario usuario = snapshot.getValue(ModelUsuario.class);
+                                AssistanceData assistance;
+                                if(usuario.getImagenPerfil() != null) {
+                                    assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), singleUserId);
+                                }
+                                else
+                                {
+                                    assistance = new AssistanceData(usuario.getUserNameCustom(), null, currentUser.getPhotoUrl().toString(), singleUserId);
+                                }
+                                data.add(assistance);
+                                summaryAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+        else
+        {
+            TextView title = (TextView) findViewById(R.id.participantesText);
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewAssistance);
+            title.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+        }
     }//fin OnCReate
 
     @Override

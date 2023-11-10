@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.example.gps_test.BuscarEventosMapaActivity;
 import com.example.gps_test.PlanificarRuta;
 import com.example.gps_test.VerEventosMapaActivity;
+import com.example.sesionconfirebase.Swiper.OnSwipeTouchListener;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -78,10 +81,11 @@ public class HomeActivity extends AppCompatActivity {
     //Variables opcionales para desloguear de google tambien
     private GoogleSignInClient mGoogleSignInClient;
     private GoogleSignInOptions gso;
-
+    FirebaseUser currentUser;
     private String password;
     private String username;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +93,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Creamos el objeto de Firebase
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUser = mAuth.getCurrentUser();
 
         //Acá decimos que queremos que firebase guarde los datos de forma local aunque se pierda la conexión
         //solo hace falte activarlo una vez, preferentemente acá que entramos siempre
@@ -411,12 +415,60 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
-
+        OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(HomeActivity.this) {
+            @Override
+            public void onSwipeRight() {
+                Intent intent = new Intent(getApplicationContext(), VerEventosMapaActivity.class);
+                intent.putExtra("Close_On_Enter", "False");
+                intent.putExtra("User_ID", currentUser.getUid());
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        };
+        LinearLayout viewlayout = findViewById(R.id.overlay);
+        viewlayout.setOnTouchListener(onSwipeTouchListener);
 
 
     }//fin onCreate()
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
 
+            perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+
+                        List<String> completados = usuario.getCompletados();
+                        if (completados != null) {
+                            tv_completados.setText("Completados: " + completados.size());
+                        } else {
+                            tv_completados.setText("Completados: 0");
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Manejar el error, si es necesario
+                }
+            });
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev)
+    {
+
+        LinearLayout viewlayout = findViewById(R.id.overlay);
+        viewlayout.dispatchTouchEvent(ev);
+
+        return super.dispatchTouchEvent(ev);
+    }
     public void redirectToOtherActivity(View view) {
         // Crea un Intent para abrir la otra actividad
         Intent intent = new Intent(this, ListadoNotificacionesActivity.class);

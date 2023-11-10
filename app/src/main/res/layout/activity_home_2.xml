@@ -7,7 +7,7 @@
     android:fillViewport="true"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".MainActivity">
+    tools:context=".HomeActivity">
 
     <LinearLayout
         android:id="@+id/contenedorPrincipal"
@@ -482,8 +482,12 @@
                 app:menu="@menu/bottom_menu" />
         </LinearLayout>
 
-
+        <LinearLayout
+            android:id="@+id/overlay"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right" >
+        </LinearLayout>
     </LinearLayout>
-
-
 </ScrollView>

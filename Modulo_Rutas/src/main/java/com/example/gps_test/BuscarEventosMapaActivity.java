@@ -465,7 +465,7 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
            eventTime.setTime( dateFormat.parse(data).getTime());}
            catch (java.text.ParseException error){}
         }
-        h.post(new Runnable() {
+        h.postDelayed(new Runnable()  {
             @Override
             public void run() {
                 currentTime = Calendar.getInstance().getTime();
@@ -474,10 +474,11 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 {
                     DeletePoints.setEnabled(true);
                     DeletePoints.setImageAlpha(255);
+
                 }
-                h.postDelayed(this, 1000);
+                //h.postDelayed(this, 1000);
             }
-        });
+        }, 1000);
     }
 
 
