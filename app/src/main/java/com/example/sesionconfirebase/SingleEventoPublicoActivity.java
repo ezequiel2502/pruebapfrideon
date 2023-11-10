@@ -104,6 +104,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         });
 
 
+        //Obtengo los controles de la vista
         tv_SingleEvento=findViewById(R.id.tv_SingleEvento);
         tv_SingleRuta=findViewById(R.id.tv_SingleRuta);
         tv_SingleDescripcion=findViewById(R.id.tv_SingleDescripcion);
@@ -119,6 +120,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         rb_SingleRatingEvento=findViewById(R.id.rb_SingleRatingEvento);
         btn_postularse=findViewById(R.id.btn_postularse);
         btn_CancelarEvento=findViewById(R.id.btn_CancelarEvento);
+        image_profile=findViewById(R.id.image_profile);
 
 
 
@@ -567,7 +569,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                                     if (task.isSuccessful()) {
                                         // Pre-postulación exitosa
                                         Toast.makeText(getApplicationContext(), "Te has pre-postulado al evento", Toast.LENGTH_SHORT).show();
-
+                                        Intent intent=new Intent(SingleEventoPublicoActivity.this,ListaEventosPublicosVigentes.class);
+                                        startActivity(intent);
                                     } else {
                                         // Error en la pre-postulación
                                         Toast.makeText(getApplicationContext(), "Error al pre-postularte al evento", Toast.LENGTH_SHORT).show();
@@ -749,62 +752,111 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         String userId = user.getUid();
         String userName = user.getDisplayName();
 
-        // Obtengo la URI de la imagen de perfil desde Firebase Storage
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Default-Profile/doomer.jpg");
-        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        // Accedo al perfil del usuario
+        DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
+        perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onSuccess(Uri uri) {
-                // La URI de la imagen de perfil se ha obtenido exitosamente
-                String imagenPerfilUri = uri.toString();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                // Creo el nodo y los subnodos para agregar el comentario con un identificador único
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(idEvento);
-                String comentarioId = reference.push().getKey(); // Genera un ID único para el comentario
-                HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("comment", txt_write_comment.getText().toString());
-                hashMap.put("publisherId", userId);
-                hashMap.put("publisherName", userName);
-                hashMap.put("commentId", comentarioId);
-                hashMap.put("idEvento", idEvento);
-                hashMap.put("tipo", "comentario");
-                hashMap.put("imagenPerfilUri", imagenPerfilUri); // Agrego la URI de la imagen de perfil
+                //Inicializo el String
+                String imagenPerfilUri = "";
 
+                if (dataSnapshot.exists()) {
 
+                    //Obtengo el objeto que simboliza el perfil del usuario
+                    ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+                    String imagenPerfil = usuario.getImagenPerfil();
 
-                // Utilizo el identificador único para almacenar el comentario
-                reference.child(comentarioId).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        runOnUiThread(new Runnable() {
+                    if (imagenPerfil != null && !imagenPerfil.isEmpty()) {
+
+                        // Si hay una imagen de perfil en el perfil del usuario, la uso
+                        imagenPerfilUri = imagenPerfil;
+
+                    } else if (user.getPhotoUrl() != null) {
+
+                        // Si no hay imagen de perfil en el perfil del usuario, pero sí en su cuenta de Google, la uso
+                        imagenPerfilUri = user.getPhotoUrl().toString();
+
+                    } else {
+                        // Si no hay imagen de perfil en el perfil del usuario ni en su cuenta de Google, utilizo la imagen por defecto
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Default-Profile/doomer.jpg");
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
-                            public void run() {
-                                Toast.makeText(SingleEventoPublicoActivity.this, "Se publicó el mensaje", Toast.LENGTH_SHORT).show();
+                            public void onSuccess(Uri uri) {
+                                // La URI de la imagen de perfil se ha obtenido exitosamente
+                                String imagenPerfilUri = uri.toString();
 
-                                // Llamar a cargarComentarios después de agregar el comentario
-                                cargarComentarios();
+                                // Ahora podemos agregar el comentario
+                                agregarComentario(idEvento, userId, usuario.getUserNameCustom(), imagenPerfilUri);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Manejar el error si no se pudo obtener la URI de la imagen de perfil
+                                Toast.makeText(SingleEventoPublicoActivity.this, "No se pudo obtener la imagen de perfil", Toast.LENGTH_SHORT).show();
                             }
                         });
+                        return; // Importante: Salir del método para evitar llamadas múltiples
                     }
-                }).addOnFailureListener(new OnFailureListener() {
+
+                    // Si llegamos aquí, significa que ya tenemos la imagen de perfil y podemos agregar el comentario
+                    agregarComentario(idEvento, userId, usuario.getUserNameCustom(), imagenPerfilUri);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Maneja el error si ocurre una cancelación de la operación
+            }
+        });
+    }
+
+    private void agregarComentario(String idEvento, String userId, String userName, String imagenPerfilUri) {
+        // Creo el nodo y los subnodos para agregar el comentario con un identificador único
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(idEvento);
+        String comentarioId = reference.push().getKey();
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("comment", txt_write_comment.getText().toString());
+        hashMap.put("publisherId", userId);
+        hashMap.put("publisherName", userName);
+        hashMap.put("commentId", comentarioId);
+        hashMap.put("idEvento", idEvento);
+        hashMap.put("tipo", "comentario");
+        hashMap.put("imagenPerfilUri", imagenPerfilUri);
+
+        // Utilizo el identificador único para almacenar el comentario
+        reference.child(comentarioId).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onFailure(@NonNull Exception e) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(SingleEventoPublicoActivity.this, "No se publicó el mensaje", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                    public void run() {
+                        Toast.makeText(SingleEventoPublicoActivity.this, "Se publicó el mensaje", Toast.LENGTH_SHORT).show();
+
+                        // Llamar a cargarComentarios después de agregar el comentario
+                        cargarComentarios();
                     }
                 });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                // Maneja el error si no se puede obtener la URI de la imagen de perfil
-                Toast.makeText(SingleEventoPublicoActivity.this, "No se pudo obtener la imagen de perfil", Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SingleEventoPublicoActivity.this, "No se publicó el mensaje", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
+
+
+
+
+
+
+
 
 
 

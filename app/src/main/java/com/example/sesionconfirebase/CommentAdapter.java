@@ -27,8 +27,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -105,7 +108,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
 
 
+
         if (respuesta != null) {
+            //si el comentario tiene respuesta
 
             // Configurar vista para comentario con respuesta
             holder.linearLayoutComentario.setVisibility(View.VISIBLE);
@@ -139,15 +144,47 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             holder.tv_userNameRespuesta.setText(respuesta.getPublisherName());
 
 
-        }else{
+        } else {
+            // si el comentario NO tiene respuesta
 
             // Configurar vista para comentario sin respuesta
             holder.linearLayoutComentario.setVisibility(View.VISIBLE);
             holder.linearLayoutRespuesta.setVisibility(View.GONE);
-            // Para que el botón "Responder" esté habilitado
-            holder.btn_reply.setEnabled(true);
-            // Para que el botón  botón "Responder" esté visible
-            holder.btn_reply.setVisibility(View.VISIBLE);
+
+            // Obtener el ID del evento actual
+            String eventId = comentario.getEventoId();
+
+            // Obtener una referencia a la base de datos
+            DatabaseReference eventoRef = FirebaseDatabase.getInstance().getReference()
+                    .child("Eventos")
+                    .child("Eventos Publicos")
+                    .child(eventId);
+
+            eventoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
+                        if (evento != null) {
+                            // Verificar si el usuario actual es el organizador del evento
+                            if (userId.equals(evento.getUserId())) {
+                                // El usuario actual es el organizador, permitir respuesta
+                                holder.btn_reply.setEnabled(true);
+                                holder.btn_reply.setVisibility(View.VISIBLE);
+                            } else {
+                                // El usuario actual no es el organizador, ocultar y deshabilitar respuesta
+                                holder.btn_reply.setEnabled(false);
+                                holder.btn_reply.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    // Manejar error de lectura de datos
+                }
+            });
 
             //Se carga el itemComentario
             // Cargar la imagen usando Glide desde la URI almacenada en la base de datos
@@ -247,9 +284,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             }
         });
 
+
+        //Los botones para eliminar comenatario o respuesta solo pueden ser eliminados por su publicante
         if (!Objects.equals(list.get(holder.getAbsoluteAdapterPosition()).getPublisherId(), userId))
         {
             holder.btn_delete.setVisibility(View.GONE);
+            holder.btn_deleteRespuesta.setVisibility(View.GONE);
         }
 
 

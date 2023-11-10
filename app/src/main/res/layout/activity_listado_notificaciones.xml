@@ -6,29 +6,48 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ListadoNotificacionesActivity">
-    <TextView
-        android:id="@+id/textList"
 
+    <!-- Agregar botones y TextView en el mismo LinearLayout horizontal -->
+    <LinearLayout
         android:layout_width="match_parent"
-
         android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        android:fontFamily="sans-serif"
+        <Button
+            android:id="@+id/btnVolver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Volver"/>
 
-        android:text="Mis Notificaciones"
+        <TextView
+            android:id="@+id/textList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:text="Mis Notificaciones"
+            android:textSize="20sp"
+            android:textColor="@color/lavender"
+            android:layout_marginTop="10dp"
+            android:gravity="center"/>
 
-        android:textSize="20sp"
+        <ImageButton
+            android:id="@+id/btnActualizar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_popup_sync"
+            android:contentDescription="Actualizar"
+            android:layout_gravity="end|top"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
 
-        android:layout_marginTop="10dp"
-
-        android:textColor="@color/teal_700"
-
-        android:layout_gravity="top"
-
-        android:gravity="center"/>
+    <!-- Resto del diseño -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewNotificaciones"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </LinearLayout>
