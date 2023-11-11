@@ -44,6 +44,9 @@
             android:name=".RespuestaComentarioActivity"
             android:exported="false" />
         <activity
+            android:name=".RespuestaComentarioActivityPostulados"
+            android:exported="false" />
+        <activity
             android:name=".DetallesActivity"
             android:exported="false" />
         <activity
