@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +49,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.nex3z.notificationbadge.NotificationBadge;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -433,32 +435,43 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (currentUser != null) {
-            String userId = currentUser.getUid();
-            DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
 
-            perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+        Handler timer = new Handler();
+        timer.postDelayed(new Runnable()  {
+            @Override
+            public void run() {
+                if (currentUser != null) {
+                    String userId = currentUser.getUid();
+                    DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
 
-                        List<String> completados = usuario.getCompletados();
-                        if (completados != null) {
-                            tv_completados.setText("Completados: " + completados.size());
-                        } else {
-                            tv_completados.setText("Completados: 0");
+                    perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+
+                                List<String> completados = usuario.getCompletados();
+                                if (completados.size() != 0) {
+                                    tv_completados.setText("Completados: " + completados.size());
+                                } else {
+                                    tv_completados.setText("Completados: 0");
+                                }
+                            }
                         }
-                    }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Manejar el error, si es necesario
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Manejar el error, si es necesario
+                        }
+                    });
                 }
-            });
-        }
+            }
+        }, 1500);
+
     }
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev)
