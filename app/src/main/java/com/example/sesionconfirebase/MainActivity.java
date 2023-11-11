@@ -86,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login2);
-        if (first_Entrance == false) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(false);
-            first_Entrance = true;
-        }
+//        if (first_Entrance == false) {
+//            FirebaseDatabase.getInstance().setPersistenceEnabled(false);
+//            first_Entrance = true;
+//        }
         //*********Controles de activity_main
 //        mEditTextEmail = findViewById(R.id.editTextEmail);
 //        mEditTextPass = findViewById(R.id.editTextPass);
