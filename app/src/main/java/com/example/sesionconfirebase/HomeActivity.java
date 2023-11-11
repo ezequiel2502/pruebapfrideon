@@ -453,7 +453,8 @@ public class HomeActivity extends AppCompatActivity {
                                 ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
 
                                 List<String> completados = usuario.getCompletados();
-                                if (completados.size() != 0) {
+
+                                if (completados!=null && completados.size() != 0) {
                                     tv_completados.setText("Completados: " + completados.size());
                                 } else {
                                     tv_completados.setText("Completados: 0");
