@@ -440,11 +440,8 @@ public class CrearEvento extends AppCompatActivity {
         btn_CrearEvento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                //ProgressDialog
+                // ProgressDialog
                 dialog.show();
-
-
 
                 // Obtener los valores seleccionados del Spinner
                 String categoriaSeleccionada = spnCategoria.getSelectedItem().toString();
@@ -488,29 +485,45 @@ public class CrearEvento extends AppCompatActivity {
                                 evento.setNombreEvento(nombreEvento);
                                 evento.setDescripcion(descripcion);
                                 evento.setCupoMinimo(cupoMinimo);
-                                evento.setCupoMaximo(cupoMaximo);
+
+                                // Disminuye en uno el cupo máximo, porque estoy contando al organizador del evento
+                                int nuevoCupoMaximo = Integer.parseInt(cupoMaximo) - 1;
+                                evento.setCupoMaximo(String.valueOf(nuevoCupoMaximo));
+
                                 evento.setFechaEncuentro(fechaEncuentro);
                                 evento.setHoraEncuentro(horaEncuentro);
                                 evento.setFechaFinalizacion(fechaFinalizacion);
                                 evento.setHoraFinalizacion(horaFinalizacion);
                                 evento.setActivarDesactivar(activadoDesactivado);
-                                evento.setUserId(userId);
-                                evento.setUserName(userName);
+                                evento.setUserId(userId);//del organizador
+                                evento.setUserName(userName);//del organizador
                                 evento.setCalificacionGeneral(0.0f);
                                 evento.setPublicoPrivado(esPublico);
                                 evento.setActivadoDescativado(esActivo);
-                                evento.setTokenFCM(tokenFCM);
+                                evento.setTokenFCM(tokenFCM);//set del organizador
                                 evento.setImagenEvento(uri.toString());
 
-
                                 // Crea una referencia a la base de datos
-                                DatabaseReference eventosRef = database.getReference().child("Eventos");
+                                DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos");
 
                                 if (esPublico.equals("Publico")) {
                                     DatabaseReference eventosPublicosRef = eventosRef.child("Eventos Publicos");
                                     DatabaseReference nuevoEventoRef = eventosPublicosRef.push();
                                     String nuevoEventoId = nuevoEventoRef.getKey();
                                     evento.setIdEvento(nuevoEventoId);
+
+                                    // Agregar pre-postulación(para que quede consistente con los metodo prePostularCandidato y cancelarEvento)
+                                    DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
+                                    prePostulacionesRef.child(nuevoEventoId).child(userId).setValue(new PrePostulacion(tokenFCM, true, userId, nuevoEventoId));
+
+                                    // Agrega la postulación del usuario
+                                    DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Postulaciones");
+                                    postulacionesRef.child(userId).child(nuevoEventoId).setValue(true);
+
+                                    // Agrega al participante a la lista
+                                    evento.agregarParticipante(userId);
+
+                                    // Guarda los cambios en el evento
                                     nuevoEventoRef.setValue(evento).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -535,6 +548,15 @@ public class CrearEvento extends AppCompatActivity {
                                     DatabaseReference nuevoEventoRef = eventosPrivadosRef.push();
                                     String nuevoEventoId = nuevoEventoRef.getKey();
                                     evento.setIdEvento(nuevoEventoId);
+
+                                    // Agrega la postulación del usuario
+                                    DatabaseReference postulacionesRef = FirebaseDatabase.getInstance().getReference().child("Postulaciones");
+                                    postulacionesRef.child(userId).child(nuevoEventoId).setValue(true);
+
+                                    // Agrega al participante a la lista
+                                    evento.agregarParticipante(userId);
+
+                                    // Guarda los cambios en el evento
                                     nuevoEventoRef.setValue(evento).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -569,7 +591,10 @@ public class CrearEvento extends AppCompatActivity {
             }
         });
 
-            }//fin onCreate()
+
+
+
+    }//fin onCreate()
 
             private void requestStoragePermission() {
                 Dexter.withContext(this)

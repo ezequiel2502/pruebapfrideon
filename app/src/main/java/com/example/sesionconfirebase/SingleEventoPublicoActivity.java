@@ -209,7 +209,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
 
 
-        //*************Para activar/desactivar el btn_CancelarEvento
+        //*************Para activar/desactivar el btn_CancelarEvento y Postularse
 
         // Primero obtén una instancia de la base de datos
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -232,13 +232,20 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
                     // Compara los IDs de usuario
                     if (modelEvento.getUserId().equals(currentUserId)) {
-                        // Los IDs coinciden, habilita el botón, porque se trata del creador de ese evento
+                        // Los IDs coinciden, habilita el botón "Cancelar Evento", porque se trata del creador de ese evento
                         btn_CancelarEvento.setEnabled(true);
                         btn_CancelarEvento.setVisibility(View.VISIBLE);
+
+                        // Los IDs coinciden, desabilita el botón "Postularse", porque se trata del creador de ese evento
+                        btn_postularse.setEnabled(false);
+                        btn_postularse.setVisibility(View.INVISIBLE);
                     } else {
                         // Los IDs no coinciden, deshabilita el botón
                         btn_CancelarEvento.setEnabled(false);
                         btn_CancelarEvento.setVisibility(View.INVISIBLE);
+
+                        btn_postularse.setEnabled(true);
+                        btn_postularse.setVisibility(View.VISIBLE);
                     }
 
                     // Guarda el ModelEvento en un miembro de clase, para usar luego ese objeto
