@@ -222,7 +222,7 @@ public class ListaEventoCompletados extends AppCompatActivity {
                                 completadosRef.setValue(evento);
 
                                 // Remover el evento de "Eventos Publicos"
-                                eventoPublicoRef.removeValue();
+                                //eventoPublicoRef.removeValue();
 
                                 //Actualizo el perfil del usuario que completo el evento, pongo el eventoId en su lista
                                 agregarEventoAPerfilListaCompletados(userId, eventoId);
