@@ -246,11 +246,15 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
                 if (!abandono)
                 {
                     database.getReference().child("Events_Data").child(userId).child(EventoId).child("abandono").setValue("No");
+                    database.getReference().child("Eventos").child("Eventos Publicos")
+                            .child(EventoId).child("listaPresentes").child(userId).setValue("True");
                     showFinishPopUp(Calendar.getInstance().getTime(), distancia, "Terminado");
                 }
                 else
                 {
                     database.getReference().child("Events_Data").child(userId).child(EventoId).child("abandono").setValue("Si");
+                    database.getReference().child("Eventos").child("Eventos Publicos")
+                            .child(EventoId).child("listaPresentes").child(userId).setValue("True");
                     showFinishPopUp(Calendar.getInstance().getTime(), distancia, "Abandonó");
                 }
                 abandono = true;

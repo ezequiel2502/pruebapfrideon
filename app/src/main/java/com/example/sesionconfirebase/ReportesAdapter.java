@@ -12,11 +12,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.gps_test.ui.ActivityBuscarEventosRecycler.ModelEvento;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -86,6 +92,50 @@ public class ReportesAdapter extends RecyclerView.Adapter<ReportesAdapter.ViewHo
                 intent.putExtra("NombreEvento",reporte.getNombreEvento());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
+            }
+        });
+
+        holder.imvEvento.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference events = database.getReference().child("Eventos").child("Completados").child(reporte.getEventoId());
+                events.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        if(snapshot.exists()) {
+                            ModelEvento evento = snapshot.getValue(ModelEvento.class);
+
+                            Intent intent = new Intent(context, SingleEventoPostuladosActivity.class);
+                            intent.putExtra("singleImage", evento.getImagenEvento());
+                            intent.putExtra("singleEvento", evento.getNombreEvento());
+                            intent.putExtra("singleRuta", evento.getRuta());
+                            intent.putExtra("singleDescripcion", evento.getDescripcion());
+                            intent.putExtra("singleFechaEncuentro", evento.getFechaEncuentro());
+                            intent.putExtra("singleHoraEncuentro", evento.getHoraEncuentro());
+                            intent.putExtra("singleCupoMinimo", evento.getCupoMinimo());
+                            intent.putExtra("singleCupoMaximo", evento.getCupoMaximo());
+                            intent.putExtra("singleCategoria", evento.getCategoria());
+                            intent.putExtra("singleUserName", evento.getUserName());
+                            intent.putExtra("singleUserId", evento.getUserId());
+                            //intent.putExtra("singleRating",evento.getRating());
+                            intent.putExtra("singlePublicoPrivado", evento.getPublicoPrivado());
+                            intent.putExtra("singleActivarDesactivar", evento.getActivadoDescativado());
+                            intent.putExtra("EventoId", evento.getIdEvento());
+                            intent.putExtra("isReportInstance", "True");
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
             }
         });
 

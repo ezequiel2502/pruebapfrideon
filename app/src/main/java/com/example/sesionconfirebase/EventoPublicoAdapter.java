@@ -121,15 +121,21 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
                             List<TupleDouble> camino = ruta_actual.routePoints;
                             List<com.example.gps_test.ui.recyclerView.MyListData> resumen = ruta_actual.routeResumeData;
 
-                            Toast.makeText(view.getContext(),"click on item: "+ ruta_actual.routeName,Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(context, BuscarEventosMapaActivity.class);
+                            Toast.makeText(view.getContext(),"click on item: "+ruta_actual.getRouteName(),Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(context, PlanificarRuta.class);
                             intent.putExtra("List_Of_Points", (Serializable) camino);
-                            intent.putExtra("List_Navigation", (Serializable) ruta_actual.routePointsNavigation);
-                            intent.putExtra("Resume_Data", (Serializable) resumen);
-                            intent.putExtra("Fecha_Hora", (evento.getFechaEncuentro() + " " + evento.getHoraEncuentro()).toString());
-                            intent.putExtra("Start_Point", ruta_actual.routePoints.get(0));
-                            intent.putExtra("Evento", evento.getIdEvento());
+                            intent.putExtra("Invalidate_Controls", "True");
                             context.startActivity(intent);
+
+//                            Toast.makeText(view.getContext(),"click on item: "+ ruta_actual.routeName,Toast.LENGTH_LONG).show();
+//                            Intent intent = new Intent(context, BuscarEventosMapaActivity.class);
+//                            intent.putExtra("List_Of_Points", (Serializable) camino);
+//                            intent.putExtra("List_Navigation", (Serializable) ruta_actual.routePointsNavigation);
+//                            intent.putExtra("Resume_Data", (Serializable) resumen);
+//                            intent.putExtra("Fecha_Hora", (evento.getFechaEncuentro() + " " + evento.getHoraEncuentro()).toString());
+//                            intent.putExtra("Start_Point", ruta_actual.routePoints.get(0));
+//                            intent.putExtra("Evento", evento.getIdEvento());
+//                            context.startActivity(intent);
                         }
 
                         @Override

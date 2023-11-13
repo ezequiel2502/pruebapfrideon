@@ -1,6 +1,7 @@
 package com.example.sesionconfirebase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ModelEvento {
@@ -24,6 +25,7 @@ private ArrayList<ModelCalificacion> calificaciones;
 private ArrayList<String>ListaParticipantes;
 private ArrayList<String>ListaParticipantesFinalizados;
 private ArrayList<String>ListaParticipantesConAbandono;
+private HashMap<String, String> ListaPresentes;
 
 private float calificacionGeneral;
 
@@ -381,6 +383,14 @@ private float calificacionGeneral;
 
     public void setCalificacionGeneral(float calificacionGeneral) {
         this.calificacionGeneral = calificacionGeneral;
+    }
+
+    public HashMap<String, String> getListaPresentes() {
+        return ListaPresentes;
+    }
+
+    public void setListaPresentes(HashMap<String, String> listaPresentes) {
+        ListaPresentes = listaPresentes;
     }
 }
 

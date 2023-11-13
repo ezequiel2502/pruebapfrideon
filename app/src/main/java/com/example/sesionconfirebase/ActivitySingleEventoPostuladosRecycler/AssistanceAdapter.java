@@ -38,13 +38,15 @@ public class AssistanceAdapter extends RecyclerView.Adapter<AssistanceAdapter.Vi
     private List<AssistanceData> listdata;
     private Context context;
     private String evento;
+    private String disableAsistanceButtons;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     // RecyclerView recyclerView;
-    public AssistanceAdapter(List<AssistanceData> listdata, Context context, String evento) {
+    public AssistanceAdapter(List<AssistanceData> listdata, Context context, String evento, String disableAsistanceButtons) {
         this.listdata = listdata;
         this.context = context;
         this.evento = evento;
+        this.disableAsistanceButtons = disableAsistanceButtons;
     }
 
     public List<AssistanceData> getCurrentList()
@@ -80,7 +82,7 @@ public class AssistanceAdapter extends RecyclerView.Adapter<AssistanceAdapter.Vi
                 .into(holder.imageView);
 
         DatabaseReference listaExistente =  database.getReference().child("Eventos").child("Eventos Publicos")
-                .child(evento).child("ListaPresentes");
+                .child(evento).child("listaPresentes");
         listaExistente.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -100,6 +102,41 @@ public class AssistanceAdapter extends RecyclerView.Adapter<AssistanceAdapter.Vi
                         }
                     }
                 }
+                else
+                {
+                    DatabaseReference listaExistente =  database.getReference().child("Eventos").child("Completados")
+                            .child(evento).child("listaPresentes");
+                    listaExistente.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists())
+                            {
+                                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                                    if (dataSnapshot.getValue(String.class).equals("True"))
+                                    {
+                                        holder.accept.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03fc56")));
+                                        holder.accept.setEnabled(false);
+                                        holder.accept.setImageAlpha(75);
+                                        holder.cancel.setEnabled(false);
+                                        holder.cancel.setImageAlpha(75);
+                                    } else if (dataSnapshot.getValue(String.class).equals("False"))
+                                    {
+                                        holder.cancel.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#f53b3b")));
+                                        holder.cancel.setEnabled(false);
+                                        holder.cancel.setImageAlpha(75);
+                                        holder.accept.setEnabled(false);
+                                        holder.accept.setImageAlpha(75);
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
             }
 
             @Override
@@ -108,13 +145,21 @@ public class AssistanceAdapter extends RecyclerView.Adapter<AssistanceAdapter.Vi
             }
         });
 
+        if(disableAsistanceButtons == "True")
+        {
+            holder.cancel.setEnabled(false);
+            holder.cancel.setImageAlpha(75);
+            holder.accept.setEnabled(false);
+            holder.accept.setImageAlpha(75);
+        }
+
         holder.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (holder.accept.getBackgroundTintList().getDefaultColor() == ContextCompat.getColor(context, R.color.white))
                 {
                     database.getReference().child("Eventos").child("Eventos Publicos")
-                            .child(evento).child("ListaPresentes").child(myListData.getIdUsuario()).setValue("True");
+                            .child(evento).child("listaPresentes").child(myListData.getIdUsuario()).setValue("True");
                     holder.accept.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03fc56")));
                     holder.cancel.setEnabled(false);
                     holder.cancel.setImageAlpha(75);
@@ -122,7 +167,7 @@ public class AssistanceAdapter extends RecyclerView.Adapter<AssistanceAdapter.Vi
                 else
                 {
                     database.getReference().child("Eventos").child("Eventos Publicos")
-                            .child(evento).child("ListaPresentes").child(myListData.getIdUsuario()).setValue("Undefined");
+                            .child(evento).child("listaPresentes").child(myListData.getIdUsuario()).setValue("Undefined");
                     holder.accept.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.white)));
                     holder.cancel.setEnabled(true);
                     holder.cancel.setImageAlpha(255);

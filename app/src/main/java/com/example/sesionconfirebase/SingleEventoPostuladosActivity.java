@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -89,6 +90,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
 
     private DatabaseReference commentsRef;
     private String singleIdEvento;
+    private String disableAssistanceButtons = "False";
 
 
     @Override
@@ -141,6 +143,16 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
         Integer singleRating = getIntent().getIntExtra("singleRating", 0);
         singleIdEvento = getIntent().getStringExtra("EventoId");
 
+        if(getIntent().getStringExtra("isReportInstance") != null)
+        {
+            TextView tv_etiquetaRating = findViewById(R.id.tv_etiquetaRatingBar);
+            tv_etiquetaRating.setVisibility(View.GONE);
+            rb_SingleRatingEvento.setVisibility(View.GONE);
+            btn_CancelarPostulacion.setVisibility(View.GONE);
+            LinearLayout tv_comments = findViewById(R.id.containerComments);
+            tv_comments.setVisibility(View.GONE);
+            disableAssistanceButtons = "True";
+        }
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference refRoutes = database.getReference().child("Route");
@@ -389,7 +401,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
         if (singleUserId.equals(currentUser.getUid())) {
 
             ArrayList<AssistanceData> data = new ArrayList<>();
-            AssistanceAdapter summaryAdapter = new AssistanceAdapter(data, SingleEventoPostuladosActivity.this, singleIdEvento);
+            AssistanceAdapter summaryAdapter = new AssistanceAdapter(data, SingleEventoPostuladosActivity.this, singleIdEvento, disableAssistanceButtons);
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewAssistance);
             //recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(SingleEventoPostuladosActivity.this));
@@ -398,23 +410,63 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
             database.getReference().child("Eventos").child("Eventos Publicos").child(singleIdEvento).child("listaParticipantes").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        String participante = dataSnapshot.getValue(String.class);
+                    if (snapshot.exists()) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            String participante = dataSnapshot.getValue(String.class);
 
-                        database.getReference().child("Perfil").child(participante).addListenerForSingleValueEvent(new ValueEventListener() {
+                            database.getReference().child("Perfil").child(participante).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    ModelUsuario usuario = snapshot.getValue(ModelUsuario.class);
+                                    AssistanceData assistance;
+                                    if (usuario.getImagenPerfil() != null) {
+                                        assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), singleUserId);
+                                    } else {
+                                        assistance = new AssistanceData(usuario.getUserNameCustom(), null, currentUser.getPhotoUrl().toString(), singleUserId);
+                                    }
+                                    data.add(assistance);
+                                    summaryAdapter.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                        }
+                    }
+                    else
+                    {
+                        database.getReference().child("Eventos").child("Completados").child(singleIdEvento).child("listaParticipantes").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                ModelUsuario usuario = snapshot.getValue(ModelUsuario.class);
-                                AssistanceData assistance;
-                                if(usuario.getImagenPerfil() != null) {
-                                    assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), singleUserId);
+                                if (snapshot.exists()) {
+                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                        String participante = dataSnapshot.getValue(String.class);
+
+                                        database.getReference().child("Perfil").child(participante).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                ModelUsuario usuario = snapshot.getValue(ModelUsuario.class);
+                                                AssistanceData assistance;
+                                                if (usuario.getImagenPerfil() != null) {
+                                                    assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), singleUserId);
+                                                } else {
+                                                    assistance = new AssistanceData(usuario.getUserNameCustom(), null, currentUser.getPhotoUrl().toString(), singleUserId);
+                                                }
+                                                data.add(assistance);
+                                                summaryAdapter.notifyDataSetChanged();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+
+                                    }
                                 }
-                                else
-                                {
-                                    assistance = new AssistanceData(usuario.getUserNameCustom(), null, currentUser.getPhotoUrl().toString(), singleUserId);
-                                }
-                                data.add(assistance);
-                                summaryAdapter.notifyDataSetChanged();
                             }
 
                             @Override
@@ -422,9 +474,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
 
                             }
                         });
-
                     }
-
                 }
 
                 @Override

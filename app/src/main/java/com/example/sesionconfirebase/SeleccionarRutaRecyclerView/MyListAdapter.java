@@ -94,6 +94,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
                 dialogInstance.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
+                        Toast.makeText(view.getContext(),"Ruta seleccionada: "+myListData.getRouteName(),Toast.LENGTH_LONG).show();
                         CrearEvento.dialogResult(listdata.get(holder.getAbsoluteAdapterPosition()).getDatabaseID());
                     }
                 });
