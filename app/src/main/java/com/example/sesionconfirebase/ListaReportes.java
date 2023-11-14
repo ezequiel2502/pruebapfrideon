@@ -121,6 +121,7 @@ public class ListaReportes extends AppCompatActivity {
                             // Armo una estadística por cada participante de ese evento...
                             final int[] totalAbandonosParcial = {0};
                             final int[] totalFinalizadosParcial = {0};
+
                             for (String participante : listaParticipantes) {
 
                                 DatabaseReference participanteRef = firebaseDatabase.getReference()
@@ -193,7 +194,8 @@ public class ListaReportes extends AppCompatActivity {
                                                                             }
 
                                                                             // Si es el último participante, crea el reporte
-                                                                            if (listaEstadisticas.size() == listaParticipantes.size()) {
+                                                                           if (listaEstadisticas.size() == listaParticipantes.size()) {
+
                                                                                 ModelReporteAbandonosYFinalizados reporte = new ModelReporteAbandonosYFinalizados(
                                                                                         eventoCompletado.getUserId(),
                                                                                         eventoCompletado.getUserName(),

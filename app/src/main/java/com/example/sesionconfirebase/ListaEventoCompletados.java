@@ -99,6 +99,8 @@ public class ListaEventoCompletados extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
 
+
+
                             }
                             else
                             {

@@ -240,10 +240,11 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                         btn_postularse.setEnabled(false);
                         btn_postularse.setVisibility(View.INVISIBLE);
                     } else {
-                        // Los IDs no coinciden, deshabilita el botón
+                        // Los IDs no coinciden, desabilita el botón cancelar
                         btn_CancelarEvento.setEnabled(false);
                         btn_CancelarEvento.setVisibility(View.INVISIBLE);
 
+                        // Los IDs no coinciden, habilita el botón postular
                         btn_postularse.setEnabled(true);
                         btn_postularse.setVisibility(View.VISIBLE);
                     }
