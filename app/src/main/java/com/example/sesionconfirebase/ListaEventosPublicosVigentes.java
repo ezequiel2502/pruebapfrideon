@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -75,11 +76,28 @@ public class ListaEventosPublicosVigentes extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
-                    recycleList.add(evento);
+                    if (dataSnapshot.exists())
+                    {
+                        ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
+                        DatabaseReference eventoCompletadoRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(evento.getIdEvento());
+                        eventoCompletadoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if(!snapshot.exists()) {
+                                    recycleList.add(evento);
+                                    recyclerAdapter.notifyDataSetChanged();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
                 }
 
-                recyclerAdapter.notifyDataSetChanged();
+
             }
 
             @Override

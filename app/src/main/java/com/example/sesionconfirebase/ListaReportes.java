@@ -193,7 +193,7 @@ public class ListaReportes extends AppCompatActivity {
                                                                             }
 
                                                                             // Si es el último participante, crea el reporte
-                                                                            if (listaEstadisticas.size() == listaParticipantes.size()) {
+                                                                            //if (listaEstadisticas.size() == listaParticipantes.size()) {
                                                                                 ModelReporteAbandonosYFinalizados reporte = new ModelReporteAbandonosYFinalizados(
                                                                                         eventoCompletado.getUserId(),
                                                                                         eventoCompletado.getUserName(),
@@ -250,7 +250,7 @@ public class ListaReportes extends AppCompatActivity {
                                                                                 pieChart.getDescription().setEnabled(false);
                                                                                 pieChart.animateY(1000, Easing.EaseInOutCubic);
                                                                                 pieChart.setEntryLabelColor(Color.BLACK);
-                                                                            }
+                                                                            //}
                                                                         }
                                                                     }
                                                                 }
@@ -258,6 +258,7 @@ public class ListaReportes extends AppCompatActivity {
                                                                 @Override
                                                                 public void onCancelled(@NonNull DatabaseError error) {
                                                                     // Manejar error de cancelación
+                                                                    String rutaId = eventoCompletado.getRuta();
                                                                 }
                                                             });
                                                         }
@@ -266,6 +267,7 @@ public class ListaReportes extends AppCompatActivity {
                                                     @Override
                                                     public void onCancelled(@NonNull DatabaseError error) {
                                                         // Manejar error de cancelación
+                                                        String rutaId = eventoCompletado.getRuta();
                                                     }
                                                 });
                                             }
@@ -275,6 +277,7 @@ public class ListaReportes extends AppCompatActivity {
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
                                         // Manejar error de cancelación
+
                                     }
                                 });
                             }//fin for(listaParticipantes)

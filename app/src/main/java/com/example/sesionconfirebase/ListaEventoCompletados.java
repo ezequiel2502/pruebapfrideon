@@ -98,7 +98,23 @@ public class ListaEventoCompletados extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
+                                DatabaseReference eventoCompletadoRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
+                                eventoCompletadoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        ModelEvento evento = snapshot.getValue(ModelEvento.class);
 
+
+                                        //Lo listo en el recycler
+                                        recycleList.add(evento);
+                                        recyclerAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
                             }
                             else
                             {
