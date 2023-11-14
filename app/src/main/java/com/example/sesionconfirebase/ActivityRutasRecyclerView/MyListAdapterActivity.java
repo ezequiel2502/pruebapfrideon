@@ -81,19 +81,19 @@ public class MyListAdapterActivity extends RecyclerView.Adapter<MyListAdapterAct
                 .apply(RequestOptions.skipMemoryCacheOf(true))
                 .signature(new com.bumptech.glide.signature.ObjectKey(String.valueOf(System.currentTimeMillis())))
                 .into(holder.imageViewRoute);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialogInstance.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        CrearEvento.dialogResult(listdata.get(holder.getAbsoluteAdapterPosition()).getDatabaseID());
-                    }
-                });
-                Toast.makeText(view.getContext(),"click on item: "+myListData.getRouteName(),Toast.LENGTH_LONG).show();
-                dialogInstance.dismiss();
-            }
-        });
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                dialogInstance.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                        CrearEvento.dialogResult(listdata.get(holder.getAbsoluteAdapterPosition()).getDatabaseID());
+//                    }
+//                });
+//                Toast.makeText(view.getContext(),"click on item: "+myListData.getRouteName(),Toast.LENGTH_LONG).show();
+//                dialogInstance.dismiss();
+//            }
+//        });
         holder.routePreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
