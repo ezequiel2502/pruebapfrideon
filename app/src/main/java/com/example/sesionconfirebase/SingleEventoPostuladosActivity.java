@@ -420,9 +420,9 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                                     ModelUsuario usuario = snapshot.getValue(ModelUsuario.class);
                                     AssistanceData assistance;
                                     if (usuario.getImagenPerfil() != null) {
-                                        assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), singleUserId);
+                                        assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), usuario.getUserId());
                                     } else {
-                                        assistance = new AssistanceData(usuario.getUserNameCustom(), null, currentUser.getPhotoUrl().toString(), singleUserId);
+                                        assistance = new AssistanceData(usuario.getUserNameCustom(), null, null, usuario.getUserId());
                                     }
                                     data.add(assistance);
                                     summaryAdapter.notifyDataSetChanged();
@@ -451,9 +451,9 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                                                 ModelUsuario usuario = snapshot.getValue(ModelUsuario.class);
                                                 AssistanceData assistance;
                                                 if (usuario.getImagenPerfil() != null) {
-                                                    assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), singleUserId);
+                                                    assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), usuario.getUserId());
                                                 } else {
-                                                    assistance = new AssistanceData(usuario.getUserNameCustom(), null, currentUser.getPhotoUrl().toString(), singleUserId);
+                                                    assistance = new AssistanceData(usuario.getUserNameCustom(), null, null, usuario.getUserId());
                                                 }
                                                 data.add(assistance);
                                                 summaryAdapter.notifyDataSetChanged();

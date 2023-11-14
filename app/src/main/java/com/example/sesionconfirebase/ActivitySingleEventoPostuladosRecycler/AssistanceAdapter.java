@@ -72,61 +72,55 @@ public class AssistanceAdapter extends RecyclerView.Adapter<AssistanceAdapter.Vi
         final AssistanceData myListData = listdata.get(position);
         holder.textView.setText(myListData.getDescription());
         holder.textView2.setText(myListData.getDescription2());
-        Glide.with(context)
-                .load(listdata.get(position).getImgId())
-                .transition(withCrossFade())
-                .placeholder(holder.imageView.getDrawable())
-                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
-                .apply(RequestOptions.skipMemoryCacheOf(true))
-                .signature(new com.bumptech.glide.signature.ObjectKey(String.valueOf(System.currentTimeMillis())))
-                .into(holder.imageView);
+        if (listdata.get(position).getImgId() != null) {
+            Glide.with(context)
+                    .load(listdata.get(position).getImgId())
+                    .transition(withCrossFade())
+                    .placeholder(holder.imageView.getDrawable())
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                    .apply(RequestOptions.skipMemoryCacheOf(true))
+                    .signature(new com.bumptech.glide.signature.ObjectKey(String.valueOf(System.currentTimeMillis())))
+                    .into(holder.imageView);
+        }
 
         DatabaseReference listaExistente =  database.getReference().child("Eventos").child("Eventos Publicos")
-                .child(evento).child("listaPresentes");
+                .child(evento).child("listaPresentes").child(myListData.getIdUsuario());
         listaExistente.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists())
                 {
-                    for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
-                        if (dataSnapshot.getValue(String.class).equals("True"))
-                        {
-                            holder.accept.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03fc56")));
-                            holder.cancel.setEnabled(false);
-                            holder.cancel.setImageAlpha(75);
-                        } else if (dataSnapshot.getValue(String.class).equals("False"))
-                        {
-                            holder.cancel.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#f53b3b")));
-                            holder.accept.setEnabled(false);
-                            holder.accept.setImageAlpha(75);
-                        }
+                    if (snapshot.getValue(String.class).equals("True")) {
+                        holder.accept.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03fc56")));
+                        holder.cancel.setEnabled(false);
+                        holder.cancel.setImageAlpha(75);
+                    } else if (snapshot.getValue(String.class).equals("False")) {
+                        holder.cancel.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#f53b3b")));
+                        holder.accept.setEnabled(false);
+                        holder.accept.setImageAlpha(75);
                     }
                 }
                 else
                 {
                     DatabaseReference listaExistente =  database.getReference().child("Eventos").child("Completados")
-                            .child(evento).child("listaPresentes");
+                            .child(evento).child("listaPresentes").child(myListData.getIdUsuario());
                     listaExistente.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists())
                             {
-                                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
-                                    if (dataSnapshot.getValue(String.class).equals("True"))
-                                    {
-                                        holder.accept.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03fc56")));
-                                        holder.accept.setEnabled(false);
-                                        holder.accept.setImageAlpha(75);
-                                        holder.cancel.setEnabled(false);
-                                        holder.cancel.setImageAlpha(75);
-                                    } else if (dataSnapshot.getValue(String.class).equals("False"))
-                                    {
-                                        holder.cancel.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#f53b3b")));
-                                        holder.cancel.setEnabled(false);
-                                        holder.cancel.setImageAlpha(75);
-                                        holder.accept.setEnabled(false);
-                                        holder.accept.setImageAlpha(75);
-                                    }
+                                if (snapshot.getValue(String.class).equals("True")) {
+                                    holder.accept.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03fc56")));
+                                    holder.accept.setEnabled(false);
+                                    holder.accept.setImageAlpha(75);
+                                    holder.cancel.setEnabled(false);
+                                    holder.cancel.setImageAlpha(75);
+                                } else if (snapshot.getValue(String.class).equals("False")) {
+                                    holder.cancel.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#f53b3b")));
+                                    holder.cancel.setEnabled(false);
+                                    holder.cancel.setImageAlpha(75);
+                                    holder.accept.setEnabled(false);
+                                    holder.accept.setImageAlpha(75);
                                 }
                             }
                         }

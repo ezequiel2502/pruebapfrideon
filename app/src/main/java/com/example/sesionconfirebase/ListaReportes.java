@@ -121,6 +121,7 @@ public class ListaReportes extends AppCompatActivity {
                             // Armo una estadística por cada participante de ese evento...
                             final int[] totalAbandonosParcial = {0};
                             final int[] totalFinalizadosParcial = {0};
+                            final boolean[] duplicating = {false};
                             for (String participante : listaParticipantes) {
 
                                 DatabaseReference participanteRef = firebaseDatabase.getReference()
@@ -194,6 +195,10 @@ public class ListaReportes extends AppCompatActivity {
 
                                                                             // Si es el último participante, crea el reporte
                                                                             //if (listaEstadisticas.size() == listaParticipantes.size()) {
+                                                                                if (duplicating[0] == true)
+                                                                                {
+                                                                                    recycleList.remove(recycleList.size()-1);
+                                                                                }
                                                                                 ModelReporteAbandonosYFinalizados reporte = new ModelReporteAbandonosYFinalizados(
                                                                                         eventoCompletado.getUserId(),
                                                                                         eventoCompletado.getUserName(),
@@ -251,6 +256,7 @@ public class ListaReportes extends AppCompatActivity {
                                                                                 pieChart.animateY(1000, Easing.EaseInOutCubic);
                                                                                 pieChart.setEntryLabelColor(Color.BLACK);
                                                                             //}
+                                                                            duplicating[0] = true;
                                                                         }
                                                                     }
                                                                 }
@@ -280,6 +286,7 @@ public class ListaReportes extends AppCompatActivity {
 
                                     }
                                 });
+
                             }//fin for(listaParticipantes)
                         }
                     }
