@@ -229,46 +229,86 @@ public class ListaEventoCompletados extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-
-                                //Si existe el evento en "Eventos Publicos" lo muevo a "Completados", esto es para el primero que completa el evento
-
-                                ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
-
-                                DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
-                                completadosRef.setValue(evento);
-
-                                // Remover el evento de "Eventos Publicos"
-                                //eventoPublicoRef.removeValue();
-
-                                //Actualizo el perfil del usuario que completo el evento, pongo el eventoId en su lista
-                                agregarEventoAPerfilListaCompletados(userId, eventoId);
-                            }
-                            else
-                            {
-                                //Si No existe el evento en "Eventos Publicos" lo busco en "Completados", esto es para
-                                //todo ususario que no sea el primero en completar un evento
-
-
-                                // Acceder a los eventos completados usando este eventoId
-                                DatabaseReference eventosCompletadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
-
-                                eventosCompletadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                DatabaseReference eventoCompletadoRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
+                                eventoCompletadoRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot eventoSnapshot) {
-                                        if (eventoSnapshot.exists()) {
-                                            ModelEvento evento = eventoSnapshot.getValue(ModelEvento.class);
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if(!snapshot.exists())
+                                        {
+                                            //Si existe el evento en "Eventos Publicos" lo muevo a "Completados", esto es para el primero que completa el evento
+
+                                            ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
+
+                                            DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
+                                            completadosRef.setValue(evento);
+
+                                            // Remover el evento de "Eventos Publicos"
+                                            //eventoPublicoRef.removeValue();
 
                                             //Actualizo el perfil del usuario que completo el evento, pongo el eventoId en su lista
                                             agregarEventoAPerfilListaCompletados(userId, eventoId);
+                                        }
+                                        else
+                                        {
+                                            //Si No existe el evento en "Eventos Publicos" lo busco en "Completados", esto es para
+                                            //todo ususario que no sea el primero en completar un evento
+
+
+                                            // Acceder a los eventos completados usando este eventoId
+                                            DatabaseReference eventosCompletadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
+
+                                            eventosCompletadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot eventoSnapshot) {
+                                                    if (eventoSnapshot.exists()) {
+                                                        ModelEvento evento = eventoSnapshot.getValue(ModelEvento.class);
+
+                                                        //Actualizo el perfil del usuario que completo el evento, pongo el eventoId en su lista
+                                                        agregarEventoAPerfilListaCompletados(userId, eventoId);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    // Manejar error de cancelación
+                                                }
+                                            });
                                         }
                                     }
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-                                        // Manejar error de cancelación
+
                                     }
                                 });
+
                             }
+//                            else
+//                            {
+//                                //Si No existe el evento en "Eventos Publicos" lo busco en "Completados", esto es para
+//                                //todo ususario que no sea el primero en completar un evento
+//
+//
+//                                // Acceder a los eventos completados usando este eventoId
+//                                DatabaseReference eventosCompletadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
+//
+//                                eventosCompletadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                    @Override
+//                                    public void onDataChange(@NonNull DataSnapshot eventoSnapshot) {
+//                                        if (eventoSnapshot.exists()) {
+//                                            ModelEvento evento = eventoSnapshot.getValue(ModelEvento.class);
+//
+//                                            //Actualizo el perfil del usuario que completo el evento, pongo el eventoId en su lista
+//                                            agregarEventoAPerfilListaCompletados(userId, eventoId);
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onCancelled(@NonNull DatabaseError error) {
+//                                        // Manejar error de cancelación
+//                                    }
+//                                });
+//                            }
                         }
 
                         @Override
