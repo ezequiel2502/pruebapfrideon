@@ -159,7 +159,7 @@ public class RespuestaComentarioActivityPostulados extends AppCompatActivity {
     }
     private void agregarRespuesta(String idEvento, String userId, String respuesta, String userName, String imagenPerfilUri) {
         // Agrega la lógica para almacenar la respuesta en la base de datos y realizar otras operaciones necesarias
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(idEvento);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ComentariosPostulacion").child(idEvento);
         String comentarioId = reference.push().getKey(); // Genera un ID único para la respuesta
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("comment", respuesta);
