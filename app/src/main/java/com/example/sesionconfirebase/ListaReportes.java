@@ -122,6 +122,7 @@ public class ListaReportes extends AppCompatActivity {
                             final int[] totalAbandonosParcial = {0};
                             final int[] totalFinalizadosParcial = {0};
                             final boolean[] duplicating = {false};
+                            final ModelReporteAbandonosYFinalizados[] previous = {null};
                             for (String participante : listaParticipantes) {
 
                                 DatabaseReference participanteRef = firebaseDatabase.getReference()
@@ -197,7 +198,7 @@ public class ListaReportes extends AppCompatActivity {
                                                                             //if (listaEstadisticas.size() == listaParticipantes.size()) {
                                                                                 if (duplicating[0] == true)
                                                                                 {
-                                                                                    recycleList.remove(recycleList.size()-1);
+                                                                                    recycleList.remove(previous[0]);
                                                                                 }
                                                                                 ModelReporteAbandonosYFinalizados reporte = new ModelReporteAbandonosYFinalizados(
                                                                                         eventoCompletado.getUserId(),
@@ -257,6 +258,7 @@ public class ListaReportes extends AppCompatActivity {
                                                                                 pieChart.setEntryLabelColor(Color.BLACK);
                                                                             //}
                                                                             duplicating[0] = true;
+                                                                            previous[0] = reporte;
                                                                         }
                                                                     }
                                                                 }
