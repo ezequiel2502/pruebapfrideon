@@ -11,14 +11,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
-        android:contentDescription="Icon" />
+        android:contentDescription="Icon"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        android:src="@drawable/userimg" />
 
     <LinearLayout
         android:layout_width="match_parent"
