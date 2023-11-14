@@ -230,6 +230,8 @@ public class ListaEventoCompletados extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
 
+                                
+
                                 //Si existe el evento en "Eventos Publicos" lo muevo a "Completados", esto es para el primero que completa el evento
 
                                 ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);

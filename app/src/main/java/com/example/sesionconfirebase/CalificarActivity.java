@@ -73,6 +73,7 @@ ModelUsuario perfilOrganizador;
                     float calificacionUsuario = 0.0f;
 
                     if (evento.getCalificaciones() != null) {
+
                         for (ModelCalificacion calificacion : evento.getCalificaciones()) {
                             if (calificacion.getUserId().equals(userId)) {
                                 usuarioYaCalificado = true;
