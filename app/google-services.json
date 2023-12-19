@@ -47,6 +47,14 @@
           }
         },
         {
+          "client_id": "930502610467-l17h2veg7e8dujae647opa44a1c84bjo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sesionconfirebase",
+            "certificate_hash": "cb35e0bd58c057283dd3c4f4376732b45027f27b"
+          }
+        },
+        {
           "client_id": "930502610467-toklbhgj8s130a3l88agm10afqksj8k7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
