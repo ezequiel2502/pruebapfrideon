@@ -39,6 +39,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -725,6 +726,12 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                     String idOrganizador = dataSnapshot.child("userId").getValue(String.class);
 
                     notificacion.registrarNotificacionCreadorEvento("Aceptar Postulacion de: ",userName,"creador_evento",idEvento,idOrganizador,postulanteId,nombreEvento);
+
+                    //RemoteMessage a = new RemoteMessage.Builder("Token FCM del dispositivo").addData("Message", "").build();
+
+                    //FirebaseMessaging.getInstance().send(a);
+
+
                 } else {
                     // El evento no existe en la base de datos
                     System.out.println("Evento no encontrado.");

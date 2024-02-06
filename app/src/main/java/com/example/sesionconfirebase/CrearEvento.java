@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -597,8 +598,17 @@ public class CrearEvento extends AppCompatActivity {
     }//fin onCreate()
 
             private void requestStoragePermission() {
+                String readMediaImages;
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                {
+                    readMediaImages = Manifest.permission.READ_EXTERNAL_STORAGE;
+                }
+                else
+                {
+                    readMediaImages = Manifest.permission.READ_MEDIA_IMAGES;
+                }
                 Dexter.withContext(this)
-                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .withPermission(readMediaImages)
                         .withListener(new PermissionListener() {
                             @Override
                             public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
@@ -608,7 +618,7 @@ public class CrearEvento extends AppCompatActivity {
                             @Override
                             public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
                                 // Handle permission denied
-                                Toast.makeText(CrearEvento.this, "Permiso denegado", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CrearEvento.this, String.valueOf(Build.VERSION.SDK_INT) + readMediaImages, Toast.LENGTH_SHORT).show();
                             }
 
                             @Override

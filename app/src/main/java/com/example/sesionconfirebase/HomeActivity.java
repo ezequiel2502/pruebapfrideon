@@ -1,18 +1,29 @@
 package com.example.sesionconfirebase;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -52,6 +63,8 @@ import com.nex3z.notificationbadge.NotificationBadge;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -74,7 +87,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView tv_privados,tv_publicos,tv_postulados,tv_completados,tv_following;
     CardView cardView_detalles,cardView_cerrarSesion,cardView_EliminarCuenta;
     FirebaseAuth mAuth;
-
+    boolean waitingUser = false;
 
 
     private TextView txtid, txtnombres, txtemail;
@@ -92,6 +105,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_2);
+
+
+
+
 
         //Creamos el objeto de Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -430,11 +447,24 @@ public class HomeActivity extends AppCompatActivity {
         LinearLayout viewlayout = findViewById(R.id.overlay);
         viewlayout.setOnTouchListener(onSwipeTouchListener);
 
+        if(getIntent().getStringExtra("openNotifications") != null && getIntent().getStringExtra("openNotifications").equals("True"))
+        {
+            Intent intent = new Intent(HomeActivity.this, ListadoNotificacionesActivity.class);
+            startActivity(intent);
+        }
+
 
     }//fin onCreate()
     @Override
     public void onResume() {
         super.onResume();
+
+        if (ContextCompat.checkSelfPermission(HomeActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && waitingUser != true){
+            requestStoragePermission();
+        }
+        else {
+            //Do nothing if the permission is granted - Response is handled below by onRequestPermissionsResult
+        }
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
@@ -472,6 +502,145 @@ public class HomeActivity extends AppCompatActivity {
         }, 1500);
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 101:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+                } else {
+                    // Explain to the user that the feature is unavailable because
+                    // the feature requires a permission that the user has denied.
+                    // At the same time, respect the user's decision. Don't link to
+                    // system settings in an effort to convince the user to change
+                    // their decision.
+                    waitingUser = true;
+                    requestStoragePermission2();
+                }
+                return;
+        }
+        // Other 'case' lines to check for other
+        // permissions this app might request.
+    }
+
+    private  void requestStoragePermission()
+    {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_COARSE_LOCATION))
+        {
+            new AlertDialog.Builder(this)
+                    .setTitle("GPS Permission Needed")
+                    .setMessage("Permission is needed for the maps functions to execute properly")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(HomeActivity.this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},101);
+
+                            // Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            // Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            // intent.setData(uri);
+                            // startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finishAffinity();
+                        }
+                    }).create().show();
+        }
+        else
+        {
+            new AlertDialog.Builder(this)
+                    .setTitle("GPS Permission Needed")
+                    .setMessage("Permission is needed for the maps functions to execute properly")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(HomeActivity.this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},101);
+
+                           // Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                           // Uri uri = Uri.fromParts("package", getPackageName(), null);
+                           // intent.setData(uri);
+                           // startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finishAffinity();
+                        }
+                    }).create().show();
+        }
+    }
+
+    ActivityResultLauncher<Intent> callLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        requestStoragePermission2();
+                    }
+                }
+            });
+    private  void requestStoragePermission2()
+    {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_COARSE_LOCATION))
+        {
+            new AlertDialog.Builder(this)
+                    .setTitle("GPS Permission Needed")
+                    .setMessage("Permission should be granted in the permissions section from the app, press OK to open or Cancel to close the app")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                            waitingUser = false;
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finishAffinity();
+                        }
+                    }).create().show();
+        }
+        else
+        {
+            new AlertDialog.Builder(this)
+                    .setTitle("GPS Permission Needed")
+                    .setMessage("Permission should be granted in the permissions section from the app, press OK to open or Cancel to close the app")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                            waitingUser = false;
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finishAffinity();
+                        }
+                    }).create().show();
+        }
+    }
+
 
 
     @Override

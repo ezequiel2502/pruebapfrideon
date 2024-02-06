@@ -62,6 +62,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SingleEventoPostuladosActivity extends AppCompatActivity implements CommentAdapterPostulados.OnResponseDeleteListener, CommentAdapterPostulados.OnCommentDeleteListener {
 
@@ -169,7 +171,7 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                             if (data.getStringExtra("Result").equals("Calificar"))
                             {
                                 String eventoId = data.getStringExtra("EventID");
-                                DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventoId);
+                                DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
                                 completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -184,24 +186,60 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                                         }
                                         else
                                         {
-                                            DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
-                                            completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            Toast.makeText(SingleEventoPostuladosActivity.this,"Por favor espere", Toast.LENGTH_LONG).show();
+                                            new Timer().schedule(new TimerTask() {
                                                 @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    ModelEvento evento = snapshot.getValue(ModelEvento.class);
-                                                    Intent intent = new Intent(SingleEventoPostuladosActivity.this, CalificarActivity.class);
-                                                    intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
-                                                    intent.putExtra("EventoId", evento.getIdEvento());
-                                                    intent.putExtra("OrganizadorId", evento.getUserId());
-                                                    startActivity(intent);
-                                                    finish();
-                                                }
+                                                public void run() {
+                                                    completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            if (snapshot.exists()) {
+                                                                ModelEvento evento = snapshot.getValue(ModelEvento.class);
+                                                                Intent intent = new Intent(SingleEventoPostuladosActivity.this, CalificarActivity.class);
+                                                                intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
+                                                                intent.putExtra("EventoId", evento.getIdEvento());
+                                                                intent.putExtra("OrganizadorId", evento.getUserId());
+                                                                startActivity(intent);
+                                                                finish();
+                                                            }
+                                                            else
+                                                            {
+                                                                Toast.makeText(SingleEventoPostuladosActivity.this,"Lo sentimos, los datos aún se están actualizando, intente en unos momentos", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        }
 
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                                                        }
+                                                    });
+//                                                    runOnUiThread(new Runnable(){
+//                                                        @Override
+//                                                        public void run(){
+//                                                            adapter.notifyDataSetChanged();
+//                                                        }
+//                                                    });
                                                 }
-                                            });
+                                            }, 1000);
+
+//                                            DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventoId);
+//                                            completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                                @Override
+//                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                                    ModelEvento evento = snapshot.getValue(ModelEvento.class);
+//                                                    Intent intent = new Intent(SingleEventoPostuladosActivity.this, CalificarActivity.class);
+//                                                    intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
+//                                                    intent.putExtra("EventoId", evento.getIdEvento());
+//                                                    intent.putExtra("OrganizadorId", evento.getUserId());
+//                                                    startActivity(intent);
+//                                                    finish();
+//                                                }
+//
+//                                                @Override
+//                                                public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                                }
+//                                            });
                                         }
                                     }
 
@@ -419,9 +457,12 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     ModelUsuario usuario = snapshot.getValue(ModelUsuario.class);
                                     AssistanceData assistance;
-                                    if (usuario.getImagenPerfil() != null) {
+                                    if (usuario.getImagenPerfil() != null && usuario.getNombre() != null) {
                                         assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), usuario.getUserId());
-                                    } else {
+                                    } else if (usuario.getImagenPerfil() != null) {
+                                        assistance = new AssistanceData(usuario.getUserNameCustom(), null, usuario.getImagenPerfil(), usuario.getUserId());
+                                    }
+                                    else{
                                         assistance = new AssistanceData(usuario.getUserNameCustom(), null, null, usuario.getUserId());
                                     }
                                     data.add(assistance);
@@ -450,9 +491,12 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                 ModelUsuario usuario = snapshot.getValue(ModelUsuario.class);
                                                 AssistanceData assistance;
-                                                if (usuario.getImagenPerfil() != null) {
+                                                if (usuario.getImagenPerfil() != null && usuario.getNombre() != null) {
                                                     assistance = new AssistanceData(usuario.getApellido(), usuario.getNombre(), usuario.getImagenPerfil(), usuario.getUserId());
-                                                } else {
+                                                } else if (usuario.getImagenPerfil() != null) {
+                                                    assistance = new AssistanceData(usuario.getUserNameCustom(), null, usuario.getImagenPerfil(), usuario.getUserId());
+                                                }
+                                                else{
                                                     assistance = new AssistanceData(usuario.getUserNameCustom(), null, null, usuario.getUserId());
                                                 }
                                                 data.add(assistance);

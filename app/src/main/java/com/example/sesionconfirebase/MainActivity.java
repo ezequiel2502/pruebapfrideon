@@ -24,6 +24,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -67,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
     String msjInicio;
 
+    String openNotifications = "False";
+
     private ProgressDialog mProgressBar;
 
     //**************Controles login2**************
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //FirebaseApp.initializeApp();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login2);
 //        if (first_Entrance == false) {
@@ -327,6 +331,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart()
     {
+        notification();
         //mAuth.addAuthStateListener(mAuthStateListener);
         //mAuth.signOut();
         //Sirve para: Si me salgo de la aplicacion y hay un usuario logueado que cuando entre siga logueado en el home
@@ -346,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("esLoginConEmailYPass",esLoginConEmailYpass_guardado);
             intent.putExtra("getPhoto",getPhoto_guardado);
             intent.putExtra("userId",user.getUid());
+            intent.putExtra("openNotifications",openNotifications);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
 
@@ -460,6 +466,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void notification()
+    {
+        String idEvento = getIntent().getStringExtra("idEvento");
+        if (idEvento != null)
+        {
+            openNotifications = "True";
+        }
     }
 
 // ...

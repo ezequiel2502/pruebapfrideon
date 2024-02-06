@@ -27,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ListaEventoPostulados extends AppCompatActivity {
 
@@ -78,7 +80,7 @@ public class ListaEventoPostulados extends AppCompatActivity {
                             if (data.getStringExtra("Result").equals("Calificar"))
                             {
                                 String eventoId = data.getStringExtra("EventID");
-                                DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventoId);
+                                DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
                                 completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -93,24 +95,60 @@ public class ListaEventoPostulados extends AppCompatActivity {
                                         }
                                         else
                                         {
-                                            DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
-                                            completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            Toast.makeText(ListaEventoPostulados.this,"Por favor espere", Toast.LENGTH_LONG).show();
+                                            new Timer().schedule(new TimerTask() {
                                                 @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    ModelEvento evento = snapshot.getValue(ModelEvento.class);
-                                                    Intent intent = new Intent(ListaEventoPostulados.this, CalificarActivity.class);
-                                                    intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
-                                                    intent.putExtra("EventoId", evento.getIdEvento());
-                                                    intent.putExtra("OrganizadorId", evento.getUserId());
-                                                    startActivity(intent);
-                                                    finish();
-                                                }
+                                                public void run() {
+                                                    completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            if (snapshot.exists()) {
+                                                                ModelEvento evento = snapshot.getValue(ModelEvento.class);
+                                                                Intent intent = new Intent(ListaEventoPostulados.this, CalificarActivity.class);
+                                                                intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
+                                                                intent.putExtra("EventoId", evento.getIdEvento());
+                                                                intent.putExtra("OrganizadorId", evento.getUserId());
+                                                                startActivity(intent);
+                                                                finish();
+                                                            }
+                                                            else
+                                                            {
+                                                                Toast.makeText(ListaEventoPostulados.this,"Lo sentimos, los datos aún se están actualizando, intente en unos momentos", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        }
 
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                                                        }
+                                                    });
+//                                                    runOnUiThread(new Runnable(){
+//                                                        @Override
+//                                                        public void run(){
+//                                                            adapter.notifyDataSetChanged();
+//                                                        }
+//                                                    });
                                                 }
-                                            });
+                                            }, 1000);
+
+//                                            DatabaseReference completadosRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventoId);
+//                                            completadosRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                                @Override
+//                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                                    ModelEvento evento = snapshot.getValue(ModelEvento.class);
+//                                                    Intent intent = new Intent(ListaEventoPostulados.this, CalificarActivity.class);
+//                                                    intent.putExtra("calificacion_gral", String.valueOf(evento.getCalificacionGeneral()));
+//                                                    intent.putExtra("EventoId", evento.getIdEvento());
+//                                                    intent.putExtra("OrganizadorId", evento.getUserId());
+//                                                    startActivity(intent);
+//                                                    finish();
+//                                                }
+//
+//                                                @Override
+//                                                public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                                }
+//                                            });
                                         }
                                     }
 

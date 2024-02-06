@@ -52,7 +52,7 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
         View view= LayoutInflater.from(context).inflate(R.layout.item_notificacion,parent,false);
         return new ViewHolderNotificacion(view);
     }
-
+    //Acá debería incorporar estos comportamientos basado en los botones de la notificación
     @Override
     public void onBindViewHolder(@NonNull NotificacionesAdapter.ViewHolderNotificacion holder, int position) {
         ModelNotificacion notificacion = list.get(position);
