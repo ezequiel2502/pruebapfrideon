@@ -137,4 +137,6 @@
     <string name="title_activity_listado_notifiaciones">ListadoNotifiacionesActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
+    <string name="registrar_cuenta_text"><u>¿No tenes cuenta?</u></string>
+    <string name="recuperar_contraseña_text"><u>Olvidaste contraseña</u></string>
 </resources>
