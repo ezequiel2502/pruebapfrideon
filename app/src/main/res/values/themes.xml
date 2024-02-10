@@ -43,5 +43,14 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="OutlineStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/my_primary</item>
+        <item name="hintTextColor">@color/my_primary</item>
+    </style>
+
+    <style name="OnFocus" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">@color/my_primary</item>
+    </style>
+
 </resources>
 
