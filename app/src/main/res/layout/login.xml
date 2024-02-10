@@ -40,7 +40,7 @@
             android:fontFamily="sans-serif-medium"
             android:text="Tu ruta, tu pasión, nuestra comunidad"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
 
@@ -74,9 +74,19 @@
                 android:text="Por favor, inicie sesión."
                 android:alpha="0.7"/>
 
-            <View
+            <TextView
+                android:id="@+id/textViewRespuesta"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"/>
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Respuesta"
+                android:textColor="@color/red"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_bias="0.079"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,7 +98,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:drawableEnd="@drawable/done_icon"/>
+                android:drawableEnd="@drawable/done_icon"
+                android:id="@+id/editTextEmail" />
 
             <View
                 android:layout_width="wrap_content"
@@ -104,7 +115,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:drawableEnd="@drawable/password_icon"/>
+                android:drawableEnd="@drawable/password_icon"
+                android:id="@+id/editTextPass" />
+
 
             <View
                 android:layout_width="wrap_content"
@@ -115,7 +128,8 @@
                 android:layout_height="60dp"
                 android:backgroundTint="@color/my_primary"
                 android:text="Iniciar Sesión"
-                app:cornerRadius="32dp"/>
+                app:cornerRadius="32dp"
+                android:id="@+id/btn_iniciar_sesion" />
 
             <View
                 android:layout_width="wrap_content"
@@ -129,6 +143,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/registrar_cuenta_text"
+                    android:id="@+id/cardview_registrarseUsuarioYPass"
                     android:layout_centerVertical="true" />
 
                 <TextView
@@ -136,7 +151,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/recuperar_contraseña_text"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true"
+                    android:id="@+id/btn_olvidaste_contrasena" />
 
             </RelativeLayout>
 
@@ -161,19 +177,11 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_margin="12dp"
-                    android:background="@drawable/fui_ic_googleg_color_24dp"/>
-
-
-
+                    android:background="@drawable/fui_ic_googleg_color_24dp"
+                    android:id="@+id/cardview_registrarseGoogle"/>
             </LinearLayout>
-
-
         </LinearLayout>
-
-
     </androidx.cardview.widget.CardView>
-
-
 </RelativeLayout>
 
 

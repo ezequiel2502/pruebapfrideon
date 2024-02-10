@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,13 +72,13 @@ public class MainActivity extends AppCompatActivity {
 
     //**************Controles login2**************
 
-    CardView cardview_registrarseUsuarioYPass;
-    CardView cardview_registrarseGoogle;
+    TextView cardview_registrarseUsuarioYPass, btn_olvidaste_contrasena;
+    ImageView cardview_registrarseGoogle;
     EditText editTextEmail;
     EditText editTextPass;
     TextView textViewRespuesta;
     private static boolean first_Entrance = false;
-    Button btn_olvidaste_contrasena,btn_iniciar_sesion;
+    Button btn_iniciar_sesion;
 
 
 
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login2);
+        setContentView(R.layout.login);
 //        if (first_Entrance == false) {
 //            FirebaseDatabase.getInstance().setPersistenceEnabled(false);
 //            first_Entrance = true;
@@ -224,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
 
                             textViewRespuesta.setText("CORRECTO");
                             textViewRespuesta.setTextColor(Color.GREEN);
+                            textViewRespuesta.setVisibility(View.VISIBLE);
 
                             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -298,6 +300,8 @@ public class MainActivity extends AppCompatActivity {
                         mProgressBar.dismiss();
                         textViewRespuesta.setText("No se pudo iniciar Sesión. Verifica correo/contraseña");
                         textViewRespuesta.setTextColor(Color.RED);
+                        textViewRespuesta.setVisibility(View.VISIBLE);
+
                         Toast.makeText(MainActivity.this, "No se pudo iniciar Sesión. Verifica correo/contraseña", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -376,6 +380,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 textViewRespuesta.setText(e.getMessage());
+                textViewRespuesta.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -457,6 +462,7 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         } else {
                             textViewRespuesta.setText(task.getException().toString());
+                            textViewRespuesta.setVisibility(View.VISIBLE);
                         }
                     }
                 });
