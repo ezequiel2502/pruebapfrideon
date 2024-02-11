@@ -65,7 +65,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
     ImageView image_profile;
 
     private static String tokenFcmPostulante;
-
+    private static String TokenFCMRecuperado;
 
     EditText txt_write_comment;
     TextView tv_add_comment;
@@ -150,7 +150,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         Float singleRating=  getIntent().getFloatExtra("singleRating",0);
         String singleIdEvento=getIntent().getStringExtra("EventoId");
         String singleTokenFCM=getIntent().getStringExtra("TokenFCM");//del creador del evento
-
+        TokenFCMRecuperado = singleTokenFCM;
 
         // Establece los datos en los TextViews
         tv_SingleEvento.setText(singleEvento);
@@ -725,7 +725,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                     // Ahora puedes obtener el idOrganizador
                     String idOrganizador = dataSnapshot.child("userId").getValue(String.class);
 
-                    notificacion.registrarNotificacionCreadorEvento("Aceptar Postulacion de: ",userName,"creador_evento",idEvento,idOrganizador,postulanteId,nombreEvento);
+                    notificacion.registrarNotificacionCreadorEvento("Aceptar Postulacion de: ",userName,"creador_evento",idEvento,idOrganizador,postulanteId,nombreEvento,TokenFCMRecuperado,tokenFcmPostulante);
 
                     //RemoteMessage a = new RemoteMessage.Builder("Token FCM del dispositivo").addData("Message", "").build();
 

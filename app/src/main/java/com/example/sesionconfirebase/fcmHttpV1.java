@@ -19,24 +19,40 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class fcmHttpV1 extends AppCompatActivity {
+    private String idEvento;
+    private String tokenFcmRecuperado;
+    private String tokenFcmPostulante;
+    private String nombreEvento;
+    private String userName;
+    private String postulanteId;
+    public void NotificarCreadorEvento(String idEvento,String tokenFcmRecuperado,String tokenFcmPostulante,String nombreEvento,String userName,String postulanteId)
+    {
+        this.idEvento = idEvento;
+        this.tokenFcmRecuperado = tokenFcmRecuperado;
+        this.tokenFcmPostulante = tokenFcmPostulante;
+        this.nombreEvento = nombreEvento;
+        this.userName = userName;
+        this.postulanteId = postulanteId;
+        NotificarCreadorEvento();
+    }
 
     private void NotificarCreadorEvento() {
 
         //"Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM"
 
         //userName del que se postula
-        String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        //String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         //userId del que se postula
-        String postulanteId=FirebaseAuth.getInstance().getUid();
+        //String postulanteId=FirebaseAuth.getInstance().getUid();
 
         // Para recuperar el tokenFcm almacenado en SharedPreferences del creador de
-        SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);
-        String idEvento = sharedPreferences.getString("idEvento", "");
-        String tokenFcmRecuperado = sharedPreferences.getString("TokenFCM", "");
-        String tokenFcmPostulante= sharedPreferences.getString("tokenFcmPostulante", "");
-        String nombreEvento = sharedPreferences.getString("nombreEvento", "");
+        //SharedPreferences sharedPreferences = getSharedPreferences("Evento",Context.MODE_PRIVATE);
+        //String idEvento = sharedPreferences.getString("idEvento", "");
+        //String tokenFcmRecuperado = sharedPreferences.getString("TokenFCM", "");
+        //String tokenFcmPostulante= sharedPreferences.getString("tokenFcmPostulante", "");
+       // String nombreEvento = sharedPreferences.getString("nombreEvento", "");
 
-        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue myrequest = Volley.newRequestQueue(this);
         JSONObject json = new JSONObject();
 
         try {

@@ -52,7 +52,7 @@ public class NotificationCounter {
         return ban[0];
     }
 
-    public boolean registrarNotificacionCreadorEvento(String titulo, String detalle,String tipoNotificacion,String idEvento,String idOrganizador,String postulanteId,String nombreEvento)
+    public boolean registrarNotificacionCreadorEvento(String titulo, String detalle,String tipoNotificacion,String idEvento,String idOrganizador,String postulanteId,String nombreEvento,String tokenFcmRecuperado,String tokenFcmPostulante)
     {
       FirebaseDatabase database;
       FirebaseStorage firebaseStorage;
@@ -77,6 +77,8 @@ public class NotificationCounter {
             public void onSuccess(Void aVoid) {
                 // La inserción fue exitosa
                 ban[0] = true;
+                fcmHttpV1 fcm= new fcmHttpV1();
+                fcm.NotificarCreadorEvento(idEvento,tokenFcmRecuperado,tokenFcmPostulante,nombreEvento,detalle,postulanteId);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
