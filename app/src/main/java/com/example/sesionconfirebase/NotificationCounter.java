@@ -1,17 +1,28 @@
 package com.example.sesionconfirebase;
 
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class NotificationCounter {
 
@@ -77,8 +88,6 @@ public class NotificationCounter {
             public void onSuccess(Void aVoid) {
                 // La inserción fue exitosa
                 ban[0] = true;
-                fcmHttpV1 fcm= new fcmHttpV1();
-                fcm.NotificarCreadorEvento(idEvento,tokenFcmRecuperado,tokenFcmPostulante,nombreEvento,detalle,postulanteId);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

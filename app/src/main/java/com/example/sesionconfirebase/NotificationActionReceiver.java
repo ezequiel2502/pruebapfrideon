@@ -1,5 +1,6 @@
 package com.example.sesionconfirebase;
 
+import static androidx.core.content.ContextCompat.startActivity;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 import android.content.BroadcastReceiver;
@@ -41,49 +42,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         String action = intent.getStringExtra("ACTION");
 
         if ("Botón 1".equals(action)) {
-            // Aquí puedes enviar un broadcast específico para capturar la acción en la SingleEventoPublicoActivity
-//            Intent broadcastIntent = new Intent("com.example.sesionconfirebase.ACTION_POSTULAR");
-//            context.sendBroadcast(broadcastIntent);
-            
-            // Recuperar los datos pasados al servicio
-            String idEvento = intent.getStringExtra("idEvento");
-            String postulanteId = intent.getStringExtra("postulanteId");
-            String nombreEvento = intent.getStringExtra("nombreEvento");
-            String tokenCreador = intent.getStringExtra("tokenCreador");
-            String tokenPostulante = intent.getStringExtra("tokenPostulante");
 
-            // Obtén una referencia a tus SharedPreferences
-            SharedPreferences sharedPreferences = context.getSharedPreferences("SPNotificationActionReceiver", Context.MODE_PRIVATE);
-
-            // Obtiene un editor para modificar los valores
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-
-            // Guarda los valores
-            editor.putString("idEvento", idEvento);
-            editor.putString("postulanteId", postulanteId);
-            editor.putString("nombreEvento", nombreEvento);
-            editor.putString("tokenCreador", tokenCreador);
-            editor.putString("tokenPostulante", tokenPostulante);
-
-            // Aplica los cambios
-            editor.apply();
-
-            // Ejecuta tu método para aceptar
-
-            //buscarPrimerNoAceptado(context);
-            buscarNoAceptadoPorEventoYUsuario(context,idEvento,nombreEvento,postulanteId);
-            //notificarPostulanteEvento(context,nombreEvento,tokenPostulante);
-
-        } else if ("Botón 2".equals(action)) {
-
-            // Aquí envías un broadcast específico para capturar la acción del Botón 2 en la SingleEventoPublicoActivity
-//            Intent broadcastIntent = new Intent("com.example.sesionconfirebase.ACTION_DENEGAR_POSTULACION");
-//            context.sendBroadcast(broadcastIntent);
-
-            String nombreEvento = intent.getStringExtra("nombreEvento");
-            String IdPostulante = intent.getStringExtra("IdPostulante");
-            String IdEvento = intent.getStringExtra("IdEvento");
-            notificarDenegacionPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
         }
     }
 
