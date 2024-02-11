@@ -3,6 +3,12 @@
     <style name="Base.Theme.SesionConFirebase" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:fontFamily">@font/futura_family</item>
+        <item name="colorAccent">@color/my_primary</item>
+    </style>
+
+    <style name="AppFonts" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/futura_family</item>
     </style>
 
     <style name="Theme.SesionConFirebase" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge" />
@@ -47,10 +53,5 @@
         <item name="boxStrokeColor">@color/my_primary</item>
         <item name="hintTextColor">@color/my_primary</item>
     </style>
-
-    <style name="OnFocus" parent="ThemeOverlay.AppCompat">
-        <item name="colorAccent">@color/my_primary</item>
-    </style>
-
 </resources>
 
