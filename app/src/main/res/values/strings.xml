@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sesion con Firebase</string>
+    <string name="app_name">Ride On</string>
     <string name="title_activity_login_email_pass">LoginEmailPass</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
