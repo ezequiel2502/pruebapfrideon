@@ -705,6 +705,29 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
         //userName del que se postula
         String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        final String [] userName1 = {userName};
+        if(userName==null || userName.length()==0)
+        {
+
+            // Accedo al perfil del usuario
+            DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()) {
+                        //Obtengo el objeto que simboliza el perfil del usuario
+                        ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+                        userName1[0] = usuario.getUserNameCustom();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Maneja el error si ocurre una cancelación de la operación
+                }
+            });
+        }
         //userId del que se postula
         String postulanteId=FirebaseAuth.getInstance().getUid();
 
@@ -727,7 +750,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                     String idOrganizador = dataSnapshot.child("userId").getValue(String.class);
 
                     notificacion.registrarNotificacionCreadorEvento("Aceptar Postulacion de: ",userName,"creador_evento",idEvento,idOrganizador,postulanteId,nombreEvento,TokenFCMRecuperado,tokenFcmPostulante);
-                    notificaCreador(userName,idEvento,postulanteId,nombreEvento);
+                    notificaCreador( userName1[0],idEvento,postulanteId,nombreEvento);
                     //RemoteMessage a = new RemoteMessage.Builder("Token FCM del dispositivo").addData("Message", "").build();
 
                     //FirebaseMessaging.getInstance().send(a);
