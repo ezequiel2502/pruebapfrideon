@@ -78,6 +78,7 @@ public class NotificationCounter {
         notificacion.setPostulanteId(postulanteId);
         notificacion.setNombreEvento(nombreEvento);
         notificacion.setIdOrganizador(idOrganizador);
+        notificacion.setTokenPostulante(tokenFcmPostulante);
         DatabaseReference notificacionRef = database.getReference().child("Notificaciones");
 
         DatabaseReference nuevonotificacionRef = notificacionRef.push();

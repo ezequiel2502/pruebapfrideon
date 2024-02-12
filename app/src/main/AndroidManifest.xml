@@ -65,9 +65,10 @@
             android:name=".CalificarActivity"
             android:exported="false"></activity>
 
-        <receiver
-            android:name=".NotificationActionReceiver"
-            android:enabled="true" /> <!-- <receiver android:name=".NotificationActionReceiver1" -->
+        <!-- <receiver
+             android:name=".NotificationActionReceiver"
+             android:enabled="true" />-->
+        <!-- <receiver android:name=".NotificationActionReceiver1" -->
         <!-- android:exported="true"> -->
         <!-- <intent-filter> -->
         <!-- <action android:name="com.example.sesionconfirebase.ACTION_BUTTON_1" /> -->

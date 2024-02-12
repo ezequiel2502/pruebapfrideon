@@ -1,6 +1,8 @@
 package com.example.sesionconfirebase;
 
 
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -16,6 +18,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.gps_test.BuscarEventosMapaActivity;
 import com.example.gps_test.Ruta;
@@ -28,9 +34,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAdapter.ViewHolderNotificacion>  {
 
@@ -85,6 +96,7 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                  IdPostulante = notificacion.getPostulanteId();
                  IdEvento = notificacion.getIdEvento();
                 notificarDenegacionPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
+                notificaDenegacionPostulanteEvento(IdEvento,nombreEvento,IdPostulante, notificacion.getTokenPostulante());
                 Toast.makeText(context, "Denegaste la Postulación", Toast.LENGTH_SHORT).show();
                 DatabaseReference notificacionRef = database.getReference("Notificaciones").child(notificacion.getIdNotificacion());
                 // Eliminar la notificación
@@ -131,6 +143,42 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
         Intent intent = new Intent(context, ListadoNotificacionesActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
         context.startActivity(intent);
+    }
+    private void notificaDenegacionPostulanteEvento( String IdEvento,String nombreEvento, String postulanteId,String TokenPostulante) {
+        Context context=this.context;
+        RequestQueue myrequest = Volley.newRequestQueue(context);
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject notificacion = new JSONObject();
+            notificacion.put("titulo", "Denegaron tu postulacion a : ");
+            notificacion.put("detalle", nombreEvento);
+            notificacion.put("tipo", "denegacion_postulante_evento");
+            notificacion.put("idEvento", IdEvento);
+            notificacion.put("postulanteId", postulanteId);
+            notificacion.put("tokenPostulante", TokenPostulante);
+            json.put("to", TokenPostulante);
+            json.put("data", notificacion); // Cambio de "data" a "notification"
+
+
+            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+            String URL = "https://fcm.googleapis.com/fcm/send";
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header;
+                    header = new HashMap<>();
+                    header.put("Content-Type", "application/json");
+                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    return header;
+                }
+            };
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     private void buscarNoAceptadoPorEventoYUsuario(Context context,String idEvento, String userId) {
         DatabaseReference prePostulacionesRef = FirebaseDatabase.getInstance().getReference().child("Pre-Postulaciones");
@@ -197,9 +245,11 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                                                                 if (0 >= nuevoCupoMaximo) {
                                                                     // Notificar al creador del evento
                                                                     notificarCupoMaximoAlcanzado(evento.getNombreEvento(),evento.getIdEvento());
+                                                                    notificaCupoMaximoAlcanzado(evento.getIdEvento(),evento.getNombreEvento(),evento.getTokenFCM());
                                                                     Toast.makeText(context, "Se alcanzó el cupo máximo", Toast.LENGTH_SHORT).show();
                                                                 }else{
                                                                     notificarPostulanteEvento(IdEvento,nombreEvento,IdPostulante);
+                                                                    notificaPostulanteEvento(IdEvento,nombreEvento,tokenFcmPostulante);
                                                                     Toast.makeText(context, "Aceptaste postulación", Toast.LENGTH_SHORT).show();
                                                                 }
 
@@ -219,6 +269,7 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
                     } else {
                         // No hay cupo disponible
                         notificarCupoMaximoAlcanzado(evento.getNombreEvento(),evento.getIdEvento());
+                        notificaCupoMaximoAlcanzado(evento.getIdEvento(),evento.getNombreEvento(),evento.getTokenFCM());
                         Toast.makeText(context, "Se alcanzó el cupo máximo", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -230,13 +281,10 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
             }
         });
     }
+
     private void notificarCupoMaximoAlcanzado(String nombreEvento,String idEvento){
 
-//        SharedPreferences sharedPreferences = mContext.getSharedPreferences("SPNotificationActionReceiver", Context.MODE_PRIVATE);
-//
-//        String idEvento = sharedPreferences.getString("idEvento", "");
-//        String nombreEvento = sharedPreferences.getString("nombreEvento", "");
-//        String tokenCreador = sharedPreferences.getString("tokenCreador", "");
+
         NotificationCounter notificacion = new NotificationCounter();
 // Crea una referencia al evento que quieres recuperar
         DatabaseReference eventoRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEvento);
@@ -265,6 +313,43 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
             }
         });
     }
+    public void notificaCupoMaximoAlcanzado(String idEvento,String nombreEvento, String TokenFCM)
+    {
+        Context mContext = null;
+        mContext=this.context;
+        RequestQueue myrequest = Volley.newRequestQueue(mContext);
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject notificacion = new JSONObject();
+            notificacion.put("titulo", "Cupo Máximo Alcanzado en: ");
+            notificacion.put("detalle", nombreEvento);
+            notificacion.put("tipo", "cupo-maximo");
+            notificacion.put("idEvento", idEvento);
+            notificacion.put("tokenCreador", TokenFCM);
+            json.put("to", TokenFCM);
+            json.put("data", notificacion); // Cambio de "data" a "notification"
+
+
+            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+            String URL = "https://fcm.googleapis.com/fcm/send";
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header;
+                    header = new HashMap<>();
+                    header.put("Content-Type", "application/json");
+                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    return header;
+                }
+            };
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     private void notificarPostulanteEvento( String IdEvento,String nombreEvento,String postulanteId) {
         NotificationCounter notificacion = new NotificationCounter();
         notificacion.registrarNotificacionPostulanteEvento("Aceptaron tu postulacion a :",nombreEvento,"postulante_evento",IdEvento,postulanteId,nombreEvento);
@@ -272,5 +357,41 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
         Intent intent = new Intent(context, ListadoNotificacionesActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
+    }
+    private void notificaPostulanteEvento( String IdEvento,String postulanteId,String TokenPostulante) {
+        Context context=this.context;
+        RequestQueue myrequest = Volley.newRequestQueue(context);
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject notificacion = new JSONObject();
+            notificacion.put("titulo", "Aceptaron tu postulacion a : ");
+            notificacion.put("detalle", nombreEvento);
+            notificacion.put("tipo", "postulante_evento");
+            notificacion.put("idEvento", IdEvento);
+            notificacion.put("postulanteId", postulanteId);
+            notificacion.put("tokenPostulante", TokenPostulante);
+            json.put("to", TokenPostulante);
+            json.put("data", notificacion); // Cambio de "data" a "notification"
+
+
+            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+            String URL = "https://fcm.googleapis.com/fcm/send";
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header;
+                    header = new HashMap<>();
+                    header.put("Content-Type", "application/json");
+                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    return header;
+                }
+            };
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

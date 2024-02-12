@@ -48,6 +48,7 @@ public class Fcm extends FirebaseMessagingService {
         String tokenCreador = remoteMessage.getData().get("tokenCreador");
         String tokenPostulante = remoteMessage.getData().get("tokenPostulante");
 
+        // Crear el Intent para abrir ListadoNotificacionesActivity
         Intent acceptIntent = new Intent(this, ListadoNotificacionesActivity.class);
         acceptIntent.putExtra("ACTION", "Botón 1"); // Puedes pasar cualquier información adicional necesaria
 
@@ -61,7 +62,7 @@ public class Fcm extends FirebaseMessagingService {
                 acceptPendingIntent // PendingIntent que se activará cuando se presione el botón
         ).build();
 
-        // Construir la notificación, con imagen y botones
+// Construir la notificación
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(titulo)
@@ -70,20 +71,23 @@ public class Fcm extends FirebaseMessagingService {
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.doomer))
                 .addAction(actionAccept);
 
+// Obtener el servicio de notificación
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
         if (notificationManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Crear el canal de notificación para Android Oreo y versiones posteriores
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
                 notificationManager.createNotificationChannel(channel);
             }
-            // Generar un ID único para la notificación
-            Random random = new Random();
-            int uniqueNotificationId = random.nextInt(10000);
 
-            // Notificar utilizando el ID único
+            // Generar un ID único para la notificación
+            int uniqueNotificationId = (int) System.currentTimeMillis();
+
+            // Mostrar la notificación
             notificationManager.notify(uniqueNotificationId, builder.build());
         }
-        // Aca puedo llamar metodos de forma directa ---->
+
 
     }
 
