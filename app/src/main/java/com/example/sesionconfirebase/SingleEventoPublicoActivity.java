@@ -749,7 +749,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                     // Ahora puedes obtener el idOrganizador
                     String idOrganizador = dataSnapshot.child("userId").getValue(String.class);
 
-                    notificacion.registrarNotificacionCreadorEvento("Aceptar Postulacion de: ",userName,"creador_evento",idEvento,idOrganizador,postulanteId,nombreEvento,TokenFCMRecuperado,tokenFcmPostulante);
+                    notificacion.registrarNotificacionCreadorEvento("Aceptar Postulacion de: ",userName1[0],"creador_evento",idEvento,idOrganizador,postulanteId,nombreEvento,TokenFCMRecuperado,tokenFcmPostulante);
                     notificaCreador( userName1[0],idEvento,postulanteId,nombreEvento);
                     //RemoteMessage a = new RemoteMessage.Builder("Token FCM del dispositivo").addData("Message", "").build();
 
