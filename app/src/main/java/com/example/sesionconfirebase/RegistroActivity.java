@@ -43,14 +43,14 @@ public class RegistroActivity extends AppCompatActivity {
 
     //***********controles nuevos
     EditText editTextUsuario,editTextEmail,editTextPass,editConfirmarPass;
-    CardView card_view_registrar,cardViewYaTienesCuenta;
-    TextView textViewRespuestaR;
+    Button btnRegistrar;
+    TextView textViewRespuestaR, textViewYaTienesCuenta;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.registro2);
+        setContentView(R.layout.registro);
 
         //controles viejos activity_registro
 //        mEditTextUsuario=findViewById(R.id.editTextUsuario);
@@ -67,9 +67,9 @@ public class RegistroActivity extends AppCompatActivity {
         editTextEmail=findViewById(R.id.editTextEmail);
         editTextPass=findViewById(R.id.editTextPass);
         editConfirmarPass=findViewById(R.id.editConfirmarPass);
-        card_view_registrar=findViewById(R.id.card_view_registrar);
+        btnRegistrar=findViewById(R.id.btnRegistrar);
         textViewRespuestaR=findViewById(R.id.textViewRespuestaR);
-        cardViewYaTienesCuenta=findViewById(R.id.cardViewYaTienesCuenta);
+        textViewYaTienesCuenta=findViewById(R.id.alreadyHaveAccount);
 
         mProgressBar=new ProgressDialog(RegistroActivity.this);
 
@@ -79,7 +79,7 @@ public class RegistroActivity extends AppCompatActivity {
 
 
         //Para el registro de un usuario email, usuario y contraseña
-        card_view_registrar.setOnClickListener(new View.OnClickListener() {
+        btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 verificarCredenciales();
@@ -88,7 +88,7 @@ public class RegistroActivity extends AppCompatActivity {
 
 
         //
-        cardViewYaTienesCuenta.setOnClickListener(new View.OnClickListener() {
+        textViewYaTienesCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(RegistroActivity.this,MainActivity.class);

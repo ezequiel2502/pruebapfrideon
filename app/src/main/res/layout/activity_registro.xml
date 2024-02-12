@@ -1,10 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".RegistroActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".RegistroActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/relativeLayout"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_gravity="center_vertical" >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/card_view"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="10dp"
+            app:strokeColor="@color/my_primary">
+
+            <TextView
+                android:id="@+id/txtRegisterYourAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/my_primary"
+                android:gravity="center"
+                android:text="Registrar tu cuenta"
+                android:textColor="@color/white"
+                android:textSize="30sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingStart="1dp"
+        android:paddingRight="15dp"
+        android:paddingEnd="15dp" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -138,4 +171,6 @@
             android:layout_marginTop="20dp"/>
 
     </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
