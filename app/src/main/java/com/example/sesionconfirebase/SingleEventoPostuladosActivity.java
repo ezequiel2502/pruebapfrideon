@@ -320,7 +320,29 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                 // Obtener el ID del usuario actual
                 String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String userName=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                final String [] userName1 = {userName};
+                if(userName==null || userName.length()==0)
+                {
 
+                    // Accedo al perfil del usuario
+                    DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
+                    perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.exists()) {
+                                //Obtengo el objeto que simboliza el perfil del usuario
+                                ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+                                userName1[0] = usuario.getUserNameCustom();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Maneja el error si ocurre una cancelación de la operación
+                        }
+                    });
+                }
 
                 // Buscar el evento
                 DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(singleIdEvento);
@@ -366,8 +388,8 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                                                                                         Toast.makeText(getApplicationContext(), "Has cancelado tu postulación al evento", Toast.LENGTH_SHORT).show();
 
                                                                     //Agregar notificacion al creador de evento
-                                                                    notificarPostulacionCancelada(evento.getNombreEvento(),userName,userId,evento.getIdEvento(),evento.getUserId());
-                                                                    notificaPostulacionCancelada(evento.getNombreEvento(),userName,userId,evento.getIdEvento(),evento.getTokenFCM());
+                                                                    notificarPostulacionCancelada(evento.getNombreEvento(),userName1[0],userId,evento.getIdEvento(),evento.getUserId());
+                                                                    notificaPostulacionCancelada(evento.getNombreEvento(),userName1[0],userId,evento.getIdEvento(),evento.getTokenFCM());
                                                                                     } else {
                                                                                         // Error en la modificación del evento
                                                                                         Toast.makeText(getApplicationContext(), "Error al modificar el evento", Toast.LENGTH_SHORT).show();
