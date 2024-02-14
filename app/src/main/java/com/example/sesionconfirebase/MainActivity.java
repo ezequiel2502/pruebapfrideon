@@ -2,7 +2,6 @@ package com.example.sesionconfirebase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,7 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -72,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
     //**************Controles login2**************
 
-    TextView cardview_registrarseUsuarioYPass, btn_olvidaste_contrasena;
-    ImageView cardview_registrarseGoogle;
+    TextView textViewRegistrarseUsuarioYPass, btn_olvidaste_contrasena;
+    ImageButton imgBtnRegistrarseGoogle;
     EditText editTextEmail;
     EditText editTextPass;
     TextView textViewRespuesta;
@@ -103,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         //************controles login2
-        cardview_registrarseUsuarioYPass=findViewById(R.id.cardview_registrarseUsuarioYPass);
-        cardview_registrarseGoogle=findViewById(R.id.cardview_registrarseGoogle);
+        textViewRegistrarseUsuarioYPass=findViewById(R.id.cardview_registrarseUsuarioYPass);
+        imgBtnRegistrarseGoogle=findViewById(R.id.imgbtn_registrarseGoogle);
         btn_olvidaste_contrasena=findViewById(R.id.btn_olvidaste_contrasena);
         btn_iniciar_sesion=findViewById(R.id.btn_iniciar_sesion);
         editTextEmail=findViewById(R.id.editTextEmail);
@@ -139,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
 
           //Para registrarse por primera vez, te manda al RegistroActivity
-        cardview_registrarseUsuarioYPass.setOnClickListener(new View.OnClickListener() {
+        textViewRegistrarseUsuarioYPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
@@ -165,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Le damos fuuncionalidad al boton de GOOGLE, que llama al método  que esta abajo signIn..
-        cardview_registrarseGoogle.setOnClickListener(new View.OnClickListener() {
+        imgBtnRegistrarseGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 esLoginConEmailYPass=false;

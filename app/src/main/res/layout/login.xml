@@ -168,12 +168,13 @@
                 android:orientation="horizontal"
                 android:gravity="center">
 
-                <ImageView
+                <ImageButton
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_margin="12dp"
                     android:background="@drawable/fui_ic_googleg_color_24dp"
-                    android:id="@+id/cardview_registrarseGoogle"/>
+                    android:id="@+id/imgbtn_registrarseGoogle"/>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

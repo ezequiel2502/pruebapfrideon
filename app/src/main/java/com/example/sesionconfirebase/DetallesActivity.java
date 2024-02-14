@@ -24,10 +24,8 @@ import java.util.Calendar;
 public class DetallesActivity extends AppCompatActivity {
 
     private int dia,mes,ano,hora,minutos;
-    Button btn_FechaNacimiento;
+    Button btn_FechaNacimiento, btn_guardarDetalles;
     EditText editTextName,editTextLastName,txt_FechaNacimiento,editTextCity,editTextCountry,editTextFacebook,editTextTwitter,editTextInstagram;
-
-    CardView cardView_guardarDetalles;
 
     FirebaseAuth mAuth;
     @Override
@@ -47,7 +45,7 @@ public class DetallesActivity extends AppCompatActivity {
         editTextTwitter=findViewById(R.id.editTextTwitter);
         editTextInstagram=findViewById(R.id.editTextInstagram);
         editTextInstagram=findViewById(R.id.editTextInstagram);
-        cardView_guardarDetalles=findViewById(R.id.cardView_guardarDetalles);
+        btn_guardarDetalles=findViewById(R.id.btn_guardarDetalles);
 
 
         //si habia datos ya cargados en el perfil los muestra en los campos
@@ -108,7 +106,7 @@ public class DetallesActivity extends AppCompatActivity {
         });
 
 
-        cardView_guardarDetalles.setOnClickListener(new View.OnClickListener() {
+        btn_guardarDetalles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
