@@ -46,10 +46,12 @@ import com.google.firebase.storage.StorageReference;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 public class SingleEventoPublicoActivity extends AppCompatActivity implements CommentAdapter.OnResponseDeleteListener, CommentAdapter.OnCommentDeleteListener {
     TextView tv_SingleEvento,tv_SingleRuta,tv_SingleDescripcion,tv_SingleFechaEncuentro,
             tv_SingleHoraEncuentro,tv_SingleCupoMinimo,tv_SingleCupoMaximo,
@@ -787,19 +789,20 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
             notificacion.put("tokenPostulante", tokenFcmPostulante);
             notificacion.put("nombreEvento", nombreEvento);
 
+
             json.put("to", TokenFCMRecuperado);
             json.put("data", notificacion); // Cambio de "data" a "notification"
 
 
             // URL que se utilizará para enviar la solicitud POST al servidor de FCM
-            String URL = "https://fcm.googleapis.com/fcm/send";
+            String URL = "https://fcm.googleapis.com/v1/projects/tutorial-sesion-firebase/messages:send";
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
                 @Override
                 public Map<String, String> getHeaders() {
                     Map<String, String> header;
                     header = new HashMap<>();
-                    header.put("Content-Type", "application/json");
+                    header.put("Content-Type", "application/json; UTF-8");
                     header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
                     return header;
                 }
@@ -810,6 +813,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
             e.printStackTrace();
         }
     }
+
     public void notificaCancelacionEvento(String nombreEvento,String TokenPostulante1)
     {
         RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
