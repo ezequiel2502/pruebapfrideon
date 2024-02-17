@@ -38,56 +38,52 @@ public class Fcm extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        //Saco los campos directamente de la notificacion recibida
-        String titulo = remoteMessage.getData().get("titulo");
-        String detalle = remoteMessage.getData().get("detalle");
-        String tipoNotificacion = remoteMessage.getData().get("tipo");
-        String idEvento = remoteMessage.getData().get("idEvento");
-        String postulanteId = remoteMessage.getData().get("postulanteId");
-        String nombreEvento = remoteMessage.getData().get("nombreEvento");
-        String tokenCreador = remoteMessage.getData().get("tokenCreador");
-        String tokenPostulante = remoteMessage.getData().get("tokenPostulante");
+        // Procesar el mensaje recibido
+        if (remoteMessage.getNotification() != null) {
+            // Aquí puedes manejar la notificación entrante, como mostrarla en una notificación en la barra de estado
+            String title = remoteMessage.getNotification().getTitle();
+            String body = remoteMessage.getNotification().getBody();
 
-        // Crear el Intent para abrir ListadoNotificacionesActivity
-        Intent acceptIntent = new Intent(this, ListadoNotificacionesActivity.class);
-        acceptIntent.putExtra("ACTION", "Botón 1"); // Puedes pasar cualquier información adicional necesaria
+            // Crear el Intent para abrir ListadoNotificacionesActivity
+            Intent acceptIntent = new Intent(this, ListadoNotificacionesActivity.class);
+            acceptIntent.putExtra("ACTION", "Botón 1"); // Puedes pasar cualquier información adicional necesaria
 
 // Envolver el Intent en un PendingIntent
-        PendingIntent acceptPendingIntent = PendingIntent.getActivity(this, 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent acceptPendingIntent = PendingIntent.getActivity(this, 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 // Construir la acción del botón de "Aceptar" utilizando el PendingIntent
-        NotificationCompat.Action actionAccept = new NotificationCompat.Action.Builder(
-                R.drawable.btn_acpt, // Icono del botón
-                "Aceptar", // Texto del botón
-                acceptPendingIntent // PendingIntent que se activará cuando se presione el botón
-        ).build();
+            NotificationCompat.Action actionAccept = new NotificationCompat.Action.Builder(
+                    R.drawable.btn_acpt, // Icono del botón
+                    "Aceptar", // Texto del botón
+                    acceptPendingIntent // PendingIntent que se activará cuando se presione el botón
+            ).build();
 
 // Construir la notificación
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(titulo)
-                .setContentText(detalle)
-                .setAutoCancel(true)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.doomer))
-                .addAction(actionAccept);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setAutoCancel(true)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.doomer))
+                    .addAction(actionAccept);
 
 // Obtener el servicio de notificación
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
 
-        if (notificationManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // Crear el canal de notificación para Android Oreo y versiones posteriores
-                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
-                notificationManager.createNotificationChannel(channel);
+            if (notificationManager != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // Crear el canal de notificación para Android Oreo y versiones posteriores
+                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
+                    notificationManager.createNotificationChannel(channel);
+                }
+
+                // Generar un ID único para la notificación
+                int uniqueNotificationId = (int) System.currentTimeMillis();
+
+                // Mostrar la notificación
+                notificationManager.notify(uniqueNotificationId, builder.build());
             }
-
-            // Generar un ID único para la notificación
-            int uniqueNotificationId = (int) System.currentTimeMillis();
-
-            // Mostrar la notificación
-            notificationManager.notify(uniqueNotificationId, builder.build());
         }
-
 
     }
 

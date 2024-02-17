@@ -779,20 +779,14 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         JSONObject json = new JSONObject();
 
         try {
+            JSONObject message = new JSONObject();
             JSONObject notificacion = new JSONObject();
-            notificacion.put("titulo", "Aceptar Postulacion de: ");
-            notificacion.put("detalle", userName);
-            notificacion.put("tipo", "creador_evento");
-            notificacion.put("idEvento", idEvento);
-            notificacion.put("postulanteId", postulanteId);
-            notificacion.put("tokenCreador", TokenFCMRecuperado);
-            notificacion.put("tokenPostulante", tokenFcmPostulante);
-            notificacion.put("nombreEvento", nombreEvento);
+            notificacion.put("title", "RideOn");
+            notificacion.put("body", "Aceptar Postulacion de: " + userName);
 
-
-            json.put("to", TokenFCMRecuperado);
-            json.put("data", notificacion); // Cambio de "data" a "notification"
-
+            message.put("token", TokenFCMRecuperado);
+            message.put("notification", notificacion); // Cambio de "data" a "notification"
+            json.put("message", message); //Se tiene que agregar este encabezado si o si
 
             // URL que se utilizará para enviar la solicitud POST al servidor de FCM
             String URL = "https://fcm.googleapis.com/v1/projects/tutorial-sesion-firebase/messages:send";
@@ -802,7 +796,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                 public Map<String, String> getHeaders() {
                     Map<String, String> header;
                     header = new HashMap<>();
-                    header.put("Content-Type", "application/json; UTF-8");
+                    header.put("Content-Type", "application/json; charset=UTF-8");
                     header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
                     return header;
                 }
