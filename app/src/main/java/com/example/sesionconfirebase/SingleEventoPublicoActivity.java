@@ -333,14 +333,14 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
                         // Mueve el evento de "Eventos Publicos" a "Cancelados", para que no se liste mas en la lista de publicos
                         DatabaseReference eventosPublicosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEvento);
-                        DatabaseReference canceladosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Cancelados").child(idEvento);
+                       // DatabaseReference canceladosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Cancelados").child(idEvento);
 
                         eventosPublicosRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
                                     ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
-                                    canceladosRef.setValue(evento);
+                                   // canceladosRef.setValue(evento);
                                     eventosPublicosRef.removeValue();
                                     Intent intent=new Intent(SingleEventoPublicoActivity.this,ListaEventosPublicosVigentes.class);
                                     startActivity(intent);
