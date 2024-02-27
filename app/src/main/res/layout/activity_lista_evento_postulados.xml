@@ -43,15 +43,17 @@
         android:layout_weight="1"
         android:layout_marginTop="16dp" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <include layout="@layout/bottommenu"  />
+    <!--<com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="49dp"
-        android:background="@drawable/bottom_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
         android:elevation="2dp"
-        app:itemIconSize="30dp"
-        app:itemIconTint="@drawable/item_selector"
-        app:itemRippleColor="@android:color/transparent"
-        app:labelVisibilityMode="unlabeled"
-        app:menu="@menu/bottom_menu" />
+        app:itemIconTint="@color/my_primary"
+        app:itemRippleColor="@color/white"
+        android:background="@color/white"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_menu" />-->
 </LinearLayout>
