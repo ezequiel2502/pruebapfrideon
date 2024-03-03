@@ -76,6 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:src="@drawable/add"
+        android:tint="@color/white"
         android:contentDescription="submit"
         android:layout_margin="16dp" />
     </LinearLayout>
