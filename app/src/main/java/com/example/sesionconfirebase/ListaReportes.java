@@ -1,16 +1,21 @@
 package com.example.sesionconfirebase;
 
+import static com.example.sesionconfirebase.Utils.GetNotifications;
 import static com.example.sesionconfirebase.Utils.calcularTiempo;
 import static com.example.sesionconfirebase.Utils.calcularTiempo2;
 import static com.example.sesionconfirebase.Utils.calcularVelocidad;
 import static com.example.sesionconfirebase.Utils.calcularVelocidad2;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,11 +29,13 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.util.ArrayList;
 
@@ -38,7 +45,7 @@ public class ListaReportes extends AppCompatActivity {
     ArrayList<ModelReporteAbandonosYFinalizados> recycleList;
 
     FirebaseDatabase firebaseDatabase;
-
+    FirebaseUser currentUser;
     ReportesAdapter recyclerAdapter;
 
     TextView tvEventos, tvAbandonos, tvFinalizados, tvParticipantes;
@@ -50,7 +57,8 @@ public class ListaReportes extends AppCompatActivity {
 
     String userNameCustom;
 
-
+    NotificationBadge notificactionBadge;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +74,11 @@ public class ListaReportes extends AppCompatActivity {
         tvParticipantes=findViewById(R.id.tvParticipantes);
         pieChart=findViewById(R.id.pieChart);
 
-
+        notificactionBadge=findViewById(R.id.badge);
+        toolbar=findViewById(R.id.main_tool_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
 
 
 
@@ -87,12 +99,15 @@ public class ListaReportes extends AppCompatActivity {
 
 
 
-        // Obtener el ID del usuario actual
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // Obtener el ID del usuario actualmente logueado
+        currentUser= FirebaseAuth.getInstance().getCurrentUser();
+        String userId = currentUser.getUid();
 
         // Observar cambios en el nodo Completados
         DatabaseReference completadosRef = firebaseDatabase.getReference()
                 .child("Eventos").child("Completados");
+
+        GetNotifications(currentUser, notificactionBadge);
 
         // Inicializar variables para los totales
          totalAbandonos = 0;
@@ -386,6 +401,22 @@ public class ListaReportes extends AppCompatActivity {
         } else {
             return 0;
         }
+    }
+
+    public void redirectToOtherActivity(View view) {
+        // Crea un Intent para abrir la otra actividad
+        Intent intent = new Intent(this, ListadoNotificacionesActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 

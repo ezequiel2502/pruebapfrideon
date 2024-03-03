@@ -116,11 +116,11 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.btn_perfil) {
-                Intent intent = new Intent(getApplicationContext(), VerEventosMapaActivity.class);
+                /*Intent intent = new Intent(getApplicationContext(), this.class);
                 intent.putExtra("Close_On_Enter", "False");
                 intent.putExtra("User_ID", currentUser.getUid());
                 startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);*/
                 //finish();
                 return true;
             } else if (itemId == R.id.btn_inicio) {

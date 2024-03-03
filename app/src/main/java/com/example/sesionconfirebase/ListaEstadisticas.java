@@ -1,5 +1,6 @@
 package com.example.sesionconfirebase;
 
+import static com.example.sesionconfirebase.Utils.GetNotifications;
 import static com.example.sesionconfirebase.Utils.calcularTiempo;
 import static com.example.sesionconfirebase.Utils.calcularTiempo2;
 import static com.example.sesionconfirebase.Utils.calcularVelocidad;
@@ -7,7 +8,12 @@ import static com.example.sesionconfirebase.Utils.calcularVelocidad2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -84,9 +90,12 @@ public class ListaEstadisticas extends AppCompatActivity {
         recyclerViewEstadisticasEventos.setAdapter(recyclerAdapter);
 
         notificactionBadge=findViewById(R.id.badge);
-        toolbar=findViewById(R.id.hometoolbar);
+        toolbar=findViewById(R.id.main_tool_bar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
+
+
         //-----Accedo al perfil del usuario participante-------
 
         // Obtener el ID del usuario actualmente logueado
@@ -96,11 +105,7 @@ public class ListaEstadisticas extends AppCompatActivity {
         // Acceder al nodo de "Perfil" del usuario
         DatabaseReference perfilRef = firebaseDatabase.getReference().child("Perfil").child(userId);
 
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        Automatico aut = new Automatico(currentUser);
-        aut.setNotificactionBadge(notificactionBadge);
-        // Programa la ejecución del método contarNotificaciones cada 30 segundos
-        scheduler.scheduleAtFixedRate(aut::contarNotificaciones, 0, 10, TimeUnit.SECONDS);
+        GetNotifications(currentUser, notificactionBadge);
         perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -301,6 +306,16 @@ public class ListaEstadisticas extends AppCompatActivity {
         // Crea un Intent para abrir la otra actividad
         Intent intent = new Intent(this, ListadoNotificacionesActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 

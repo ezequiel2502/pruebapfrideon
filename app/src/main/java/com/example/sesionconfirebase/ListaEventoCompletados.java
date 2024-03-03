@@ -1,12 +1,17 @@
 package com.example.sesionconfirebase;
 
+import static com.example.sesionconfirebase.Utils.GetNotifications;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,11 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.gps_test.PlanificarRuta;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +36,15 @@ public class ListaEventoCompletados extends AppCompatActivity {
     ArrayList<ModelEvento> recycleList;
 
     static FirebaseDatabase firebaseDatabase;
-
+    FirebaseUser currentUser;
     Spinner spnFiltro;
 
     ArrayList<String> filtroList = new ArrayList<String>();
 
     EventoCompletadoAdapter recyclerAdapter;
 
+    NotificationBadge notificactionBadge;
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,23 +55,28 @@ public class ListaEventoCompletados extends AppCompatActivity {
         recycleList = new ArrayList<>();
 
         //********************spnFiltro
-        spnFiltro = findViewById(R.id.spnFiltro);
+        //spnFiltro = findViewById(R.id.spnFiltro);
 
         //Lleno la lista de filtros
         filtroList.add("Ninguno");
         filtroList.add("Recientes");
 
         // Crear un ArrayAdapter utilizando la lista de filtros y un diseño simple para el spinner
-        ArrayAdapter<String> filtroAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filtroList);
+        //ArrayAdapter<String> filtroAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filtroList);
 
         // Especificar el diseño para el menú desplegable
-        filtroAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //filtroAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
         // Establecer el adaptador en el Spinner
-        spnFiltro.setAdapter(filtroAdapter);
+        //spnFiltro.setAdapter(filtroAdapter);
         //*********************spnFiltro
 
+        notificactionBadge=findViewById(R.id.badge);
+        toolbar=findViewById(R.id.main_tool_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
 
         //Creo la instancia de la base de datos
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -78,12 +92,14 @@ public class ListaEventoCompletados extends AppCompatActivity {
 
         //********************Observo cambios en el nodo events_data
 
-        //// Obtener el ID del usuario actualmente logueado
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // Obtener el ID del usuario actualmente logueado
+        currentUser= FirebaseAuth.getInstance().getCurrentUser();
+        String userId = currentUser.getUid();
 
         // Acceder al nodo de "Events_Data" del usuario
         DatabaseReference eventsDataRef = firebaseDatabase.getReference().child("Events_Data").child(userId);
 
+        GetNotifications(currentUser, notificactionBadge);
         eventsDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -352,6 +368,22 @@ public class ListaEventoCompletados extends AppCompatActivity {
                 // Manejar error de cancelación
             }
         });
+    }
+
+    public void redirectToOtherActivity(View view) {
+        // Crea un Intent para abrir la otra actividad
+        Intent intent = new Intent(this, ListadoNotificacionesActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 

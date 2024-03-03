@@ -1,7 +1,10 @@
 package com.example.sesionconfirebase;
 
+import static com.example.sesionconfirebase.Utils.GetNotifications;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -10,32 +13,37 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListaEventos extends AppCompatActivity {
 
-    Button btnAgregarEvento;
+    FloatingActionButton btnAgregarEvento;
     RecyclerView recyclerViewEventos;
     ArrayList<ModelEvento> recycleList;
     Spinner spnFiltro;
 
     FirebaseDatabase firebaseDatabase;
-
+    FirebaseUser currentUser;
     ArrayList<String> filtroList=new ArrayList<String>();
 
+    NotificationBadge notificactionBadge;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,25 +62,33 @@ public class ListaEventos extends AppCompatActivity {
         recycleList=new ArrayList<>();
 
         //>>>>>>>>>>spnFiltro
-        spnFiltro=findViewById(R.id.spnFiltro);
+        //spnFiltro=findViewById(R.id.spnFiltro);
 
         //Lleno la lista de filtros
-        filtroList.add("Ninguno");
-        filtroList.add("Recientes");
+/*        filtroList.add("Ninguno");
+        filtroList.add("Recientes");*/
 
         // Crear un ArrayAdapter utilizando la lista de filtros y un diseño simple para el spinner
-        ArrayAdapter<String> filtroAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filtroList);
+       /* ArrayAdapter<String> filtroAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, filtroList);
 
         // Especificar el diseño para el menú desplegable
-        filtroAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filtroAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
 
         // Establecer el adaptador en el Spinner
-        spnFiltro.setAdapter(filtroAdapter);
+        //spnFiltro.setAdapter(filtroAdapter);
         //spnFiltro<<<<<<<<<<
 
+        notificactionBadge=findViewById(R.id.badge);
+        toolbar=findViewById(R.id.main_tool_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
+
+        GetNotifications(currentUser, notificactionBadge);
         //Creo la instancia de la base de datos
         firebaseDatabase= FirebaseDatabase.getInstance();
+
 
         //Creo una instancia del adapter
         EventoAdapter recyclerAdapter=new EventoAdapter(recycleList,getApplicationContext());
@@ -101,7 +117,7 @@ public class ListaEventos extends AppCompatActivity {
         });
 
         //Filtros...por ahora solo fecha de encuentro
-        spnFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+/*        spnFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String opcionSeleccionada = filtroList.get(i);
@@ -116,7 +132,7 @@ public class ListaEventos extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
-        });
+        });*/
 
 
 
@@ -159,4 +175,20 @@ public class ListaEventos extends AppCompatActivity {
             return false;
         });
     }//fin onCreate()
+
+    public void redirectToOtherActivity(View view) {
+        // Crea un Intent para abrir la otra actividad
+        Intent intent = new Intent(this, ListadoNotificacionesActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }//fin App

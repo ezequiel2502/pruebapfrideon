@@ -345,6 +345,7 @@
                     android:layout_marginBottom="10dp"
                     android:src="@drawable/add" />
 
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/l2"
                     android:layout_width="match_parent"
@@ -357,6 +358,7 @@
                     app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="0dp">
+
 
                     <LinearLayout
                         android:layout_width="match_parent"

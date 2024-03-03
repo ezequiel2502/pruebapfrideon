@@ -8,7 +8,7 @@
     android:id="@+id/hometoolbar">
 
     <ImageView
-        android:id="@+id/img"
+        android:id="@+id/img_logo"
         android:layout_width="120dp"
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="start"
