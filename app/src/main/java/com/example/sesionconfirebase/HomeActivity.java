@@ -78,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView tv_user_name,tv_user_email,tv_UserId;
     RatingBar rating_bar;
     LinearLayout notification_bell,analytics,settings,reportes;
-    ImageView add_evento;
+    ImageView add_evento, img_viewCompletados;
     TextView tv_privados,tv_publicos,tv_postulados,tv_completados,tv_following;
     CardView cardView_detalles,cardView_cerrarSesion,cardView_EliminarCuenta;
     FirebaseAuth mAuth;
@@ -169,6 +169,7 @@ public class HomeActivity extends AppCompatActivity {
         toolbar=findViewById(R.id.hometoolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
+        img_viewCompletados = findViewById(R.id.img_viewCompletados);
 
 
 //********************************************************************************************************************************
@@ -233,7 +234,7 @@ public class HomeActivity extends AppCompatActivity {
 //***********************************************************************************************************************
 
 
-        tv_completados.setOnClickListener(new View.OnClickListener() {
+        img_viewCompletados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(HomeActivity.this,ListaEventoCompletados.class);

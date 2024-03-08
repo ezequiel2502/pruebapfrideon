@@ -1,13 +1,17 @@
 package com.example.sesionconfirebase;
 
+import static com.example.sesionconfirebase.Utils.GetNotifications;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +20,8 @@ import com.example.gps_test.Ruta;
 import com.example.sesionconfirebase.ActivityRutasRecyclerView.MyListAdapterActivity;
 import com.example.sesionconfirebase.ActivityRutasRecyclerView.MyListDataActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +46,9 @@ public class Rutas extends AppCompatActivity {
     private static FirebaseStorage firebaseStorage;
     private static String userId;
     private static MyListAdapterActivity adapter;
+
+    NotificationBadge notificactionBadge;
+    private Toolbar toolbar;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +72,13 @@ public class Rutas extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(Rutas.this));
 
+        notificactionBadge=findViewById(R.id.badge);
+        toolbar=findViewById(R.id.main_tool_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
+
+        GetNotifications(currentUser, notificactionBadge);
         database.getReference().child("Route").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -107,7 +124,7 @@ public class Rutas extends AppCompatActivity {
             });
         }
 
-        Button newRoute = findViewById(com.example.sesionconfirebase.R.id.Agregar_Ruta);
+        FloatingActionButton newRoute = findViewById(com.example.sesionconfirebase.R.id.Agregar_Ruta);
         newRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,6 +137,35 @@ public class Rutas extends AppCompatActivity {
             }
         });
 
+        //Barra de navegacion
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setSelectedItemId(R.id.btn_lista_rutas);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.btn_planificar) {
+                startActivity(new Intent(getApplicationContext(), ListaEventos.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return true;
+            } else if (itemId == R.id.btn_perfil) {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+                return true;
+            } else if (itemId == R.id.btn_inicio) {
+                startActivity(new Intent(getApplicationContext(), ListaEventosPublicosVigentes.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+                return true;
+            }
+            else if (itemId == R.id.btn_lista_postulados) {
+                startActivity(new Intent(getApplicationContext(), ListaEventoPostulados.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+                return true;
+            }
+            return false;
+        });
+
     }
 
     public static void Delete_Route(String databaseID, int position)
@@ -128,6 +174,22 @@ public class Rutas extends AppCompatActivity {
         database.getReference().child("Route").child(databaseID).removeValue();
         adapter.getCurrentList().remove(position);
         adapter.notifyItemRemoved(position);
+    }
+
+    public void redirectToOtherActivity(View view) {
+        // Crea un Intent para abrir la otra actividad
+        Intent intent = new Intent(this, ListadoNotificacionesActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }
