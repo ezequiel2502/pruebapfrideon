@@ -453,43 +453,6 @@ public class CrearEvento extends AppCompatActivity {
                 // ProgressDialog
                 // dialog.show();
                 // Obtener los valores seleccionados del Spinner
-                String categoriaSeleccionada = spnCategoria.getSelectedItem().toString();
-                if(categoriaSeleccionada.equals(""))
-                {
-                    Toast.makeText(getApplicationContext(), "Seleccione categoría", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                String esActivo = spnActivarDesactivar.getSelectedItem().toString();
-
-                String esPublico = spnPublicoPrivado.getSelectedItem().toString();
-
-                // Obtener los valores ingresados en los EditText
-                String cupoMinimo = txt_CupoMinimo.getText().toString();
-                if(cupoMinimo.equals(""))
-                {
-                    Toast.makeText(getApplicationContext(), "Seleccione Cupo Minimo", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String cupoMaximo = txt_CupoMaximo.getText().toString();
-                if(cupoMaximo.equals(""))
-                {
-                    Toast.makeText(getApplicationContext(), "Seleccione Cupo Maximo", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                int cupoMinimoNum = Integer.parseInt(cupoMinimo);
-                int cupoMaximoNum = Integer.parseInt(cupoMinimo);
-                if(cupoMaximoNum<cupoMinimoNum)
-                {
-                    Toast.makeText(getApplicationContext(), "El cupo minimo no puede ser mayor al cupo maximo", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String descripcion = txt_Descripcion.getText().toString();
-                if(descripcion.equals(""))
-                {
-                    Toast.makeText(getApplicationContext(), "Ingrese una descripcion", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 String fechaEncuentro = txt_FechaEncuentro.getText().toString();
                 if(fechaEncuentro.equals(""))
                 {
@@ -565,10 +528,49 @@ public class CrearEvento extends AppCompatActivity {
                     if(fechaHoraFinEncuentro.isBefore(fechaHoraEncuentro))
                     {
 
-                            Toast.makeText(getApplicationContext(), "La fecha de encuentro no puede ser anterior a la fecha de finalización del evento", Toast.LENGTH_SHORT).show();
-                            return;
+                        Toast.makeText(getApplicationContext(), "La fecha de encuentro no puede ser anterior a la fecha de finalización del evento", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                 }
+
+
+                String esActivo = spnActivarDesactivar.getSelectedItem().toString();
+
+                String esPublico = spnPublicoPrivado.getSelectedItem().toString();
+
+                // Obtener los valores ingresados en los EditText
+                String cupoMinimo = txt_CupoMinimo.getText().toString();
+                if(cupoMinimo.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Seleccione Cupo Minimo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String cupoMaximo = txt_CupoMaximo.getText().toString();
+                if(cupoMaximo.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Seleccione Cupo Maximo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                int cupoMinimoNum = Integer.parseInt(cupoMinimo);
+                int cupoMaximoNum = Integer.parseInt(cupoMaximo);
+                if(cupoMaximoNum<cupoMinimoNum)
+                {
+                    Toast.makeText(getApplicationContext(), "El cupo minimo no puede ser mayor al cupo maximo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String descripcion = txt_Descripcion.getText().toString();
+                if(descripcion.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Ingrese una descripcion", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String categoriaSeleccionada = spnCategoria.getSelectedItem().toString();
+                if(categoriaSeleccionada.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Seleccione categoría", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 String nombreEvento = txt_NombreEvento.getText().toString();
                 if(nombreEvento.equals(""))
                 {
@@ -587,7 +589,21 @@ public class CrearEvento extends AppCompatActivity {
 
                 // Referencia al Storage para la imagen
                 final StorageReference imageRef = firebaseStorage.getReference().child("Usuarios").child(userId).child(eventKey).child(System.currentTimeMillis() + "");
-
+                if(imageUri == null)
+                    {
+                        Toast.makeText(getApplicationContext(), "Ingrese Imagen del evento", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                if( esActivo.equals("Ninguno"))
+                {
+                    Toast.makeText(getApplicationContext(), "Active o Desactive el evento", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if( esPublico.equals("Ninguno"))
+                {
+                    Toast.makeText(getApplicationContext(), "Seleccione si el evento es publico o privado", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                  dialog.show();
                 imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -596,11 +612,7 @@ public class CrearEvento extends AppCompatActivity {
                         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                if(uri == null)
-                                {
-                                    Toast.makeText(getApplicationContext(), "Ingrese Imagen del evento", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
+
                                 ModelEvento evento = new ModelEvento();
                                 evento.setCategoria(categoriaSeleccionada);
                                 evento.setRuta(selectedRoute);
@@ -651,9 +663,10 @@ public class CrearEvento extends AppCompatActivity {
                                         public void onSuccess(Void aVoid) {
                                             // La inserción fue exitosa
                                             Toast.makeText(CrearEvento.this, "Evento público registrado exitosamente", Toast.LENGTH_SHORT).show();
-
                                             // ProgressDialog
                                             dialog.dismiss();
+                                            Intent intent = new Intent(getApplicationContext(), ListaEventos.class);
+                                            startActivity(intent);
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
@@ -684,9 +697,10 @@ public class CrearEvento extends AppCompatActivity {
                                         public void onSuccess(Void aVoid) {
                                             // La inserción fue exitosa
                                             Toast.makeText(CrearEvento.this, "Evento privado registrado exitosamente", Toast.LENGTH_SHORT).show();
-
                                             // ProgressDialog
                                             dialog.dismiss();
+                                            Intent intent = new Intent(getApplicationContext(), ListaEventos.class);
+                                            startActivity(intent);
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
