@@ -67,10 +67,19 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -442,25 +451,131 @@ public class CrearEvento extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // ProgressDialog
-                dialog.show();
-
+                // dialog.show();
                 // Obtener los valores seleccionados del Spinner
                 String categoriaSeleccionada = spnCategoria.getSelectedItem().toString();
+                if(categoriaSeleccionada.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Seleccione categoría", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 String esActivo = spnActivarDesactivar.getSelectedItem().toString();
+
                 String esPublico = spnPublicoPrivado.getSelectedItem().toString();
 
                 // Obtener los valores ingresados en los EditText
                 String cupoMinimo = txt_CupoMinimo.getText().toString();
+                if(cupoMinimo.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Seleccione Cupo Minimo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String cupoMaximo = txt_CupoMaximo.getText().toString();
+                if(cupoMaximo.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Seleccione Cupo Maximo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                int cupoMinimoNum = Integer.parseInt(cupoMinimo);
+                int cupoMaximoNum = Integer.parseInt(cupoMinimo);
+                if(cupoMaximoNum<cupoMinimoNum)
+                {
+                    Toast.makeText(getApplicationContext(), "El cupo minimo no puede ser mayor al cupo maximo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String descripcion = txt_Descripcion.getText().toString();
-
+                if(descripcion.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Ingrese una descripcion", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String fechaEncuentro = txt_FechaEncuentro.getText().toString();
+                if(fechaEncuentro.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Ingrese una fecha del encuentro", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String horaEncuentro = txt_HoraEncuentro.getText().toString();
+                if(horaEncuentro.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Ingrese una hora del encuentro", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String fechaEncuentroCon= fechaEncuentro + " " +horaEncuentro;
+                DateTimeFormatter formatter = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    formatter = new DateTimeFormatterBuilder()
+                            .parseCaseInsensitive()
+                            .appendPattern("d/M/yyyy HH:mm")
+                            .toFormatter(Locale.getDefault());
+                }
+
+                LocalDateTime fechaHoraEncuentro = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    fechaHoraEncuentro = LocalDateTime.parse(fechaEncuentroCon, formatter);
+                }
+                ZoneId zoneId = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    zoneId = ZoneId.systemDefault();
+                }
+                Calendar calendar = Calendar.getInstance();
+                Date date = calendar.getTime();
+                Instant instant = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    instant = date.toInstant();
+                }
+                LocalDateTime localDateTime = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if(fechaHoraEncuentro.isBefore(localDateTime))
+                    {
+                        Toast.makeText(getApplicationContext(), "La fecha del encuentro no puede ser anterior a la actual", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
 
                 String fechaFinalizacion = txt_FechaFinalizacion.getText().toString();
                 String horaFinalizacion = txt_HoraFinalizacion.getText().toString();
 
+                if(fechaFinalizacion.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Ingrese fecha de finalización", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(horaFinalizacion.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Ingrese hora de finalización", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                DateTimeFormatter formatoFhFin = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    formatter = new DateTimeFormatterBuilder()
+                            .parseCaseInsensitive()
+                            .appendPattern("d/M/yyyy HH:mm")
+                            .toFormatter(Locale.getDefault());
+                }
+                LocalDateTime fechaHoraFinEncuentro=null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    fechaHoraFinEncuentro = LocalDateTime.parse(fechaFinalizacion + " "+horaFinalizacion , formatter);
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if(fechaHoraFinEncuentro.isBefore(fechaHoraEncuentro))
+                    {
+
+                            Toast.makeText(getApplicationContext(), "La fecha de encuentro no puede ser anterior a la fecha de finalización del evento", Toast.LENGTH_SHORT).show();
+                            return;
+                    }
+                }
                 String nombreEvento = txt_NombreEvento.getText().toString();
+                if(nombreEvento.equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Ingrese el nombre del evento", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Boolean activadoDesactivado = activar_desactivar;
 
                 // Formatea la fecha como una cadena legible
@@ -473,6 +588,7 @@ public class CrearEvento extends AppCompatActivity {
                 // Referencia al Storage para la imagen
                 final StorageReference imageRef = firebaseStorage.getReference().child("Usuarios").child(userId).child(eventKey).child(System.currentTimeMillis() + "");
 
+                 dialog.show();
                 imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -480,6 +596,11 @@ public class CrearEvento extends AppCompatActivity {
                         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
+                                if(uri == null)
+                                {
+                                    Toast.makeText(getApplicationContext(), "Ingrese Imagen del evento", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
                                 ModelEvento evento = new ModelEvento();
                                 evento.setCategoria(categoriaSeleccionada);
                                 evento.setRuta(selectedRoute);
@@ -591,11 +712,9 @@ public class CrearEvento extends AppCompatActivity {
                 });
             }
         });
-
-
-
-
     }//fin onCreate()
+
+
 
             private void requestStoragePermission() {
                 String readMediaImages;
