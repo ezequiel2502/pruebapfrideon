@@ -53,7 +53,7 @@ public class Fcm extends FirebaseMessagingService {
         acceptIntent.putExtra("ACTION", "Botón 1"); // Puedes pasar cualquier información adicional necesaria
 
 // Envolver el Intent en un PendingIntent
-        PendingIntent acceptPendingIntent = PendingIntent.getActivity(this, 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent acceptPendingIntent = PendingIntent.getActivity(this, 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
 // Construir la acción del botón de "Aceptar" utilizando el PendingIntent
         NotificationCompat.Action actionAccept = new NotificationCompat.Action.Builder(
