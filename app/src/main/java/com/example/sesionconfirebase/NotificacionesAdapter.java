@@ -115,7 +115,8 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
 
         //Son los controles del itemEvento
         TextView tv_TipoNotificacion,tv_NombreUsuario,tv_MensajeNotificacion;
-        Button btnAceptar, btnCancelar,btnBorrar;
+        Button btnAceptar, btnCancelar;
+        ImageView btnBorrar;
         public ViewHolderNotificacion(@NonNull View itemView) {
             super(itemView);
             tv_TipoNotificacion=itemView.findViewById(R.id.tv_TipoNotificacion);
