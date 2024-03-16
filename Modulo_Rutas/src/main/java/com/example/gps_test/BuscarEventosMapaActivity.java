@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -349,7 +350,8 @@ public class BuscarEventosMapaActivity extends AppCompatActivity {
         dialogEvents.setCancelable(true);
         dialogEvents.getWindow().getAttributes().windowAnimations = com.example.gps_test.R.style.animation;
 
-        TextView tiempo, estado, finalizado, distancia_recorrida, okay_text, cancel_text;
+        TextView tiempo, estado, finalizado, distancia_recorrida;
+        Button okay_text, cancel_text;
         okay_text = dialogEvents.findViewById(R.id.okay_text);
         cancel_text = dialogEvents.findViewById(R.id.cancel_text);
         tiempo = dialogEvents.findViewById(R.id.tv_tiempo);

@@ -36,6 +36,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -324,7 +325,7 @@ public class PlanificarRuta extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.getWindow().getAttributes().windowAnimations = R.style.animation;
 
-                TextView okay_text, cancel_text;
+                Button okay_text, cancel_text;
                 okay_text = dialog.findViewById(R.id.okay_text);
                 cancel_text = dialog.findViewById(R.id.cancel_text);
 
@@ -332,7 +333,7 @@ public class PlanificarRuta extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
-                        EditText name = (EditText)dialog.findViewById(R.id.editTextText);
+                        EditText name = (EditText)dialog.findViewById(R.id.editTextName);
                         if (!name.getText().toString().equals("") & current_Route_Points.size() > 0)
                         {
                             Intent intent = getIntent();

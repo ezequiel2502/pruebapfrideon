@@ -7,8 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="15dp"
     android:layout_marginRight="15dp"
-    android:layout_marginTop="15dp"
-    android:padding="10dp"
+    android:layout_marginTop="5dp"
     android:background="@drawable/round_dialog"
     >
 
@@ -17,34 +16,216 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/textList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/my_primary"
+            android:gravity="center"
+            android:text="Evento Finalizado"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+
         <ImageView
             android:id="@+id/imvEvento"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/twotone_local_police_24" />
+            android:layout_marginVertical="20dp"
+            android:src="@drawable/trophy" />
 
-        <TextView
-            android:id="@+id/textList"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:text="Evento Finalizado"
-            android:textSize="20sp"
-            android:layout_marginTop="1dp"
-            android:textColor="@color/teal_700"
-            android:layout_gravity="top"
-            android:gravity="center"/>
+            android:background="#dce6f1">
 
-        <LinearLayout
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:elevation="0dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/tv_tiempo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/futura_bold"
+                            android:text="0"
+                            android:textColor="#727C85"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/futura_normal"
+                            android:text="Tiempo"
+                            android:textColor="@color/my_primary"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#e9e6dd" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/tv_Distancia"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/futura_bold"
+                            android:text="0"
+                            android:textColor="#727C85"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/futura_normal"
+                            android:text="Distancia"
+                            android:textColor="@color/my_primary"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#e9e6dd" />
+
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#dce6f1">
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/l2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:elevation="0dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/tv_Estado"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/futura_bold"
+                            android:text="-"
+                            android:textColor="#727C85"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/futura_normal"
+                            android:text="Estado"
+                            android:textColor="@color/my_primary"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#e9e6dd" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/tv_Finalizado"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/futura_bold"
+                            android:text="-"
+                            android:textColor="#727C85"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/futura_normal"
+                            android:text="Finalizado"
+                            android:textColor="@color/my_primary"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#e9e6dd" />
+
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
+<!--        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:orientation="horizontal">
 
-            <!-- TextView adicional "Descripcion" en negro -->
-            <TextView
+            &lt;!&ndash; TextView adicional "Descripcion" en negro &ndash;&gt;
+            &lt;!&ndash;<TextView
                 android:id="@+id/tv_etiquetaUserId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,25 +236,25 @@
                 android:textSize="14dp"
                 android:textStyle="bold" />
 
-            <!-- Título "Descripcion" subrayado -->
+            &lt;!&ndash; Título "Descripcion" subrayado &ndash;&gt;
             <TextView
                 android:id="@+id/tv_tiempo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginTop="10dp"
-                android:textSize="12sp" />
+                android:textSize="12sp" />&ndash;&gt;
 
-        </LinearLayout>
+        </LinearLayout>-->
 
 
-        <LinearLayout
+<!--        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:orientation="horizontal">
 
-            <!-- TextView adicional "Descripcion" en negro -->
+            &lt;!&ndash; TextView adicional "Descripcion" en negro &ndash;&gt;
             <TextView
                 android:id="@+id/tv_etiquetaDescripcion"
                 android:layout_width="wrap_content"
@@ -85,7 +266,7 @@
                 android:textSize="14dp"
                 android:textStyle="bold" />
 
-            <!-- Título "Descripcion" subrayado -->
+            &lt;!&ndash; Título "Descripcion" subrayado &ndash;&gt;
             <TextView
                 android:id="@+id/tv_Estado"
                 android:layout_width="wrap_content"
@@ -94,16 +275,16 @@
                 android:layout_marginTop="10dp"
                 android:textSize="12sp" />
 
-        </LinearLayout>
+        </LinearLayout>-->
 
 
-        <LinearLayout
+<!--        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:orientation="horizontal">
 
-            <!-- TextView adicional "Fecha Encuentro" en negro -->
+            &lt;!&ndash; TextView adicional "Fecha Encuentro" en negro &ndash;&gt;
             <TextView
                 android:id="@+id/tv_etiquetaFechaEncuentro"
                 android:layout_width="wrap_content"
@@ -115,7 +296,7 @@
                 android:textSize="14dp"
                 android:textStyle="bold" />
 
-            <!-- Subtítulos "Fecha Encuentro" -->
+            &lt;!&ndash; Subtítulos "Fecha Encuentro" &ndash;&gt;
             <TextView
                 android:id="@+id/tv_Finalizado"
                 android:layout_width="wrap_content"
@@ -124,17 +305,17 @@
                 android:layout_marginTop="10dp"
                 android:textSize="12sp" />
 
-        </LinearLayout>
+        </LinearLayout>-->
 
 
-        <LinearLayout
+<!--        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:orientation="horizontal">
 
-            <!-- TextView adicional "Hora Encuentro" en negro -->
-            <TextView
+            &lt;!&ndash; TextView adicional "Hora Encuentro" en negro &ndash;&gt;
+&lt;!&ndash;            <TextView
                 android:id="@+id/tv_etiquetaHoraEncuentro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -145,27 +326,37 @@
                 android:textSize="14dp"
                 android:textStyle="bold" />
 
-            <!-- Subtítulo "Hora Encuentro" -->
+            &lt;!&ndash; Subtítulo "Hora Encuentro" &ndash;&gt;
             <TextView
                 android:id="@+id/tv_Distancia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginTop="8dp"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:textSize="12sp" />&ndash;&gt;
+        </LinearLayout>-->
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/editTextText"
-            android:layout_centerHorizontal="true"
             android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp">
 
-            <TextView
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SALIR"
+                android:textSize="16sp"
+                android:layout_weight="2"
+                app:strokeColor="@color/my_primary"
+                app:cornerRadius="2dp"
+                style="@style/Widget.Material3.Button.IconButton.Outlined"
+                />
+
+            <!--            <TextView
                 android:id="@+id/cancel_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -173,9 +364,19 @@
                 android:text="Salir"
                 android:textColor="#FF0000"
                 android:textSize="30sp"
-                android:textStyle="bold" />
+                android:textStyle="bold" />-->
 
-            <TextView
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/okay_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="GUARDAR"
+                app:cornerRadius="2dp"
+                style="@style/Widget.Material3.Button"
+                android:textSize="16sp" />
+
+            <!--<TextView
                 android:id="@+id/okay_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -184,9 +385,9 @@
                 android:text="Calificar"
                 android:textColor="#3F51B5"
                 android:textSize="30sp"
-                android:textStyle="bold" />
+                android:textStyle="bold" />-->
 
-        </RelativeLayout>
+        </LinearLayout>
 
 
     </LinearLayout>
