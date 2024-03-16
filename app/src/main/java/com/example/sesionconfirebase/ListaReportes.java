@@ -167,32 +167,40 @@ public class ListaReportes extends AppCompatActivity {
 
                                                                         if (modelUsuario != null) {
                                                                             String userNameCustom = modelUsuario.getUserNameCustom();
+                                                                            final ModelEstadistica[] existingEstadistica = new ModelEstadistica[1];
+                                                                            String estadisticaId = eventoCompletado.getIdEvento() + "_" + participante; // Crear un ID único para cada estadística
 
-                                                                            ModelEstadistica estadistica = new ModelEstadistica(
-                                                                                    eventoCompletado.getUserId(),
-                                                                                    eventoCompletado.getUserName(),
-                                                                                    eventoCompletado.getIdEvento(),
-                                                                                    eventoCompletado.getNombreEvento(),
-                                                                                    nombreRuta,
-                                                                                    participante,
-                                                                                    userNameCustom,
-                                                                                    eventoCompletado.getImagenEvento(),
-                                                                                    distanciaCubierta,
-                                                                                    calcularTiempo2(comienzo, finalizacion),
-                                                                                    calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion)),
-                                                                                    abandono
-                                                                            );
+                                                                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                                                            DatabaseReference estadisticasRef = database.getReference("Estadisticas");
 
-                                                                            listaEstadisticas.add(estadistica);
+                                                                            estadisticasRef.child(estadisticaId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                @Override
+                                                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                                    if (dataSnapshot.exists()) {
+                                                                                        // La estadística ya existe, puedes recuperarla si es necesario
+                                                                                        existingEstadistica[0] = dataSnapshot.getValue(ModelEstadistica.class);
+                                                                                        existingEstadistica[0].setAbandonoSIoNO(abandono);
 
-                                                                            // Verifica si es un abandono o finalizado y actualiza los totales
-                                                                            if (abandono.equals("Si")) {
-                                                                                totalAbandonos += 1;
-                                                                                totalAbandonosParcial[0] += 1;
-                                                                            } else {
-                                                                                totalFinalizados += 1;
-                                                                                totalFinalizadosParcial[0] += 1;
-                                                                            }
+                                                                                        listaEstadisticas.add(existingEstadistica[0]);
+
+                                                                                        // Verifica si es un abandono o finalizado y actualiza los totales
+                                                                                        if (abandono.equals("Si")) {
+                                                                                            totalAbandonos += 1;
+                                                                                            totalAbandonosParcial[0] += 1;
+                                                                                        } else {
+                                                                                            totalFinalizados += 1;
+                                                                                            totalFinalizadosParcial[0] += 1;
+                                                                                        }
+                                                                                    }
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onCancelled(DatabaseError databaseError) {
+                                                                                    // Manejar errores de base de datos si es necesario
+                                                                                }
+                                                                            });
+
+
 
                                                                             // Si es el último participante, crea el reporte
                                                                             //if (listaEstadisticas.size() == listaParticipantes.size()) {
