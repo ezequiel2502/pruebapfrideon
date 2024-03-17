@@ -121,7 +121,6 @@ public class ListaReportes extends AppCompatActivity {
                             // Armo una estadística por cada participante de ese evento...
                             final int[] totalAbandonosParcial = {0};
                             final int[] totalFinalizadosParcial = {0};
-                            final boolean[] duplicating = {false};
                             final ModelReporteAbandonosYFinalizados[] previous = {null};
                             for (String participante : listaParticipantes) {
 
@@ -138,7 +137,7 @@ public class ListaReportes extends AppCompatActivity {
                                             estadistica[0] = dataSnapshot.getValue(ModelEstadistica.class);
                                             if(estadistica[0]!=null)
                                             {   listaEstadisticas.add(estadistica[0]);
-                                                if(estadistica[0].getAbandonoSIoNO().equals("Si"))
+                                                if(estadistica[0].getAbandonoSIoNO()!=null && estadistica[0].getAbandonoSIoNO().equals("Si"))
                                                 {
                                                     totalAbandonosParcial[0]++;
                                                 }else{

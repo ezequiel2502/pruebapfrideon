@@ -143,7 +143,7 @@ public class ListaEstadisticas extends AppCompatActivity {
                                     String comienzo = datosParticipacion.getComienzo();
                                     String finalizacion = datosParticipacion.getFinalizacion();
                                     String distanciaCubierta = datosParticipacion.getDistanciaCubierta();
-
+                                    String Abandono =datosParticipacion.getAbandono();
                                     // Ahora entro en el nodo de completados para obtener el resto de datos para armar la estadística
                                     DatabaseReference eventosCompletadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
 
@@ -195,7 +195,8 @@ public class ListaEstadisticas extends AppCompatActivity {
                                                                                 evento.getImagenEvento(),
                                                                                 distanciaCubierta,
                                                                                 calcularTiempo2(comienzo, finalizacion),
-                                                                                calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion))
+                                                                                calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion)),
+                                                                                Abandono
                                                                         );
                                                                         estadisticasRef.child(estadisticaId).setValue(estadistica[0]);
                                                                     }
@@ -220,7 +221,7 @@ public class ListaEstadisticas extends AppCompatActivity {
                                                              distanciaCubierta,
                                                              calcularTiempo2(comienzo, finalizacion),
                                                              calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion)),
-                                                             datosParticipacion.getAbandono()
+                                                             Abandono
                                                              );
                                                              estadisticasRef.child(estadisticaId).setValue(estadistica[0]);
                                                              }
