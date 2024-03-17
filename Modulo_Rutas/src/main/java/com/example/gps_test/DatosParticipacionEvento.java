@@ -6,6 +6,15 @@ public class DatosParticipacionEvento {
     private String finalizacion;
     private String distanciaCubierta;
 
+    public String getAbandono() {
+        return abandono;
+    }
+
+    public void setAbandono(String abandono) {
+        this.abandono = abandono;
+    }
+
+    private String abandono;
     public DatosParticipacionEvento()
     {}
 

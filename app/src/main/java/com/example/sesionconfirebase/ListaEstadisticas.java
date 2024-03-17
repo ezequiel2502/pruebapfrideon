@@ -219,7 +219,8 @@ public class ListaEstadisticas extends AppCompatActivity {
                                                              evento.getImagenEvento(),
                                                              distanciaCubierta,
                                                              calcularTiempo2(comienzo, finalizacion),
-                                                             calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion))
+                                                             calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion)),
+                                                             datosParticipacion.getAbandono()
                                                              );
                                                              estadisticasRef.child(estadisticaId).setValue(estadistica[0]);
                                                              }
