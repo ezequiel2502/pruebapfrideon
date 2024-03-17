@@ -136,7 +136,16 @@ public class ListaReportes extends AppCompatActivity {
                                         if (dataSnapshot.exists()) {
                                             // La estadística ya existe, puedes recuperarla si es necesario
                                             estadistica[0] = dataSnapshot.getValue(ModelEstadistica.class);
-                                            listaEstadisticas.add(estadistica[0]);
+                                            if(estadistica[0]!=null)
+                                            {   listaEstadisticas.add(estadistica[0]);
+                                                if(estadistica[0].getAbandonoSIoNO().equals("Si"))
+                                                {
+                                                    totalAbandonosParcial[0]++;
+                                                }else{
+                                                    totalFinalizadosParcial[0]++;
+                                                }
+                                            }
+
                                         }
                                     }
 
@@ -145,18 +154,84 @@ public class ListaReportes extends AppCompatActivity {
                                         // Manejar errores de base de datos si es necesario
                                     }
                                 });
-                                if(estadistica[0]!=null)
-                                {
-                                    if(estadistica[0].getAbandonoSIoNO().equals("Si"))
-                                    {
-                                        totalAbandonosParcial[0]++;
-                                    }else{
-                                        totalFinalizadosParcial[0]++;
-                                    }
-                                }
+
                             }//fin for(listaParticipantes)
-                            totalAbandonos+= totalAbandonosParcial[0];
-                            totalFinalizados+=totalFinalizadosParcial[0];
+                            String rutaId = eventoCompletado.getRuta();
+
+                            DatabaseReference rutaRef = firebaseDatabase.getReference()
+                                    .child("Route").child(rutaId);
+
+                            rutaRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        Ruta ruta = dataSnapshot.getValue(Ruta.class);
+                                        String nombreRuta = ruta.getRouteName();
+                                        ModelReporteAbandonosYFinalizados reporte = new ModelReporteAbandonosYFinalizados(
+                                                eventoCompletado.getUserId(),
+                                                eventoCompletado.getUserName(),
+                                                eventoCompletado.getIdEvento(),
+                                                eventoCompletado.getNombreEvento(),
+                                                nombreRuta,
+                                                eventoCompletado.getImagenEvento(),
+                                                totalAbandonosParcial[0],
+                                                totalFinalizadosParcial[0],
+                                                listaEstadisticas.size()
+                                        );
+
+                                        reporte.setEstadisticas(listaEstadisticas);
+
+                                        totalAbandonos+= totalAbandonosParcial[0];
+                                        totalFinalizados+=totalFinalizadosParcial[0];
+                                        // Agrega el objeto reporte a recycler
+                                        recycleList.add(reporte);
+                                        recyclerAdapter.notifyDataSetChanged();
+
+
+                                        //Guardo el reporte en un nodo nuevo llamado Reportes
+                                        DatabaseReference reportesRef = firebaseDatabase.getReference().child("Reportes").child(eventoCompletado.getIdEvento());
+                                        reportesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.exists()) {
+                                                    // El reporte ya existe, entonces lo sobreescribo
+                                                    reportesRef.setValue(reporte);
+                                                } else {
+                                                    // El reporte no existe, créalo
+                                                    reportesRef.setValue(reporte);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                // Manejar errores
+                                            }
+                                        });
+
+                                        //Para calcular los totales
+                                        calcularTotales();
+
+                                        // Configurar el PieChart, para los totales
+                                        PieDataSet dataSet = new PieDataSet(generarDatosParaPieChart(), "");
+                                        dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+                                        dataSet.setValueTextColor(Color.BLACK);
+                                        dataSet.setValueTextSize(12f);
+
+                                        PieData data = new PieData(dataSet);
+
+                                        pieChart.setData(data);
+                                        pieChart.getDescription().setEnabled(false);
+                                        pieChart.animateY(1000, Easing.EaseInOutCubic);
+                                        pieChart.setEntryLabelColor(Color.BLACK);
+                                    }}
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    // Manejar error de cancelación
+                                    String rutaId = eventoCompletado.getRuta();
+                                }
+                            });
+
+
                         }
                     }
 
