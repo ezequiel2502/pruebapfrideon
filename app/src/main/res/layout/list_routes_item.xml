@@ -4,23 +4,21 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
     <androidx.cardview.widget.CardView
-        android:layout_width="380dp"
-        android:layout_height="298dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="16dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="297dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/cardborder">
 
             <!-- Parte Izquierda (ImageView y Título "Ruta") -->
 
@@ -28,75 +26,70 @@
             <!-- Parte Derecha (Otros Campos) -->
 
             <LinearLayout
-                android:layout_width="1dp"
+                android:layout_width="0.5dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.75"
+                android:layout_weight="0.5"
                 android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- TextView adicional "Evento" en negro -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="4dp"
-                    android:text="Imagén"
-                    android:textColor="@color/lavender"
-                    android:textSize="14dp" />
+                android:gravity="center"
+                android:paddingVertical="10dp">
 
                 <!-- ImageView -->
                 <ImageView
                     android:id="@+id/imageViewRoute"
-                    android:layout_width="178dp"
-                    android:layout_height="212dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
+                    android:layout_width="125dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
                     android:src="@drawable/baseline_upload_file_24" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="1dp"
+                android:layout_width="1.5dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="6dp">
 
 
                 <!-- TextView adicional "Ruta" en negro -->
 
-                <ImageButton
+                <!--<ImageButton
                     android:id="@+id/previewRoute"
                     android:layout_width="24dp"
                     android:layout_height="27dp"
                     android:background="#00FFFFFF"
                     app:srcCompat="@drawable/baseline_eye_24"
-                    android:layout_gravity="right" />
+                    android:layout_gravity="right" />-->
 
-                <TextView
+<!--                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="4dp"
                     android:text="Ruta:"
                     android:textColor="@color/lavender"
-                    android:textSize="14dp" />
+                    android:textSize="14dp" />-->
 
                 <!-- Título "Ruta" -->
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:text="Ruta"
                     android:id="@+id/textViewName"
-                    android:textColor="@android:color/black"
-                    android:textSize="12dp" />
+                    android:textColor="@color/white"
+                    android:background="@color/my_primary"
+                    android:textSize="20sp" />
 
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp">
 
                     <!-- TextView adicional "Descripcion" en negro -->
                     <TextView
@@ -104,8 +97,7 @@
                         android:layout_height="wrap_content"
                         android:text="Distancia: "
                         android:textColor="@android:color/black"
-                        android:textSize="10dp"
-                        android:layout_marginTop="10dp"
+                        android:textSize="13dp"
                         android:textStyle="bold"
                         android:layout_gravity="bottom" />
 
@@ -115,8 +107,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/textViewDistance"
                         android:text="Distancia"
-                        android:textSize="8sp"
-                        android:layout_marginTop="10dp"
+                        android:textSize="14sp"
                         android:layout_gravity="bottom"
                         />
 
@@ -127,7 +118,9 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp">
 
                     <!-- TextView adicional "Fecha Encuentro" en negro -->
                     <TextView
@@ -135,8 +128,7 @@
                         android:layout_height="wrap_content"
                         android:text="Nro Curvas:  "
                         android:textColor="@android:color/black"
-                        android:textSize="10dp"
-                        android:layout_marginTop="10dp"
+                        android:textSize="13dp"
                         android:layout_gravity="bottom"
                         android:textStyle="bold" />
 
@@ -146,29 +138,26 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/textViewCurves"
                         android:text="Curvas"
-                        android:textSize="8sp"
-                        android:layout_marginTop="10dp"
+                        android:textSize="14sp"
                         android:layout_gravity="bottom"
                         />
 
                 </LinearLayout>
 
-
-
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp">
 
                     <!-- TextView adicional "Hora Encuentro" en negro -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Punto partida:  "
+                        android:text="Inicio:  "
                         android:textColor="@android:color/black"
-                        android:textSize="10dp"
-                        android:layout_marginTop="10dp"
+                        android:textSize="13dp"
                         android:layout_gravity="bottom"
                         android:textStyle="bold"/>
 
@@ -178,8 +167,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/textViewStart"
                         android:text="Partida"
-                        android:textSize="8sp"
-                        android:layout_marginTop="8dp"
+                        android:textSize="14sp"
                         android:layout_gravity="bottom"
                         />
 
@@ -189,16 +177,17 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp">
 
                     <!-- TextView adicional "Cupo Mínimo" en negro -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Punto fín:  "
+                        android:text="Llegada:  "
                         android:textColor="@android:color/black"
-                        android:textSize="10dp"
-                        android:layout_marginTop="4dp"
+                        android:textSize="13dp"
                         android:layout_gravity="bottom"
                         android:textStyle="bold" />
 
@@ -208,21 +197,49 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/textViewFinish"
                         android:text="Fín"
-                        android:textSize="8sp"
-                        android:layout_marginTop="10dp"
+                        android:textSize="14sp"
                         android:layout_gravity="bottom"
                         />
 
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="2dp"
+                    android:layout_marginEnd="2dp">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/previewRoute"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="VER RUTA"
+                        android:textSize="9sp"
+                        android:layout_weight="1"
+                        app:strokeColor="@color/my_primary"
+                        app:cornerRadius="2dp"
+                        style="@style/Widget.Material3.Button.IconButton.Outlined"
+                        app:icon="@drawable/baseline_eye_24"
+                        android:gravity="center"
+                        />
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_SelectRoute"
+                        style="@style/Widget.MaterialComponents.Button.Icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/my_primary"
+                        android:text="Seleccionar"
+                        android:textSize="9sp"
+                        app:elevation="10dp"
+                        app:cornerRadius="2dp"
+                        android:layout_weight="1" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
-
-
-
 </RelativeLayout>

@@ -463,8 +463,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@android:color/darker_gray" />
+                    android:layout_marginTop="4dp"
+                    android:background="@color/my_primary" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -475,8 +475,8 @@
                     android:shadowDx="2"
                     android:shadowDy="2"
                     android:shadowRadius="4"
-                    android:text="Comentarios:"
-                    android:textColor="#607D8B"
+                    android:text="COMENTARIOS"
+                    android:textColor="@color/my_primary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -484,7 +484,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@android:color/darker_gray" />
+                    android:background="@color/my_primary" />
 
 
             </LinearLayout>
@@ -515,7 +515,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/bottom"
                     android:background="#fff"
-                    android:paddingTop="4dp"
+                    android:paddingTop="2dp"
                     android:layout_alignParentBottom="true">
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -524,7 +524,40 @@
                         android:id="@+id/image_profile">
                     </de.hdodenhof.circleimageview.CircleImageView>
 
-                    <EditText
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginRight="20dp"
+                            android:hint="Escribir Comentario">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/txt_write_comment"
+                                android:layout_width="320dp"
+                                android:layout_height="wrap_content"
+                                android:inputType="text" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <ImageButton
+                            android:id="@+id/tv_add_comment"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_alignParentEnd="true"
+                            android:scaleType="fitCenter"
+                            app:backgroundTint="@color/white"
+                            app:srcCompat="@drawable/icon_send"
+                            app:tint="@color/my_primary" />
+
+                    </RelativeLayout>
+
+                    <!--<EditText
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:layout_toRightOf="@id/image_profile"
@@ -538,9 +571,9 @@
                         android:textColor="#000000"
                         android:layout_toLeftOf="@+id/tv_add_comment">
 
-                    </EditText>
+                    </EditText>-->
 
-                    <TextView
+                    <!--<TextView
                         android:id="@+id/tv_add_comment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -550,7 +583,7 @@
                         android:text="comentar"
                         android:textColor="@color/design_default_color_primary">
 
-                    </TextView>
+                    </TextView>-->
 
                 </RelativeLayout>
 

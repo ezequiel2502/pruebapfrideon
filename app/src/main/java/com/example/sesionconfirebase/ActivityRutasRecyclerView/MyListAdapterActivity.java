@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -72,7 +73,7 @@ public class MyListAdapterActivity extends RecyclerView.Adapter<MyListAdapterAct
         holder.textViewCurves.setText(String.valueOf(listdata.get(position).getCurvesAmount()));
         holder.textViewStart.setText(listdata.get(position).getStartLocation());
         holder.textViewFinish.setText(listdata.get(position).getFinishLocation());
-        holder.imageViewRoute.setVisibility(View.VISIBLE);
+        holder.viewRoute.setVisibility(View.VISIBLE);
         Glide.with(activityContext)
                 .load(listdata.get(position).getImgId())
                 .transition(withCrossFade())
@@ -94,7 +95,7 @@ public class MyListAdapterActivity extends RecyclerView.Adapter<MyListAdapterAct
 //                dialogInstance.dismiss();
 //            }
 //        });
-        holder.routePreview.setOnClickListener(new View.OnClickListener() {
+        holder.viewRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(view.getContext(),"click on item: "+myListData.getRouteName(),Toast.LENGTH_LONG).show();
@@ -127,8 +128,9 @@ public class MyListAdapterActivity extends RecyclerView.Adapter<MyListAdapterAct
         public TextView textViewStart;
         public TextView textViewFinish;
         public ImageButton routePreview;
+        public Button deleteRoute, viewRoute ;
 
-        public ImageButton deleteRoute;
+
         public ViewHolder(View itemView) {
             super(itemView);
             this.imageViewRoute = (ImageView) itemView.findViewById(R.id.imageViewRoute);
@@ -137,8 +139,8 @@ public class MyListAdapterActivity extends RecyclerView.Adapter<MyListAdapterAct
             this.textViewCurves = (TextView) itemView.findViewById(R.id.textViewCurves);
             this.textViewStart = (TextView) itemView.findViewById(R.id.textViewStart);
             this.textViewFinish = (TextView) itemView.findViewById(R.id.textViewFinish);
-            this.routePreview = (ImageButton) itemView.findViewById(R.id.previewRoute);
-            this.deleteRoute = (ImageButton) itemView.findViewById(R.id.deleteRoute);
+            this.viewRoute = (Button) itemView.findViewById(R.id.btn_ViewRoute);
+            this.deleteRoute = (Button) itemView.findViewById(R.id.btn_deleteRoute);
         }
     }
 }

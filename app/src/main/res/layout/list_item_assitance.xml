@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/btn_acpt" />
+                app:srcCompat="@drawable/icon_check" />
 
             <ImageButton
                 android:id="@+id/imageButtonCancel"
@@ -77,7 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/btn_denied" />
+                app:srcCompat="@drawable/icon_cancel" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
