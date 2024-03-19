@@ -181,7 +181,7 @@ public class ListaReportes extends AppCompatActivity {
                                         reporte.setEstadisticas(listaEstadisticas);
 
                                         totalAbandonos+= totalAbandonosParcial[0];
-                                        totalFinalizados+=totalFinalizadosParcial[0];
+                                        totalFinalizados+= totalFinalizadosParcial[0];
                                         // Agrega el objeto reporte a recycler
                                         recycleList.add(reporte);
                                         recyclerAdapter.notifyDataSetChanged();
