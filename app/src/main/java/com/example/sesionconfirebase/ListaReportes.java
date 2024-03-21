@@ -23,6 +23,9 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ListaReportes extends AppCompatActivity {
 
@@ -112,6 +116,7 @@ public class ListaReportes extends AppCompatActivity {
 
                         // Obtengo la lista de participantes
                         ArrayList<String> listaParticipantes = eventoCompletado.getListaParticipantes();
+                        HashMap<String, String> listaPresentes = eventoCompletado.getListaPresentes();
 
                         if (listaParticipantes != null) {
 
@@ -127,109 +132,115 @@ public class ListaReportes extends AppCompatActivity {
                                 String estadisticaId = eventoCompletado.getIdEvento() + "_" + participante; // Crear un ID único para cada estadística
 
                                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference estadisticasRef = database.getReference("Estadisticas");
-                                final ModelEstadistica[] estadistica = new ModelEstadistica[1];
-                                estadisticasRef.child(estadisticaId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                DatabaseReference estadisticaRef = database.getReference("Estadisticas").child(estadisticaId);
+                                estadisticaRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                                     @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.exists()) {
-                                            // La estadística ya existe, puedes recuperarla si es necesario
-                                            estadistica[0] = dataSnapshot.getValue(ModelEstadistica.class);
-                                            if(estadistica[0]!=null)
-                                            {   listaEstadisticas.add(estadistica[0]);
-                                                if(estadistica[0].getAbandonoSIoNO()!=null && estadistica[0].getAbandonoSIoNO().equals("Si"))
+                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DataSnapshot dataSnapshot = task.getResult();
+                                            if (dataSnapshot.exists()) {
+                                                ModelEstadistica estadistica = dataSnapshot.getValue(ModelEstadistica.class);
+                                                // Haz lo que necesites con el objeto estadistica
+                                                listaEstadisticas.add(estadistica);
+                                                if(listaEstadisticas.size()==listaPresentes.size())
                                                 {
-                                                    totalAbandonosParcial[0]++;
-                                                }else{
-                                                    totalFinalizadosParcial[0]++;
+                                                    String rutaId = eventoCompletado.getRuta();
+
+                                                    DatabaseReference rutaRef = firebaseDatabase.getReference()
+                                                            .child("Route").child(rutaId);
+
+                                                    rutaRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            if (dataSnapshot.exists()) {
+                                                                Ruta ruta = dataSnapshot.getValue(Ruta.class);
+                                                                String nombreRuta = ruta.getRouteName();
+                                                                ModelReporteAbandonosYFinalizados reporte = new ModelReporteAbandonosYFinalizados(
+                                                                        eventoCompletado.getUserId(),
+                                                                        eventoCompletado.getUserName(),
+                                                                        eventoCompletado.getIdEvento(),
+                                                                        eventoCompletado.getNombreEvento(),
+                                                                        nombreRuta,
+                                                                        eventoCompletado.getImagenEvento(),
+                                                                        totalAbandonosParcial[0],
+                                                                        totalFinalizadosParcial[0],
+                                                                        listaEstadisticas.size()
+                                                                );
+
+                                                                reporte.setEstadisticas(listaEstadisticas);
+                                                                for(int i= 0;i<listaEstadisticas.size();i++)
+                                                                {
+                                                                    if(listaEstadisticas.get(i).getAbandonoSIoNO()!=null && listaEstadisticas.get(i).getAbandonoSIoNO().equals("Si"))
+                                                                    {
+                                                                        totalAbandonosParcial[0]++;
+                                                                    }else{
+                                                                        totalFinalizadosParcial[0]++;
+                                                                    }
+                                                                }
+                                                                reporte.setTotalAbandonos(totalAbandonosParcial[0]);
+                                                                reporte.setTotalFinalizados(totalFinalizadosParcial[0]);
+                                                                totalAbandonos+= totalAbandonosParcial[0];
+                                                                totalFinalizados+= totalFinalizadosParcial[0];
+                                                                // Agrega el objeto reporte a recycler
+                                                                recycleList.add(reporte);
+                                                                recyclerAdapter.notifyDataSetChanged();
+
+
+                                                                //Guardo el reporte en un nodo nuevo llamado Reportes
+                                                                DatabaseReference reportesRef = firebaseDatabase.getReference().child("Reportes").child(eventoCompletado.getIdEvento());
+                                                                reportesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                        if (dataSnapshot.exists()) {
+                                                                            // El reporte ya existe, entonces lo sobreescribo
+                                                                            reportesRef.setValue(reporte);
+                                                                        } else {
+                                                                            // El reporte no existe, créalo
+                                                                            reportesRef.setValue(reporte);
+                                                                        }
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                                        // Manejar errores
+                                                                    }
+                                                                });
+
+                                                                //Para calcular los totales
+                                                                calcularTotales();
+
+                                                                // Configurar el PieChart, para los totales
+                                                                PieDataSet dataSet = new PieDataSet(generarDatosParaPieChart(), "");
+                                                                dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+                                                                dataSet.setValueTextColor(Color.BLACK);
+                                                                dataSet.setValueTextSize(12f);
+
+                                                                PieData data = new PieData(dataSet);
+
+                                                                pieChart.setData(data);
+                                                                pieChart.getDescription().setEnabled(false);
+                                                                pieChart.animateY(1000, Easing.EaseInOutCubic);
+                                                                pieChart.setEntryLabelColor(Color.BLACK);
+                                                            }
+                                                        }
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                            // Manejar error de cancelación
+                                                            String rutaId = eventoCompletado.getRuta();
+                                                        }
+                                                    });
                                                 }
+                                            } else {
+                                                // El registro no existe en la base de datos
+                                                // Manejar este caso según sea necesario
                                             }
-
+                                        } else {
+                                            // Manejar el caso de que la tarea haya fallado
                                         }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                        // Manejar errores de base de datos si es necesario
                                     }
                                 });
 
                             }//fin for(listaParticipantes)
-                            String rutaId = eventoCompletado.getRuta();
-
-                            DatabaseReference rutaRef = firebaseDatabase.getReference()
-                                    .child("Route").child(rutaId);
-
-                            rutaRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.exists()) {
-                                        Ruta ruta = dataSnapshot.getValue(Ruta.class);
-                                        String nombreRuta = ruta.getRouteName();
-                                        ModelReporteAbandonosYFinalizados reporte = new ModelReporteAbandonosYFinalizados(
-                                                eventoCompletado.getUserId(),
-                                                eventoCompletado.getUserName(),
-                                                eventoCompletado.getIdEvento(),
-                                                eventoCompletado.getNombreEvento(),
-                                                nombreRuta,
-                                                eventoCompletado.getImagenEvento(),
-                                                totalAbandonosParcial[0],
-                                                totalFinalizadosParcial[0],
-                                                listaEstadisticas.size()
-                                        );
-
-                                        reporte.setEstadisticas(listaEstadisticas);
-
-                                        totalAbandonos+= totalAbandonosParcial[0];
-                                        totalFinalizados+= totalFinalizadosParcial[0];
-                                        // Agrega el objeto reporte a recycler
-                                        recycleList.add(reporte);
-                                        recyclerAdapter.notifyDataSetChanged();
-
-
-                                        //Guardo el reporte en un nodo nuevo llamado Reportes
-                                        DatabaseReference reportesRef = firebaseDatabase.getReference().child("Reportes").child(eventoCompletado.getIdEvento());
-                                        reportesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                if (dataSnapshot.exists()) {
-                                                    // El reporte ya existe, entonces lo sobreescribo
-                                                    reportesRef.setValue(reporte);
-                                                } else {
-                                                    // El reporte no existe, créalo
-                                                    reportesRef.setValue(reporte);
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                // Manejar errores
-                                            }
-                                        });
-
-                                        //Para calcular los totales
-                                        calcularTotales();
-
-                                        // Configurar el PieChart, para los totales
-                                        PieDataSet dataSet = new PieDataSet(generarDatosParaPieChart(), "");
-                                        dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-                                        dataSet.setValueTextColor(Color.BLACK);
-                                        dataSet.setValueTextSize(12f);
-
-                                        PieData data = new PieData(dataSet);
-
-                                        pieChart.setData(data);
-                                        pieChart.getDescription().setEnabled(false);
-                                        pieChart.animateY(1000, Easing.EaseInOutCubic);
-                                        pieChart.setEntryLabelColor(Color.BLACK);
-                                    }}
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                    // Manejar error de cancelación
-                                    String rutaId = eventoCompletado.getRuta();
-                                }
-                            });
-
 
                         }
                     }
@@ -329,8 +340,4 @@ public class ListaReportes extends AppCompatActivity {
             return 0;
         }
     }
-
-
-
-
 }//fin App

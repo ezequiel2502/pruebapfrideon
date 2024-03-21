@@ -104,7 +104,7 @@ public class ModelEstadistica {
     }
 
     public String getVelocidadPromEvento() {
-        return velocidadPromEvento;
+        return velocidadPromEvento.replace(",", ".");
     }
 
 
