@@ -1,5 +1,7 @@
 package com.example.sesionconfirebase;
 
+
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +29,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.gps_test.Ruta;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -151,10 +154,26 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         String singleIdEvento=getIntent().getStringExtra("EventoId");
         String singleTokenFCM=getIntent().getStringExtra("TokenFCM");//del creador del evento
 
+        FirebaseDatabase Database = FirebaseDatabase.getInstance();
+        DatabaseReference rutaRef = Database.getReference()
+                .child("Route").child(singleRuta);
+        rutaRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Ruta ruta = snapshot.getValue(Ruta.class);
+                    tv_SingleRuta.setText(ruta.routeName.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                tv_SingleRuta.setText(singleRuta);
+            }
+        });
 
         // Establece los datos en los TextViews
         tv_SingleEvento.setText(singleEvento);
-        tv_SingleRuta.setText(singleRuta);
         tv_SingleDescripcion.setText(singleDescripcion);
         tv_SingleFechaEncuentro.setText(singleFechaEncuentro);
         tv_SingleHoraEncuentro.setText(singleHoraEncuentro);

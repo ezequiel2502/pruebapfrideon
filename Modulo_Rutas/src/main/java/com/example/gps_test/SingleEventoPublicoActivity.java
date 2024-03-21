@@ -128,7 +128,6 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
         // Establece los datos en los TextViews
         tv_SingleEvento.setText(singleEvento);
-        tv_SingleRuta.setText(singleRuta);
         tv_SingleDescripcion.setText(singleDescripcion);
         tv_SingleFechaEncuentro.setText(singleFechaEncuentro);
         tv_SingleHoraEncuentro.setText(singleHoraEncuentro);
@@ -141,6 +140,23 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
         tv_SinglePublicoPrivado.setText(singlePublicoPrivado);
         tv_SingleActivadoDescativado.setText(singleActivarDesactivar);
 
+        FirebaseDatabase Database = FirebaseDatabase.getInstance();
+        DatabaseReference rutaRef = Database.getReference()
+                .child("Route").child(singleRuta);
+        rutaRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Ruta ruta = snapshot.getValue(Ruta.class);
+                    tv_SingleRuta.setText(ruta.routeName.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                tv_SingleRuta.setText(singleRuta);
+            }
+        });
 
         //Guardo en sharedPreferences algunos datos utiles para las notificaciones
         SharedPreferences sharedPreferences = getSharedPreferences("Evento", Context.MODE_PRIVATE);

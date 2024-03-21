@@ -5,9 +5,16 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.gps_test.Ruta;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class SingleEventoActivity extends AppCompatActivity {
     TextView tv_SingleEvento,tv_SingleRuta,tv_SingleDescripcion,tv_SingleFechaEncuentro,
@@ -62,9 +69,26 @@ public class SingleEventoActivity extends AppCompatActivity {
         String singlePublicoPrivado=getIntent().getStringExtra("singlePublicoPrivado");
         Integer singleRating=getIntent().getIntExtra("singleRating",0);
 
+        FirebaseDatabase Database = FirebaseDatabase.getInstance();
+        DatabaseReference rutaRef = Database.getReference()
+                .child("Route").child(singleRuta);
+        rutaRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Ruta ruta = snapshot.getValue(Ruta.class);
+                    tv_SingleRuta.setText(ruta.routeName.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                tv_SingleRuta.setText(singleRuta);
+            }
+        });
+
         // Establece los datos en los TextViews
         tv_SingleEvento.setText(singleEvento);
-        tv_SingleRuta.setText(singleRuta);
         tv_SingleDescripcion.setText(singleDescripcion);
         tv_SingleFechaEncuentro.setText(singleFechaEncuentro);
         tv_SingleHoraEncuentro.setText(singleHoraEncuentro);

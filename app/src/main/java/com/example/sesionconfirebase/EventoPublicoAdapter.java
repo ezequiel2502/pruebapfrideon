@@ -67,7 +67,6 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
                 .into(holder.imvEvento); // Coloca la imagen en el Imag
 
         holder.tv_tituloEvento.setText(evento.getNombreEvento());
-        holder.tv_Ruta.setText(evento.getRuta());
         holder.tv_Descripcion.setText(evento.getDescripcion());
         holder.tv_FechaEncuentro.setText(evento.getFechaEncuentro());
         holder.tv_HoraEncuentro.setText(evento.getHoraEncuentro());
@@ -80,6 +79,23 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
         holder.tv_PublicoPrivado.setText(evento.getPublicoPrivado());
         holder.rb_calificacionEvento.setRating(evento.getCalificacionGeneral());
 
+        FirebaseDatabase Database = FirebaseDatabase.getInstance();
+        DatabaseReference rutaRef = Database.getReference()
+                .child("Route").child(evento.getRuta());
+        rutaRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Ruta ruta = snapshot.getValue(Ruta.class);
+                    holder.tv_Ruta.setText(ruta.routeName.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                holder.tv_Ruta.setText(evento.getRuta());
+            }
+        });
 
         //Agrego un Listener para cuando cliquee sobre el evento(item), me lleva a los detalles de la publicacion para postularme
         holder.itemView.setOnClickListener(new View.OnClickListener() {
