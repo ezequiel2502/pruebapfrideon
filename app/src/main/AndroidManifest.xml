@@ -22,6 +22,7 @@
     <uses-permission android:name="android.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
     <!-- Agrega este permiso para mostrar notificaciones -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application android:largeHeap="true"
         android:allowBackup="false"
@@ -101,12 +102,11 @@
             android:name=".SingleEventoPostuladosActivity"
             android:exported="false" />
         <activity
-            android:name=".SingleEventoActivity"
+            android:name=".SingleEventoPublicoActivity"
             android:exported="false" />
         <activity
-            android:name=".SingleEventoPublicoActivity"
-            android:exported="false"
-            android:label="Detalles del Evento Público" />
+            android:name=".SingleEventoActivity"
+            android:exported="false" />
         <activity
             android:name=".CrearEvento"
             android:exported="false" />

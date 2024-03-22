@@ -1,9 +1,7 @@
 package com.example.sesionconfirebase;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
@@ -39,14 +39,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.auth.oauth2.GoogleCredentials;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,7 +81,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
     private DatabaseReference commentsRef;
     private ValueEventListener commentsListener;
 
-    private  ModelEvento modelEventoActual;
+    private ModelEvento modelEventoActual;
 
     @Override
     protected void onRestart() {
@@ -342,7 +344,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                                     ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
                                    // canceladosRef.setValue(evento);
                                     eventosPublicosRef.removeValue();
-                                    Intent intent=new Intent(SingleEventoPublicoActivity.this,ListaEventosPublicosVigentes.class);
+                                    Intent intent=new Intent(SingleEventoPublicoActivity.this, ListaEventosPublicosVigentes.class);
                                     startActivity(intent);
                                 }
                             }
@@ -771,39 +773,72 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
 
     }
+
+    private String getAccessToken(){
+        final String[] SCOPES = { "https://www.googleapis.com/auth/firebase.messaging" };
+        //File file = this.getAssets().open("service-account.json");
+        try {
+            GoogleCredentials googleCredentials = GoogleCredentials
+                    .fromStream(this.getAssets().open("service-account.json"))
+                    .createScoped(Arrays.asList(SCOPES));
+            googleCredentials.refresh();
+            return googleCredentials.getAccessToken().getTokenValue();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void notificaCreador(String userName,String idEvento, String postulanteId,String nombreEvento)
     {
-        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue myrequest = Volley.newRequestQueue(this);
         JSONObject json = new JSONObject();
 
         try {
-            JSONObject notificacion = new JSONObject();
-            notificacion.put("titulo", "Aceptar Postulacion de: ");
-            notificacion.put("detalle", userName);
-            notificacion.put("tipo", "creador_evento");
-            notificacion.put("idEvento", idEvento);
-            notificacion.put("postulanteId", postulanteId);
-            notificacion.put("tokenCreador", TokenFCMRecuperado);
-            notificacion.put("tokenPostulante", tokenFcmPostulante);
-            notificacion.put("nombreEvento", nombreEvento);
+            JSONObject message = new JSONObject();
 
-            json.put("to", TokenFCMRecuperado);
-            json.put("data", notificacion); // Cambio de "data" a "notification"
+            JSONObject notification = new JSONObject();
+            notification.put("titulo", "Aceptar Postulacion de: ");
+            notification.put("detalle", userName);
+            notification.put("tipo", "creador_evento");
+            notification.put("idEvento", idEvento);
+            notification.put("postulanteId", postulanteId);
+            notification.put("tokenCreador", TokenFCMRecuperado);
+            notification.put("tokenPostulante", tokenFcmPostulante);
+            notification.put("nombreEvento", nombreEvento);
 
+
+            message.put("token", TokenFCMRecuperado);
+            message.put("data", notification); // Cambio de "data" a "notification"
+            json.put("message", message); //Se tiene que agregar este encabezado si o si
 
             // URL que se utilizará para enviar la solicitud POST al servidor de FCM
-            String URL = "https://fcm.googleapis.com/fcm/send";
+            String URL = "https://fcm.googleapis.com/v1/projects/tutorial-sesion-firebase/messages:send";
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+            Response.Listener<JSONObject> retriever = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    JSONObject result = response;
+                    //Acá podemos ver si el envio fue exitoso
+                }
+            };
+
+            Response.ErrorListener error = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    VolleyError volleyError1 = volleyError;
+                }
+            };
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, retriever, error) {
                 @Override
                 public Map<String, String> getHeaders() {
-                    Map<String, String> header;
-                    header = new HashMap<>();
-                    header.put("Content-Type", "application/json");
-                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    Map<String, String> header = new HashMap<>();
+                    header.put("Content-Type", "application/json; UTF-8");
+                    header.put("Authorization", "Bearer " + getAccessToken());
                     return header;
                 }
             };
+
             myrequest.add(request);
 
         } catch (JSONException e) {
@@ -822,7 +857,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
             notificacion.put("tipo", "\"cancelacion_evento");
             notificacion.put("tokenPostulante", TokenPostulante1);
 
-            json.put("to", TokenPostulante1);
+            json.put("token", TokenPostulante1);
             json.put("data", notificacion); // Cambio de "data" a "notification"
 
 
@@ -835,7 +870,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                     Map<String, String> header;
                     header = new HashMap<>();
                     header.put("Content-Type", "application/json");
-                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    header.put("Authorization", "Bearer " + getAccessToken());
                     return header;
                 }
             };

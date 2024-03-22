@@ -1,17 +1,11 @@
 package com.example.sesionconfirebase;
 
-
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,14 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
-import com.example.gps_test.BuscarEventosMapaActivity;
-import com.example.gps_test.Ruta;
-import com.example.gps_test.ui.map.TupleDouble;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,10 +30,10 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAdapter.ViewHolderNotificacion>  {
@@ -59,13 +52,13 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
 
     @NonNull
     @Override
-    public NotificacionesAdapter.ViewHolderNotificacion onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolderNotificacion onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(context).inflate(R.layout.item_notificacion,parent,false);
         return new ViewHolderNotificacion(view);
     }
     //Acá debería incorporar estos comportamientos basado en los botones de la notificación
     @Override
-    public void onBindViewHolder(@NonNull NotificacionesAdapter.ViewHolderNotificacion holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolderNotificacion holder, int position) {
         ModelNotificacion notificacion = list.get(position);
         String mensaje = notificacion.getTitulo() + " " + notificacion.getDetalle();
         holder.tv_MensajeNotificacion.setText(mensaje);
@@ -144,36 +137,70 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Esto limpia todas las actividades en la parte superior
         context.startActivity(intent);
     }
+
+    private String getAccessToken(){
+        final String[] SCOPES = { "https://www.googleapis.com/auth/firebase.messaging" };
+        //File file = this.getAssets().open("service-account.json");
+        try {
+            GoogleCredentials googleCredentials = GoogleCredentials
+                    .fromStream(this.context.getAssets().open("service-account.json"))
+                    .createScoped(Arrays.asList(SCOPES));
+            googleCredentials.refresh();
+            return googleCredentials.getAccessToken().getTokenValue();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void notificaDenegacionPostulanteEvento( String IdEvento,String nombreEvento, String postulanteId,String TokenPostulante) {
         Context context=this.context;
         RequestQueue myrequest = Volley.newRequestQueue(context);
         JSONObject json = new JSONObject();
 
         try {
-            JSONObject notificacion = new JSONObject();
-            notificacion.put("titulo", "Denegaron tu postulacion a : ");
-            notificacion.put("detalle", nombreEvento);
-            notificacion.put("tipo", "denegacion_postulante_evento");
-            notificacion.put("idEvento", IdEvento);
-            notificacion.put("postulanteId", postulanteId);
-            notificacion.put("tokenPostulante", TokenPostulante);
-            json.put("to", TokenPostulante);
-            json.put("data", notificacion); // Cambio de "data" a "notification"
+            JSONObject message = new JSONObject();
 
+            JSONObject notification = new JSONObject();
+            notification.put("titulo", "Denegaron tu postulacion a : ");
+            notification.put("detalle", nombreEvento);
+            notification.put("tipo", "denegacion_postulante_evento");
+            notification.put("idEvento", IdEvento);
+            notification.put("postulanteId", postulanteId);
+            notification.put("tokenPostulante", TokenPostulante);
+
+
+            message.put("token", TokenPostulante);
+            message.put("data", notification); // Cambio de "data" a "notification"
+            json.put("message", message); //Se tiene que agregar este encabezado si o si
 
             // URL que se utilizará para enviar la solicitud POST al servidor de FCM
-            String URL = "https://fcm.googleapis.com/fcm/send";
+            String URL = "https://fcm.googleapis.com/v1/projects/tutorial-sesion-firebase/messages:send";
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+            Response.Listener<JSONObject> retriever = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    JSONObject result = response;
+                    //Acá podemos ver si el envio fue exitoso
+                }
+            };
+
+            Response.ErrorListener error = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    VolleyError volleyError1 = volleyError;
+                }
+            };
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, retriever, error) {
                 @Override
                 public Map<String, String> getHeaders() {
-                    Map<String, String> header;
-                    header = new HashMap<>();
-                    header.put("Content-Type", "application/json");
-                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    Map<String, String> header = new HashMap<>();
+                    header.put("Content-Type", "application/json; UTF-8");
+                    header.put("Authorization", "Bearer " + getAccessToken());
                     return header;
                 }
             };
+
             myrequest.add(request);
 
         } catch (JSONException e) {
@@ -364,30 +391,49 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
         JSONObject json = new JSONObject();
 
         try {
-            JSONObject notificacion = new JSONObject();
-            notificacion.put("titulo", "Aceptaron tu postulacion a : ");
-            notificacion.put("detalle", nombreEvento);
-            notificacion.put("tipo", "postulante_evento");
-            notificacion.put("idEvento", IdEvento);
-            notificacion.put("postulanteId", postulanteId);
-            notificacion.put("tokenPostulante", TokenPostulante);
-            json.put("to", TokenPostulante);
-            json.put("data", notificacion); // Cambio de "data" a "notification"
+            JSONObject message = new JSONObject();
 
+            JSONObject notification = new JSONObject();
+            notification.put("titulo", "Aceptaron tu postulacion a : ");
+            notification.put("detalle", nombreEvento);
+            notification.put("tipo", "postulante_evento");
+            notification.put("idEvento", IdEvento);
+            notification.put("postulanteId", postulanteId);
+            notification.put("tokenPostulante", TokenPostulante);
+
+
+            message.put("token", TokenPostulante);
+            message.put("data", notification); // Cambio de "data" a "notification"
+            json.put("message", message); //Se tiene que agregar este encabezado si o si
 
             // URL que se utilizará para enviar la solicitud POST al servidor de FCM
-            String URL = "https://fcm.googleapis.com/fcm/send";
+            String URL = "https://fcm.googleapis.com/v1/projects/tutorial-sesion-firebase/messages:send";
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+            Response.Listener<JSONObject> retriever = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    JSONObject result = response;
+                    //Acá podemos ver si el envio fue exitoso
+                }
+            };
+
+            Response.ErrorListener error = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    VolleyError volleyError1 = volleyError;
+                }
+            };
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, retriever, error) {
                 @Override
                 public Map<String, String> getHeaders() {
-                    Map<String, String> header;
-                    header = new HashMap<>();
-                    header.put("Content-Type", "application/json");
-                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    Map<String, String> header = new HashMap<>();
+                    header.put("Content-Type", "application/json; UTF-8");
+                    header.put("Authorization", "Bearer " + getAccessToken());
                     return header;
                 }
             };
+
             myrequest.add(request);
 
         } catch (JSONException e) {

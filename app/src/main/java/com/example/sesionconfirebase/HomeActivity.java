@@ -465,6 +465,12 @@ public class HomeActivity extends AppCompatActivity {
         else {
             //Do nothing if the permission is granted - Response is handled below by onRequestPermissionsResult
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(HomeActivity.this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 102);
+            }
+        }
+
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 

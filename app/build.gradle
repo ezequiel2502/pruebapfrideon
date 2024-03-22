@@ -32,6 +32,17 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    packagingOptions {
+       exclude 'META-INF/DEPENDENCIES'
+    }
+    sourceSets {
+        main {
+            assets {
+                srcDirs 'src\\main\\assets'
+            }
+        }
+    }
 }
 
 dependencies {
@@ -93,5 +104,7 @@ dependencies {
     implementation 'com.nex3z:notification-badge:1.0.4'
 
     implementation 'com.android.volley:volley:1.2.0'
+
+    implementation 'com.google.auth:google-auth-library-oauth2-http:0.26.0'
 
 }
