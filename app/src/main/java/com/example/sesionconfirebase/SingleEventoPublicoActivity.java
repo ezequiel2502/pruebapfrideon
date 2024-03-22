@@ -359,7 +359,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                     }
                 });
             }
-        });
+        });//fin btn_CancelarEvento.
 
 
 
@@ -752,7 +752,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
     }
 
 
-
+    //Este es el metodo que se llama cuando se aprieta el boton Comentar en la cajita de comentarios
     private void addComment(String idEvento) {
         // Obtengo el usuario actual que va a publicar el mensaje
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -819,6 +819,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
         });
     }
 
+    //Este es el metodo que se llama desde addComment, que sube el comentario a la base de datos.
     private void agregarComentario(String idEvento, String userId, String userName, String imagenPerfilUri) {
         // Creo el nodo y los subnodos para agregar el comentario con un identificador único
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comentarios").child(idEvento);
