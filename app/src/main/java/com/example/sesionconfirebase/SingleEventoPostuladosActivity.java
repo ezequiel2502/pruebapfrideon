@@ -320,7 +320,29 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                 // Obtener el ID del usuario actual
                 String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String userName=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                final String [] userName1 = {userName};
+                if(userName==null || userName.length()==0)
+                {
 
+                    // Accedo al perfil del usuario
+                    DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
+                    perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.exists()) {
+                                //Obtengo el objeto que simboliza el perfil del usuario
+                                ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+                                userName1[0] = usuario.getUserNameCustom();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Maneja el error si ocurre una cancelación de la operación
+                        }
+                    });
+                }
 
                 // Buscar el evento
                 DatabaseReference eventosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(singleIdEvento);
@@ -366,8 +388,8 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
                                                                                         Toast.makeText(getApplicationContext(), "Has cancelado tu postulación al evento", Toast.LENGTH_SHORT).show();
 
                                                                     //Agregar notificacion al creador de evento
-                                                                    notificarPostulacionCancelada(evento.getNombreEvento(),userName,userId,evento.getIdEvento(),evento.getUserId());
-
+                                                                    notificarPostulacionCancelada(evento.getNombreEvento(),userName1[0],userId,evento.getIdEvento(),evento.getUserId());
+                                                                    notificaPostulacionCancelada(evento.getNombreEvento(),userName1[0],userId,evento.getIdEvento(),evento.getTokenFCM());
                                                                                     } else {
                                                                                         // Error en la modificación del evento
                                                                                         Toast.makeText(getApplicationContext(), "Error al modificar el evento", Toast.LENGTH_SHORT).show();
@@ -547,6 +569,44 @@ public class SingleEventoPostuladosActivity extends AppCompatActivity implements
     private void notificarPostulacionCancelada(String nombreEvento,String userName,String postulanteId,String IdEvento,String IdOrganizador){
         NotificationCounter notificacion = new NotificationCounter();
         notificacion.registrarNotificacionPostulacionCancelada("Se cancelo postulacion de:",userName,"cancela_postulante_evento",IdEvento,postulanteId,IdOrganizador,nombreEvento);
+    }
+
+    private void notificaPostulacionCancelada(String nombreEvento,String userName,String postulanteId,String IdEvento,String TokenFCMRecuperado){
+
+        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject notificacion = new JSONObject();
+            notificacion.put("titulo", "Se cancelo postulacion de: ");
+            notificacion.put("detalle", userName);
+            notificacion.put("tipo", "cancela_postulante_evento");
+            notificacion.put("idEvento", IdEvento);
+            notificacion.put("postulanteId", postulanteId);
+            notificacion.put("tokenCreador", TokenFCMRecuperado);
+            notificacion.put("nombreEvento", nombreEvento);
+            json.put("to", TokenFCMRecuperado);
+            json.put("data", notificacion); // Cambio de "data" a "notification"
+
+
+            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+            String URL = "https://fcm.googleapis.com/fcm/send";
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header;
+                    header = new HashMap<>();
+                    header.put("Content-Type", "application/json");
+                    header.put("Authorization", "Bearer AAAA2KZHDiM:APA91bHxMVQ1jcd7sRVOqoP9ffdSEFiBnVr_iFKOL0kd_X71Arrc3lSi8is74MYUB6Iyg_1DmbvJK42Ejk-6N-i9g-yDeVjncE09U8GUOVx9YpDWjpDywU_wLXQvCO0ZERz5qZc9_zqM");
+                    return header;
+                }
+            };
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void cargarComentarios() {

@@ -20,7 +20,9 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
-
+    <!-- Agrega este permiso para mostrar notificaciones -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application android:largeHeap="true"
         android:allowBackup="false"
@@ -65,9 +67,10 @@
             android:name=".CalificarActivity"
             android:exported="false"></activity>
 
-        <receiver
-            android:name=".NotificationActionReceiver"
-            android:enabled="true" /> <!-- <receiver android:name=".NotificationActionReceiver1" -->
+        <!-- <receiver
+             android:name=".NotificationActionReceiver"
+             android:enabled="true" />-->
+        <!-- <receiver android:name=".NotificationActionReceiver1" -->
         <!-- android:exported="true"> -->
         <!-- <intent-filter> -->
         <!-- <action android:name="com.example.sesionconfirebase.ACTION_BUTTON_1" /> -->
@@ -99,12 +102,11 @@
             android:name=".SingleEventoPostuladosActivity"
             android:exported="false" />
         <activity
-            android:name=".SingleEventoActivity"
+            android:name=".SingleEventoPublicoActivity"
             android:exported="false" />
         <activity
-            android:name=".SingleEventoPublicoActivity"
-            android:exported="false"
-            android:label="Detalles del Evento Público" />
+            android:name=".SingleEventoActivity"
+            android:exported="false" />
         <activity
             android:name=".CrearEvento"
             android:exported="false" />

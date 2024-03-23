@@ -2,14 +2,29 @@ package com.example.sesionconfirebase;
 
 public class ModelNotificacion {
 
-    private String titulo,detalle,tipoNotificacion,idEvento,idOrganizador,postulanteId,nombreEvento;
+    private String titulo;
+    private String detalle;
+    private String tipoNotificacion;
+    private String idEvento;
+    private String idOrganizador;
+    private String postulanteId;
+    private String nombreEvento;
+
+    public String getTokenPostulante() {
+        return TokenPostulante;
+    }
+
+    public void setTokenPostulante(String tokenPostulante) {
+        TokenPostulante = tokenPostulante;
+    }
+
+    private String TokenPostulante;
     private String idNotificacion;
 
     public ModelNotificacion() {
     }
 
-    public ModelNotificacion(String titulo,String detalle,String tipoNotificacion,String idEvento,String idOrganizador,String postulanteId,String nombreEvento
-                     ) {
+    public ModelNotificacion(String titulo,String detalle,String tipoNotificacion,String idEvento,String idOrganizador,String postulanteId,String nombreEvento,String TokenPostulante) {
         this.nombreEvento = nombreEvento;
         this.titulo = detalle;
         this.tipoNotificacion = tipoNotificacion;
@@ -17,6 +32,7 @@ public class ModelNotificacion {
         this.postulanteId = postulanteId;
         this.nombreEvento = nombreEvento;
         this.idOrganizador = idOrganizador;
+        this.TokenPostulante = TokenPostulante;
     }
 
     public String getIdNotificacion() {

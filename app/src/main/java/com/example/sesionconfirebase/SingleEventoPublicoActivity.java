@@ -1,11 +1,7 @@
 package com.example.sesionconfirebase;
 
-
-
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
@@ -42,14 +40,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.auth.oauth2.GoogleCredentials;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +68,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
     ImageView image_profile;
 
     private static String tokenFcmPostulante;
-
+    private static String TokenFCMRecuperado;
 
     EditText txt_write_comment;
     TextView tv_add_comment;
@@ -82,7 +82,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
     private DatabaseReference commentsRef;
     private ValueEventListener commentsListener;
 
-    private  ModelEvento modelEventoActual;
+    private ModelEvento modelEventoActual;
 
     @Override
     protected void onRestart() {
@@ -171,6 +171,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                 tv_SingleRuta.setText(singleRuta);
             }
         });
+        TokenFCMRecuperado = singleTokenFCM;
 
         // Establece los datos en los TextViews
         tv_SingleEvento.setText(singleEvento);
@@ -344,23 +345,24 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                                 postulacionesRef.child(userId).child(eventoId).setValue(false);
 
                                 // Llama al método para notificar cancelación del evento
-                                notificarCancelacion(prePostulacion.getUserId(),eventoId);
+                                notificarCancelacion(prePostulacion.getUserId(),eventoId,prePostulacion.getTokenFcmPostulante());
+
                             }
                         }
 
 
                         // Mueve el evento de "Eventos Publicos" a "Cancelados", para que no se liste mas en la lista de publicos
                         DatabaseReference eventosPublicosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Eventos Publicos").child(idEvento);
-                        DatabaseReference canceladosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Cancelados").child(idEvento);
+                       // DatabaseReference canceladosRef = FirebaseDatabase.getInstance().getReference().child("Eventos").child("Cancelados").child(idEvento);
 
                         eventosPublicosRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
                                     ModelEvento evento = dataSnapshot.getValue(ModelEvento.class);
-                                    canceladosRef.setValue(evento);
+                                   // canceladosRef.setValue(evento);
                                     eventosPublicosRef.removeValue();
-                                    Intent intent=new Intent(SingleEventoPublicoActivity.this,ListaEventosPublicosVigentes.class);
+                                    Intent intent=new Intent(SingleEventoPublicoActivity.this, ListaEventosPublicosVigentes.class);
                                     startActivity(intent);
                                 }
                             }
@@ -723,6 +725,29 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
         //userName del que se postula
         String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        final String [] userName1 = {userName};
+        if(userName==null || userName.length()==0)
+        {
+
+            // Accedo al perfil del usuario
+            DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()) {
+                        //Obtengo el objeto que simboliza el perfil del usuario
+                        ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+                        userName1[0] = usuario.getUserNameCustom();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Maneja el error si ocurre una cancelación de la operación
+                }
+            });
+        }
         //userId del que se postula
         String postulanteId=FirebaseAuth.getInstance().getUid();
 
@@ -744,8 +769,8 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
                     // Ahora puedes obtener el idOrganizador
                     String idOrganizador = dataSnapshot.child("userId").getValue(String.class);
 
-                    notificacion.registrarNotificacionCreadorEvento("Aceptar Postulacion de: ",userName,"creador_evento",idEvento,idOrganizador,postulanteId,nombreEvento);
-
+                    notificacion.registrarNotificacionCreadorEvento("Aceptar Postulacion de: ",userName1[0],"creador_evento",idEvento,idOrganizador,postulanteId,nombreEvento,TokenFCMRecuperado,tokenFcmPostulante);
+                    notificaCreador( userName1[0],idEvento,postulanteId,nombreEvento);
                     //RemoteMessage a = new RemoteMessage.Builder("Token FCM del dispositivo").addData("Message", "").build();
 
                     //FirebaseMessaging.getInstance().send(a);
@@ -767,12 +792,119 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
     }
 
+    private String getAccessToken(){
+        final String[] SCOPES = { "https://www.googleapis.com/auth/firebase.messaging" };
+        //File file = this.getAssets().open("service-account.json");
+        try {
+            GoogleCredentials googleCredentials = GoogleCredentials
+                    .fromStream(this.getAssets().open("service-account.json"))
+                    .createScoped(Arrays.asList(SCOPES));
+            googleCredentials.refresh();
+            return googleCredentials.getAccessToken().getTokenValue();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void notificaCreador(String userName,String idEvento, String postulanteId,String nombreEvento)
+    {
+        RequestQueue myrequest = Volley.newRequestQueue(this);
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject message = new JSONObject();
+
+            JSONObject notification = new JSONObject();
+            notification.put("titulo", "Aceptar Postulacion de: ");
+            notification.put("detalle", userName);
+            notification.put("tipo", "creador_evento");
+            notification.put("idEvento", idEvento);
+            notification.put("postulanteId", postulanteId);
+            notification.put("tokenCreador", TokenFCMRecuperado);
+            notification.put("tokenPostulante", tokenFcmPostulante);
+            notification.put("nombreEvento", nombreEvento);
+
+
+            message.put("token", TokenFCMRecuperado);
+            message.put("data", notification); // Cambio de "data" a "notification"
+            json.put("message", message); //Se tiene que agregar este encabezado si o si
+
+            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+            String URL = "https://fcm.googleapis.com/v1/projects/tutorial-sesion-firebase/messages:send";
+
+            Response.Listener<JSONObject> retriever = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    JSONObject result = response;
+                    //Acá podemos ver si el envio fue exitoso
+                }
+            };
+
+            Response.ErrorListener error = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    VolleyError volleyError1 = volleyError;
+                }
+            };
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, retriever, error) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header = new HashMap<>();
+                    header.put("Content-Type", "application/json; UTF-8");
+                    header.put("Authorization", "Bearer " + getAccessToken());
+                    return header;
+                }
+            };
+
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void notificaCancelacionEvento(String nombreEvento,String TokenPostulante1)
+    {
+        RequestQueue myrequest = Volley.newRequestQueue(getApplicationContext());
+        JSONObject json = new JSONObject();
+
+        try {
+            JSONObject notificacion = new JSONObject();
+            notificacion.put("titulo", "Evento cancelado: ");
+            notificacion.put("detalle", nombreEvento);
+            notificacion.put("tipo", "\"cancelacion_evento");
+            notificacion.put("tokenPostulante", TokenPostulante1);
+
+            json.put("token", TokenPostulante1);
+            json.put("data", notificacion); // Cambio de "data" a "notification"
+
+
+            // URL que se utilizará para enviar la solicitud POST al servidor de FCM
+            String URL = "https://fcm.googleapis.com/fcm/send";
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, json, null, null) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header;
+                    header = new HashMap<>();
+                    header.put("Content-Type", "application/json");
+                    header.put("Authorization", "Bearer " + getAccessToken());
+                    return header;
+                }
+            };
+            myrequest.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     //Para notificar cuando un organizador cancela un evento
-    private void notificarCancelacion(String PostulanteId,String EventoId) {
+    private void notificarCancelacion(String PostulanteId,String EventoId,String TokenPostulante1) {
         NotificationCounter notificacion = new NotificationCounter();
         notificacion.registrarNotificacionCancelacionEvento("Evento cancelado: ",modelEventoActual.getNombreEvento(),"cancelacion_evento",EventoId,PostulanteId);
+        notificaCancelacionEvento(modelEventoActual.getNombreEvento(),TokenPostulante1);
         Toast.makeText(SingleEventoPublicoActivity.this, "Se cancelo el evento "+modelEventoActual.getNombreEvento(), Toast.LENGTH_SHORT).show();
     }
 

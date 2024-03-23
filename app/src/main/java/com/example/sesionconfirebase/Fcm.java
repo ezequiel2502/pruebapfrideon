@@ -34,13 +34,10 @@ import java.util.Map;
 import java.util.Random;
 
 public class Fcm extends FirebaseMessagingService {
-
-    private static final String CHANNEL_ID = "Nuevo";
+    private static final String CHANNEL_ID = "Rideon_ID";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
-
         //Saco los campos directamente de la notificacion recibida
         String titulo = remoteMessage.getData().get("titulo");
         String detalle = remoteMessage.getData().get("detalle");
@@ -51,142 +48,49 @@ public class Fcm extends FirebaseMessagingService {
         String tokenCreador = remoteMessage.getData().get("tokenCreador");
         String tokenPostulante = remoteMessage.getData().get("tokenPostulante");
 
-        if ("creador_evento".equals(tipoNotificacion)) {
+        // Crear el Intent para abrir ListadoNotificacionesActivity
+        Intent acceptIntent = new Intent(this, ListadoNotificacionesActivity.class);
+        acceptIntent.putExtra("ACTION", "Botón 1"); // Puedes pasar cualquier información adicional necesaria
 
+// Envolver el Intent en un PendingIntent
+        PendingIntent acceptPendingIntent = PendingIntent.getActivity(this, 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-            // Crear una acción para el primer botón
-            Intent actionIntent1 = new Intent(this, NotificationActionReceiver.class);
-            actionIntent1.putExtra("idEvento", idEvento);
-            actionIntent1.putExtra("nombreEvento", nombreEvento);
-            actionIntent1.putExtra("postulanteId", postulanteId);
-            actionIntent1.putExtra("tokenCreador", tokenCreador);
-            actionIntent1.putExtra("tokenPostulante", tokenPostulante);
-            actionIntent1.putExtra("ACTION", "Botón 1");
+// Construir la acción del botón de "Aceptar" utilizando el PendingIntent
+        NotificationCompat.Action actionAccept = new NotificationCompat.Action.Builder(
+                R.drawable.btn_acpt, // Icono del botón
+                "Aceptar", // Texto del botón
+                acceptPendingIntent // PendingIntent que se activará cuando se presione el botón
+        ).build();
 
-            PendingIntent pendingIntent1 = PendingIntent.getBroadcast(this, 0, actionIntent1, PendingIntent.FLAG_MUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Action action1 = new NotificationCompat.Action.Builder(
-                    R.drawable.btn_acpt, "Aceptar", pendingIntent1).build();
+// Construir la notificación
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(titulo)
+                .setContentText(detalle)
+                .setAutoCancel(true)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.doomer))
+                .addAction(actionAccept);
 
-            // Crear una acción para el segundo botón
-            Intent actionIntent2 = new Intent(this, NotificationActionReceiver.class);
-            actionIntent2.putExtra("nombreEvento", nombreEvento);
-            actionIntent2.putExtra("tokenPostulante", tokenPostulante);
-            actionIntent2.putExtra("ACTION", "Botón 2");
+// Obtener el servicio de notificación
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
 
-            PendingIntent pendingIntent2 = PendingIntent.getBroadcast(this, 0, actionIntent2, PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Action action2 = new NotificationCompat.Action.Builder(
-                    R.drawable.btn_denied, "Denegar", pendingIntent2).build();
-
-            // Construir la notificación, con imagen y botones
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(titulo)
-                    .setContentText(detalle)
-                    .setAutoCancel(true)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.doomer))
-                    .addAction(action1)
-                    .addAction(action2);
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
-                    notificationManager.createNotificationChannel(channel);
-                }
-                // Generar un ID único para la notificación
-                Random random = new Random();
-                int uniqueNotificationId = random.nextInt(10000);
-
-                // Notificar utilizando el ID único
-                notificationManager.notify(uniqueNotificationId, builder.build());
-            }
-            // Aca puedo llamar metodos de forma directa ---->
-
-        } else if ("postulante_evento".equals(tipoNotificacion)) {
-
-            // Notificación para el postulante de evento
-            Intent intent = new Intent(this, ListaEventoPostulados.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(titulo)
-                    .setContentText(detalle)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent);  // Agrega el PendingIntent
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
-                    notificationManager.createNotificationChannel(channel);
-                }
-                // Generar un ID único para la notificación
-                Random random = new Random();
-                int uniqueNotificationId = random.nextInt(10000);
-
-                // Notificar utilizando el ID único
-                notificationManager.notify(uniqueNotificationId, builder.build());
-            }
-        } else if ("cupo-maximo".equals(tipoNotificacion)) {
-            // Notificación para el creador de evento si se alcanza cupo maximo
-            Intent intent = new Intent(this, ListaEventosPublicosVigentes.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(titulo)
-                    .setContentText(detalle)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent);  // Agrega el PendingIntent
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
-                    notificationManager.createNotificationChannel(channel);
-                }
-                // Generar un ID único para la notificación
-                Random random = new Random();
-                int uniqueNotificationId = random.nextInt(10000);
-
-                // Notificar utilizando el ID único
-                notificationManager.notify(uniqueNotificationId, builder.build());
+        if (notificationManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Crear el canal de notificación para Android Oreo y versiones posteriores
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
+                notificationManager.createNotificationChannel(channel);
             }
 
+            // Generar un ID único para la notificación
+            int uniqueNotificationId = (int) System.currentTimeMillis();
 
-
-
-            
-        } else if ("cancela_postulante_evento".equals(tipoNotificacion)) {
-
-
-            // Notificación para el postulante de evento
-            Intent intent = new Intent(this, ListaEventosPublicosVigentes.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(titulo)
-                    .setContentText(detalle)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent);  // Agrega el PendingIntent
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Nuevo", NotificationManager.IMPORTANCE_HIGH);
-                    notificationManager.createNotificationChannel(channel);
-                }
-                // Generar un ID único para la notificación
-                Random random = new Random();
-                int uniqueNotificationId = random.nextInt(10000);
-
-                // Notificar utilizando el ID único
-                notificationManager.notify(uniqueNotificationId, builder.build());
-            }
+            // Mostrar la notificación
+            notificationManager.notify(uniqueNotificationId, builder.build());
         }
+
+
     }
+
 
 }
 

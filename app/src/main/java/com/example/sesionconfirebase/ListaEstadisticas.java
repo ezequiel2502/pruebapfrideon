@@ -143,7 +143,7 @@ public class ListaEstadisticas extends AppCompatActivity {
                                     String comienzo = datosParticipacion.getComienzo();
                                     String finalizacion = datosParticipacion.getFinalizacion();
                                     String distanciaCubierta = datosParticipacion.getDistanciaCubierta();
-
+                                    String Abandono =datosParticipacion.getAbandono();
                                     // Ahora entro en el nodo de completados para obtener el resto de datos para armar la estadística
                                     DatabaseReference eventosCompletadosRef = firebaseDatabase.getReference().child("Eventos").child("Completados").child(eventoId);
 
@@ -169,27 +169,66 @@ public class ListaEstadisticas extends AppCompatActivity {
 
                                                             // Obtener el nombre de la ruta
                                                             String nombreRuta = ruta.getRouteName();
+                                                            String estadisticaId = eventoId + "_" + userId; // Crear un ID único para cada estadística
 
-                                                            // Aquí se usa comienzo, finalizacion, distanciaCubierta y evento para crear ModelEstadistica
-                                                            ModelEstadistica estadistica = new ModelEstadistica(
-                                                                    evento.getUserId(),//del organizador
-                                                                    evento.getUserName(),//del organizador
-                                                                    eventoId,
-                                                                    evento.getNombreEvento(),
-                                                                    nombreRuta,
-                                                                    userId,//del usuario que participó
-                                                                    userNameCustom,
-                                                                    evento.getImagenEvento(),
-                                                                    distanciaCubierta,
-                                                                    calcularTiempo2(comienzo, finalizacion),
-                                                                    calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion))
+                                                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                                            DatabaseReference estadisticasRef = database.getReference("Estadisticas");
+                                                            final ModelEstadistica[] estadistica = new ModelEstadistica[1];
+                                                            estadisticasRef.child(estadisticaId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                    if (dataSnapshot.exists()) {
+                                                                        // La estadística ya existe, puedes recuperarla si es necesario
+                                                                        estadistica[0] = dataSnapshot.getValue(ModelEstadistica.class);
+                                                                        // Aquí puedes hacer lo que necesites con la estadística existente
+                                                                    } else {
+                                                                        // La estadística no existe, puedes crear una nueva
+                                                                        // Aquí se usa comienzo, finalizacion, distanciaCubierta y evento para crear ModelEstadistica
+                                                                        estadistica[0] = new ModelEstadistica(
+                                                                                evento.getUserId(),//del organizador
+                                                                                evento.getUserName(),//del organizador
+                                                                                eventoId,
+                                                                                evento.getNombreEvento(),
+                                                                                nombreRuta,
+                                                                                userId,//del usuario que participó
+                                                                                userNameCustom,
+                                                                                evento.getImagenEvento(),
+                                                                                distanciaCubierta,
+                                                                                calcularTiempo2(comienzo, finalizacion),
+                                                                                calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion)),
+                                                                                Abandono
+                                                                        );
+                                                                        estadisticasRef.child(estadisticaId).setValue(estadistica[0]);
+                                                                    }
+                                                                }
 
-                                                            );
+                                                                @Override
+                                                                public void onCancelled(DatabaseError databaseError) {
+                                                                    // Manejar errores de base de datos si es necesario
+                                                                }
+                                                            });
+                                                           if(estadistica[0] == null)
+                                                           {
+                                                             estadistica[0] = new ModelEstadistica(
+                                                             evento.getUserId(),//del organizador
+                                                             evento.getUserName(),//del organizador
+                                                             eventoId,
+                                                             evento.getNombreEvento(),
+                                                             nombreRuta,
+                                                             userId,//del usuario que participó
+                                                             userNameCustom,
+                                                             evento.getImagenEvento(),
+                                                             distanciaCubierta,
+                                                             calcularTiempo2(comienzo, finalizacion),
+                                                             calcularVelocidad2(distanciaCubierta, calcularTiempo2(comienzo, finalizacion)),
+                                                             Abandono
+                                                             );
+                                                             estadisticasRef.child(estadisticaId).setValue(estadistica[0]);
+                                                             }
 
                                                             // Agrega estadistica a tu lista
-                                                            recycleList.add(estadistica);
+                                                            recycleList.add(estadistica[0]);
                                                             recyclerAdapter.notifyDataSetChanged();
-
                                                             // Para que se actualicen los promedios y totales de la lista
                                                             calcularTotalesYPromedios();
                                                         }
