@@ -339,7 +339,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             }
         });
         //Fin*******************************************************************
-
+//comentario para saber si se sube o no
 
     }//fin onBindViewHolder
 
