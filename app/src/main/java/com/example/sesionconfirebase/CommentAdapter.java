@@ -285,15 +285,61 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         });
 
 
-        //Los botones para eliminar comenatario o respuesta solo pueden ser eliminados por su publicante
-        if (!Objects.equals(list.get(holder.getAbsoluteAdapterPosition()).getPublisherId(), userId))
-        {
-            holder.btn_delete.setVisibility(View.GONE);
-            holder.btn_deleteRespuesta.setVisibility(View.GONE);
-        }
+        //Habilitar/Desabilitar botones para eliminar comenatario o respuesta
+        //Inicio*******************************************************************
+        // Obtener el ID del evento relacionado al comentario
+        String eventId = list.get(holder.getAbsoluteAdapterPosition()).getEventoId();
 
+        // Obtener una instancia de la base de datos
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
+        // Obtener una referencia al evento específico en la base de datos
+        DatabaseReference eventoRef = firebaseDatabase.getReference().child("Eventos").child("Eventos Publicos").child(eventId);
 
+        eventoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ModelEvento modelEvento = dataSnapshot.getValue(ModelEvento.class);
+                    if (modelEvento != null) {
+
+                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                        FirebaseUser currentUser = mAuth.getCurrentUser();
+                        String currentUserId = currentUser.getUid();
+
+                        // Compara los IDs de usuario para mostrar u ocultar botones (creador de evento contra el usuario actual)
+
+                        //Si se trata del creador de evento habilita los botones de eliminar tanto para el comentario como para la respuesta
+                        if (modelEvento.getUserId().equals(userId)) {
+                            holder.btn_delete.setVisibility(View.VISIBLE);
+                            holder.btn_deleteRespuesta.setVisibility(View.VISIBLE);
+                        }
+                        //Si es el publicante del comentario solo puede eliminar su comentario
+                        else if (Objects.equals(list.get(holder.getAbsoluteAdapterPosition()).getPublisherId(), currentUserId))
+                        {
+                            holder.btn_delete.setVisibility(View.VISIBLE);
+                            holder.btn_deleteRespuesta.setEnabled(false);
+                            holder.btn_deleteRespuesta.setVisibility(View.GONE);
+                        }
+//                        Si es cualquier otro no puede hacer nada
+                        else {
+                            holder.btn_delete.setEnabled(false);
+                            holder.btn_delete.setVisibility(View.GONE);
+                            holder.btn_deleteRespuesta.setEnabled(false);
+                            holder.btn_deleteRespuesta.setVisibility(View.GONE);
+
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar error de cancelación
+            }
+        });
+        //Fin*******************************************************************
+//comentario para saber si se sube o no
 
     }//fin onBindViewHolder
 
