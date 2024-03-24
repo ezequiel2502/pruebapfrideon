@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,13 +75,13 @@ public class MainActivity extends AppCompatActivity {
 
     //**************Controles login2**************
 
-    CardView cardview_registrarseUsuarioYPass;
-    CardView cardview_registrarseGoogle;
+    TextView textViewRegistrarseUsuarioYPass, btn_olvidaste_contrasena;
+    ImageButton imgBtnRegistrarseGoogle;
     EditText editTextEmail;
     EditText editTextPass;
     TextView textViewRespuesta;
     private static boolean first_Entrance = false;
-    Button btn_olvidaste_contrasena,btn_iniciar_sesion;
+    Button btn_iniciar_sesion;
 
 
 
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         //FirebaseApp.initializeApp();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login2);
+        setContentView(R.layout.login);
 //        if (first_Entrance == false) {
 //            FirebaseDatabase.getInstance().setPersistenceEnabled(false);
 //            first_Entrance = true;
@@ -106,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         //************controles login2
-        cardview_registrarseUsuarioYPass=findViewById(R.id.cardview_registrarseUsuarioYPass);
-        cardview_registrarseGoogle=findViewById(R.id.cardview_registrarseGoogle);
+        textViewRegistrarseUsuarioYPass=findViewById(R.id.cardview_registrarseUsuarioYPass);
+        imgBtnRegistrarseGoogle=findViewById(R.id.imgbtn_registrarseGoogle);
         btn_olvidaste_contrasena=findViewById(R.id.btn_olvidaste_contrasena);
         btn_iniciar_sesion=findViewById(R.id.btn_iniciar_sesion);
         editTextEmail=findViewById(R.id.editTextEmail);
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
 
           //Para registrarse por primera vez, te manda al RegistroActivity
-        cardview_registrarseUsuarioYPass.setOnClickListener(new View.OnClickListener() {
+        textViewRegistrarseUsuarioYPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Le damos fuuncionalidad al boton de GOOGLE, que llama al método  que esta abajo signIn..
-        cardview_registrarseGoogle.setOnClickListener(new View.OnClickListener() {
+        imgBtnRegistrarseGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 esLoginConEmailYPass=false;
@@ -228,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
                             textViewRespuesta.setText("CORRECTO");
                             textViewRespuesta.setTextColor(Color.GREEN);
+                            textViewRespuesta.setVisibility(View.VISIBLE);
 
                             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -302,6 +304,8 @@ public class MainActivity extends AppCompatActivity {
                         mProgressBar.dismiss();
                         textViewRespuesta.setText("No se pudo iniciar Sesión. Verifica correo/contraseña");
                         textViewRespuesta.setTextColor(Color.RED);
+                        textViewRespuesta.setVisibility(View.VISIBLE);
+
                         Toast.makeText(MainActivity.this, "No se pudo iniciar Sesión. Verifica correo/contraseña", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -382,6 +386,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 textViewRespuesta.setText(e.getMessage());
+                textViewRespuesta.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -463,6 +468,7 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         } else {
                             textViewRespuesta.setText(task.getException().toString());
+                            textViewRespuesta.setVisibility(View.VISIBLE);
                         }
                     }
                 });

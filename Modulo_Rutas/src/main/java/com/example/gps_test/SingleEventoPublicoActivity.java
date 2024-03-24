@@ -128,6 +128,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity {
 
         // Establece los datos en los TextViews
         tv_SingleEvento.setText(singleEvento);
+        tv_SingleRuta.setText(singleRuta);
         tv_SingleDescripcion.setText(singleDescripcion);
         tv_SingleFechaEncuentro.setText(singleFechaEncuentro);
         tv_SingleHoraEncuentro.setText(singleHoraEncuentro);

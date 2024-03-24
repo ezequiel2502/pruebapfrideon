@@ -1,8 +1,16 @@
 package com.example.sesionconfirebase;
 
+import static com.example.sesionconfirebase.ListaEventoCompletados.firebaseDatabase;
+
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.nex3z.notificationbadge.NotificationBadge;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
@@ -105,6 +113,15 @@ public static String calcularTiempo2(String fechaInicio, String fechaFinalizacio
 
         // Convertimos la velocidad a String
         return String.format("%.2f", velocidadMs);
+    }
+
+    public static void GetNotifications(FirebaseUser currentUser, NotificationBadge notificactionBadge){
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        Automatico aut = new Automatico(currentUser);
+        aut.setNotificactionBadge(notificactionBadge);
+        // Programa la ejecución del método contarNotificaciones cada 30 segundos
+        scheduler.scheduleAtFixedRate(aut::contarNotificaciones, 0, 10, TimeUnit.SECONDS);
     }
 
 

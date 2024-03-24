@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sesion con Firebase</string>
+    <string name="app_name">Ride On</string>
     <string name="title_activity_login_email_pass">LoginEmailPass</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -137,4 +137,7 @@
     <string name="title_activity_listado_notifiaciones">ListadoNotifiacionesActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
+    <string name="registrar_cuenta_text"><u>¿No tenes cuenta?</u></string>
+    <string name="iniciar_sesion_text"><u>¿Ya tiene una Cuenta?</u></string>
+    <string name="recuperar_contraseña_text"><u>Olvidaste contraseña</u></string>
 </resources>

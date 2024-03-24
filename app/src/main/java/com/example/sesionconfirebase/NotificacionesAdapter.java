@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -120,7 +123,8 @@ public class NotificacionesAdapter extends RecyclerView.Adapter<NotificacionesAd
 
         //Son los controles del itemEvento
         TextView tv_TipoNotificacion,tv_NombreUsuario,tv_MensajeNotificacion;
-        Button btnAceptar, btnCancelar,btnBorrar;
+        Button btnAceptar, btnCancelar;
+        ImageView btnBorrar;
         public ViewHolderNotificacion(@NonNull View itemView) {
             super(itemView);
             tv_TipoNotificacion=itemView.findViewById(R.id.tv_TipoNotificacion);

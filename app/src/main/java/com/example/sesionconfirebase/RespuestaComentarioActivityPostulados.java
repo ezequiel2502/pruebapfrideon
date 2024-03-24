@@ -31,9 +31,8 @@ import java.util.HashMap;
 public class RespuestaComentarioActivityPostulados extends AppCompatActivity {
 
     EditText txt_respuesta;
-    Button btn_enviar_respuesta;
 
-    ImageView image_profile;
+    ImageView image_profile, btn_enviar_respuesta;
 
     TextView tv_userName,tv_comment;
     String commentId;

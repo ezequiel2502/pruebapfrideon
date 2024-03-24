@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -71,7 +72,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
     private static String TokenFCMRecuperado;
 
     EditText txt_write_comment;
-    TextView tv_add_comment;
+    ImageButton tv_add_comment;
 
    RecyclerView recyclerViewComments;
 
@@ -175,6 +176,7 @@ public class SingleEventoPublicoActivity extends AppCompatActivity implements Co
 
         // Establece los datos en los TextViews
         tv_SingleEvento.setText(singleEvento);
+        tv_SingleRuta.setText(singleRuta);
         tv_SingleDescripcion.setText(singleDescripcion);
         tv_SingleFechaEncuentro.setText(singleFechaEncuentro);
         tv_SingleHoraEncuentro.setText(singleHoraEncuentro);

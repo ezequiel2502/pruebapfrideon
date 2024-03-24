@@ -1,7 +1,11 @@
 package com.example.sesionconfirebase;
 
+import static com.example.sesionconfirebase.Utils.GetNotifications;
+
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -10,26 +14,30 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.util.Calendar;
 
 public class DetallesActivity extends AppCompatActivity {
 
     private int dia,mes,ano,hora,minutos;
-    Button btn_FechaNacimiento;
+    Button btn_FechaNacimiento, btn_guardarDetalles;
     EditText editTextName,editTextLastName,txt_FechaNacimiento,editTextCity,editTextCountry,editTextFacebook,editTextTwitter,editTextInstagram;
 
-    CardView cardView_guardarDetalles;
-
     FirebaseAuth mAuth;
+    FirebaseUser currentUser;
+    NotificationBadge notificactionBadge;
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,15 +55,23 @@ public class DetallesActivity extends AppCompatActivity {
         editTextTwitter=findViewById(R.id.editTextTwitter);
         editTextInstagram=findViewById(R.id.editTextInstagram);
         editTextInstagram=findViewById(R.id.editTextInstagram);
-        cardView_guardarDetalles=findViewById(R.id.cardView_guardarDetalles);
+        btn_guardarDetalles=findViewById(R.id.btn_guardarDetalles);
 
+        notificactionBadge=findViewById(R.id.badge);
+        toolbar=findViewById(R.id.main_tool_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
 
         //si habia datos ya cargados en el perfil los muestra en los campos
         // El objeto de firebase
         mAuth = FirebaseAuth.getInstance();
 
-        // Obtener el ID de usuario actualmente autenticado
-        String userId = mAuth.getCurrentUser().getUid();
+        // Obtener el ID del usuario actualmente logueado
+        currentUser= FirebaseAuth.getInstance().getCurrentUser();
+        String userId = currentUser.getUid();
+
+        GetNotifications(currentUser, notificactionBadge);
 
         // Obtener una referencia a la base de datos
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -108,7 +124,7 @@ public class DetallesActivity extends AppCompatActivity {
         });
 
 
-        cardView_guardarDetalles.setOnClickListener(new View.OnClickListener() {
+        btn_guardarDetalles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -167,5 +183,21 @@ public class DetallesActivity extends AppCompatActivity {
 
 
 }//fin onCreate()
+
+    public void redirectToOtherActivity(View view) {
+        // Crea un Intent para abrir la otra actividad
+        Intent intent = new Intent(this, ListadoNotificacionesActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 }//fin App

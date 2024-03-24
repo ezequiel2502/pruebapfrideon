@@ -2,13 +2,16 @@ package com.example.sesionconfirebase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,6 +29,8 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
     RecyclerView recyclerViewNotificaciones;
     ArrayList<ModelNotificacion> recycleList;
     FirebaseDatabase firebaseDatabase;
+
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,20 +41,25 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 // Obtener referencias a los botones
-        Button btnVolver;
-        btnVolver = findViewById(R.id.btnVolver);
-        ImageButton btnActualizar;
+        //Button btnVolver;
+        //btnVolver = findViewById(R.id.btnVolver);
+        ImageView btnActualizar;
         btnActualizar = findViewById(R.id.btnActualizar);
 
+        toolbar=findViewById(R.id.main_tool_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
+
         // Configurar el OnClickListener para el botón "Volver"
-        btnVolver.setOnClickListener(new View.OnClickListener() {
+/*        btnVolver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ListadoNotificacionesActivity.this, HomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
-        });
+        });*/
 
         // Configurar el OnClickListener para el botón "Actualizar"
         btnActualizar.setOnClickListener(new View.OnClickListener() {
@@ -110,5 +120,15 @@ public class ListadoNotificacionesActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

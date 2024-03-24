@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -17,13 +18,24 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
+import android.text.style.RelativeSizeSpan;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.gps_test.BuscarEventosMapaActivity;
@@ -78,12 +91,12 @@ public class HomeActivity extends AppCompatActivity {
     Button btnIrABuscarEventos;
 
     //controles nuevos
-    ImageView profile_image;
+    ImageView profile_image, edit_profile;
     ImageView change_profile_image;
     TextView tv_user_name,tv_user_email,tv_UserId;
     RatingBar rating_bar;
     LinearLayout notification_bell,analytics,settings,reportes;
-    ImageView add_evento;
+    ImageView add_evento, img_viewCompletados;
     TextView tv_privados,tv_publicos,tv_postulados,tv_completados,tv_following;
     CardView cardView_detalles,cardView_cerrarSesion,cardView_EliminarCuenta;
     FirebaseAuth mAuth;
@@ -100,15 +113,13 @@ public class HomeActivity extends AppCompatActivity {
     private String password;
     private String username;
 
+    private Toolbar toolbar;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_2);
-
-
-
-
+        setContentView(R.layout.activity_home_3);
 
         //Creamos el objeto de Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -123,11 +134,11 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.btn_perfil) {
-                Intent intent = new Intent(getApplicationContext(), VerEventosMapaActivity.class);
+                /*Intent intent = new Intent(getApplicationContext(), this.class);
                 intent.putExtra("Close_On_Enter", "False");
                 intent.putExtra("User_ID", currentUser.getUid());
                 startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);*/
                 //finish();
                 return true;
             } else if (itemId == R.id.btn_inicio) {
@@ -165,12 +176,18 @@ public class HomeActivity extends AppCompatActivity {
         tv_user_email = findViewById(R.id.tv_user_email);
         tv_completados = findViewById(R.id.tv_completados);
         rating_bar=findViewById(R.id.rating_bar);
-        cardView_detalles = findViewById(R.id.cardView_detalles);
-        cardView_cerrarSesion = findViewById(R.id.cardView_cerrarSesion);
-        cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);
+        edit_profile = findViewById(R.id.img_edit_profile);
+        /*cardView_detalles = findViewById(R.id.cardView_detalles);*/
+/*        cardView_cerrarSesion = findViewById(R.id.cardView_cerrarSesion);
+        cardView_EliminarCuenta = findViewById(R.id.cardView_EliminarCuenta);*/
         analytics=findViewById(R.id.analytics);
         reportes=findViewById(R.id.reportes);
         notificactionBadge=findViewById(R.id.badge);
+
+        toolbar=findViewById(R.id.hometoolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
+        img_viewCompletados = findViewById(R.id.img_viewCompletados);
 
 
 //********************************************************************************************************************************
@@ -203,9 +220,9 @@ public class HomeActivity extends AppCompatActivity {
 
                         List<String> completados = usuario.getCompletados();
                         if (completados != null) {
-                            tv_completados.setText("Completados: " + completados.size());
+                            tv_completados.setText(completados.size());
                         } else {
-                            tv_completados.setText("Completados: 0");
+                            tv_completados.setText("0");
                         }
 
                         String imagenPerfil = usuario.getImagenPerfil();
@@ -235,7 +252,7 @@ public class HomeActivity extends AppCompatActivity {
 //***********************************************************************************************************************
 
 
-        tv_completados.setOnClickListener(new View.OnClickListener() {
+        img_viewCompletados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(HomeActivity.this,ListaEventoCompletados.class);
@@ -267,7 +284,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
         //nuevo metodo donde se pregunta antes de cerrar sesion
-        cardView_cerrarSesion.setOnClickListener(new View.OnClickListener() {
+/*        cardView_cerrarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Mostrar un cuadro de diálogo de confirmación
@@ -295,13 +312,13 @@ public class HomeActivity extends AppCompatActivity {
 
                 builder.show();
             }
-        });
+        });*/
 
 
 
         //Agrega una pregunta antes de eliminar y no solo quita la cuenta
         // del servicio de autenticacion sino que elimina el perfil de la base de datos
-        cardView_EliminarCuenta.setOnClickListener(new View.OnClickListener() {
+/*        cardView_EliminarCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
@@ -401,13 +418,13 @@ public class HomeActivity extends AppCompatActivity {
 
                 builder.show();
             }
-        });
+        });*/
 
 
 
 
         //LLeva a la actividad que guarda detalles del usuario
-        cardView_detalles.setOnClickListener(new View.OnClickListener() {
+        edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomeActivity.this, DetallesActivity.class);
@@ -447,16 +464,57 @@ public class HomeActivity extends AppCompatActivity {
         LinearLayout viewlayout = findViewById(R.id.overlay);
         viewlayout.setOnTouchListener(onSwipeTouchListener);
 
-        if(getIntent().getStringExtra("openNotifications") != null && getIntent().getStringExtra("openNotifications").equals("True"))
-        {
-            Intent intent = new Intent(HomeActivity.this, ListadoNotificacionesActivity.class);
-            startActivity(intent);
-        }
-
 
     }//fin onCreate()
+
+    @SuppressLint({"RestrictedApi", "ResourceAsColor"})
     @Override
+	    public boolean onCreateOptionsMenu(Menu menu) {
+        if (menu instanceof MenuBuilder) {
+            ((MenuBuilder) menu).setOptionalIconsVisible(true);
+        }
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.menu_home_app_bar, menu);
+        for (int i=0;i<menu.size();i++){
+            MenuItem menuItem=menu.getItem(i);
+            SpannableString spannable = new SpannableString(
+              menu.getItem(i).getTitle().toString()
+            );
+            spannable.setSpan(new ForegroundColorSpan(R.color.my_primary),0, spannable.length(),0);
+            spannable.setSpan(new AbsoluteSizeSpan(20, true), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            menuItem.setTitle(spannable);
+
+            Drawable drawable = menu.getItem(i).getIcon();
+            if(drawable != null) {
+                drawable.mutate();
+                drawable.setColorFilter(getResources().getColor(R.color.my_primary), PorterDuff.Mode.SRC_ATOP);
+            }
+        }
+        return true;
+        /*return super.onCreateOptionsMenu(menu);*/
+    }
+
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.btn_cerrarsesion:
+                signOut();
+                break;
+            case R.id.btn_deleteCuenta:
+                deleteCuenta();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+   @Override
     public void onResume() {
+        super.onResume();
         super.onResume();
 
         if (ContextCompat.checkSelfPermission(HomeActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && waitingUser != true){
@@ -491,9 +549,9 @@ public class HomeActivity extends AppCompatActivity {
                                 List<String> completados = usuario.getCompletados();
 
                                 if (completados!=null && completados.size() != 0) {
-                                    tv_completados.setText("Completados: " + completados.size());
+                                    tv_completados.setText(completados.size());
                                 } else {
-                                    tv_completados.setText("Completados: 0");
+                                    tv_completados.setText("0");
                                 }
                             }
                         }
@@ -750,6 +808,105 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(IntentMainActivity); HomeActivity.this.finish();
             }
         });
+    }
+
+    private void deleteCuenta(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+        builder.setTitle("Eliminar Cuenta");
+        builder.setMessage("¿Estás seguro de que quieres eliminar tu cuenta?");
+
+        builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    String userId = currentUser.getUid();
+                    DatabaseReference perfilRef = FirebaseDatabase.getInstance().getReference().child("Perfil").child(userId);
+
+                    perfilRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                ModelUsuario usuario = dataSnapshot.getValue(ModelUsuario.class);
+
+                                // Elimina el perfil de la base de datos
+                                dataSnapshot.getRef().removeValue();
+
+                                // Desconecta al usuario
+                                mAuth.signOut();
+
+                                if (usuario != null) {
+                                    if (usuario.getEsLoginConEmailYPass()) {
+                                        // Código para eliminar cuenta con usuario y contraseña
+                                        AuthCredential credential = EmailAuthProvider.getCredential(usuario.getEmail(), usuario.getPass());
+                                        currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    currentUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                // Ahora, una vez que se ha eliminado el usuario correctamente,
+                                                                // puedes ir a la pantalla de inicio
+                                                                Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                startActivity(intent);
+                                                            } else {
+                                                                Toast.makeText(HomeActivity.this, "No se pudo eliminar", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        // Código para eliminar cuenta con inicio de sesión de Google
+                                        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+                                        if (signInAccount != null) {
+                                            AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
+                                            currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        currentUser.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Toast.makeText(getApplicationContext(), "Usuario Eliminado!!!", Toast.LENGTH_SHORT).show();
+                                                                signOut();
+                                                            }
+                                                        });
+                                                    } else {
+                                                        Toast.makeText(getApplicationContext(), "Error al eliminar el usuario!: " + task.getException().toString(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), "Error: reAuthenticateUser: user account is null", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Manejar el error, si es necesario
+                        }
+                    });
+                }
+            }
+        });
+
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // No hacer nada, simplemente cerrar el diálogo
+            }
+        });
+
+        builder.show();
     }
 }
 

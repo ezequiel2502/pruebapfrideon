@@ -12,12 +12,21 @@
     android:background="@drawable/round_dialog"
     >
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/outline_add_location_alt_black_48" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/my_primary"
+            android:gravity="center"
+            android:text="Nueva Ruta"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+
 
     <TextView
         android:id="@+id/textview"
@@ -26,12 +35,26 @@
         android:layout_below="@id/imageView"
         android:layout_marginTop="10dp"
         android:padding="10dp"
-        android:text="Por favor ingrese un nombre para la nueva ruta"
-        android:textAlignment="center"
-        android:textSize="25sp"
-        android:textStyle="bold" />
+        android:text="*Por favor ingrese un nombre para la nueva ruta"
+        android:textAlignment="textStart"
+        android:textSize="16dp"
+        />
 
-    <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:hint="Nombre de ruta">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+<!--    <EditText
         android:id="@+id/editTextText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,9 +62,9 @@
         android:ems="10"
         android:inputType="text"
         android:layout_gravity="center"
-        android:text="Nombre de ruta" />
+        android:text="Nombre de ruta" />-->
 
-    <RelativeLayout
+<!--    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextText"
@@ -72,8 +95,40 @@
             android:textSize="30sp"
             android:textStyle="bold" />
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp">
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SALIR"
+            android:textSize="16sp"
+            android:layout_weight="2"
+            app:strokeColor="@color/my_primary"
+            app:cornerRadius="2dp"
+            style="@style/Widget.Material3.Button.IconButton.Outlined"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/okay_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:text="GUARDAR"
+            app:cornerRadius="2dp"
+            style="@style/Widget.Material3.Button"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>

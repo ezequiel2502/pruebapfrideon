@@ -2,40 +2,66 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/fui_transparent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
 
     <androidx.cardview.widget.CardView
         android:layout_width="395dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="10dp"
         app:cardCornerRadius="8dp"
-        app:cardElevation="4dp">
+        app:cardElevation="4dp"
+        android:background="@drawable/cardborder">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:background="@drawable/cardborder">
 
-            <!-- Título "Notificación" -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Notificación:"
-                android:textColor="@color/lavender"
-                android:textSize="14dp" />
-            <TextView
-                android:id="@+id/tv_TipoNotificacion"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TipoNotificacion"
-                android:textColor="@android:color/black"
-                android:textSize="12dp" />
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                <!-- Título "Notificación" -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notificación:"
+                    android:textColor="@color/my_primary"
+                    android:textSize="18dp" />
+                <TextView
+                    android:id="@+id/tv_TipoNotificacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TipoNotificacion"
+                    android:textColor="@android:color/black"
+                    android:textSize="14dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/tv_BotonBorrar"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/delete"
+                    app:tint="@color/my_primary"/>
+            </RelativeLayout>
+
+
+
 
             <!-- Título "Mensaje" -->
             <TextView
@@ -43,8 +69,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Mensaje:"
-                android:textColor="@color/lavender"
-                android:textSize="14dp" />
+                android:textColor="@color/my_primary"
+                android:textSize="16dp" />
 
             <!-- Mensaje -->
             <TextView
@@ -53,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:text="Tu mensaje aquí"
                 android:textColor="@android:color/black"
-                android:textSize="12dp" />
+                android:textSize="14dp" />
 
             <!-- Botones "Aceptar" y "Cancelar" -->
             <LinearLayout
@@ -62,22 +88,46 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="16dp">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/tv_BotonAceptar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Aceptar" />
+                    android:backgroundTint="@color/my_primary"
+                    android:text="Aceptar"
+                    app:iconGravity="textStart"
+                    app:elevation="10dp"
+                    android:layout_marginHorizontal="25dp"/>
 
-                <Button
+<!--                <Button
+                    android:id="@+id/tv_BotonAceptar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/my_primary"
+                    app:elevation="10dp"
+                    android:layout_marginHorizontal="25dp"
+                    android:text="Aceptar" />-->
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/tv_BotonCancelar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cancelar" />
-                <Button
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="@color/my_primary"
+                    android:textColorHint="@color/my_primary"
+                    android:text="Cancelar"
+                    />
+
+<!--                <Button
+                    android:id="@+id/tv_BotonCancelar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancelar"
+                    />-->
+<!--                <Button
                     android:id="@+id/tv_BotonBorrar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Borrar" />
+                    android:text="Borrar" />-->
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

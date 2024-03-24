@@ -1,9 +1,12 @@
 package com.example.sesionconfirebase;
 
+import static com.example.sesionconfirebase.Utils.GetNotifications;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
@@ -11,13 +14,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 public class CalificarActivity extends AppCompatActivity {
 
@@ -31,6 +37,9 @@ ModelEvento evento;
 
 ModelUsuario perfilOrganizador;
 
+    NotificationBadge notificactionBadge;
+    private Toolbar toolbar;
+    FirebaseUser currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +54,12 @@ ModelUsuario perfilOrganizador;
 
         //Creo la instancia de la base de datos
         firebaseDatabase = FirebaseDatabase.getInstance();
+
+        // Obtener el ID del usuario actualmente logueado
+        currentUser= FirebaseAuth.getInstance().getCurrentUser();
+        String userId = currentUser.getUid();
+
+        GetNotifications(currentUser, notificactionBadge);
 
         // Recibo los intents desde la singleEventoCompletadoActivity
         float calificacion_gral = getIntent().getFloatExtra("calificacion_gral", 0.0f);
@@ -196,6 +211,21 @@ ModelUsuario perfilOrganizador;
 
     }//fin onCreate()
 
+    public void redirectToOtherActivity(View view) {
+        // Crea un Intent para abrir la otra actividad
+        Intent intent = new Intent(this, ListadoNotificacionesActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
 }//fin App

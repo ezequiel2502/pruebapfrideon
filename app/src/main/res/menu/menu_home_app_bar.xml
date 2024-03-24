@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="Cerrar Sesion"
+        android:icon="@drawable/icon_door_closed"
+        app:tint="@color/my_primary"
+        android:id="@+id/btn_cerrarsesion"
+        app:showAsAction="never" />
+
+    <item
+        android:title="Eliminar  Cuenta"
+        android:icon="@drawable/delete"
+        app:tint="@color/my_primary"
+        android:id="@+id/btn_deleteCuenta"
+        app:showAsAction="never" />
+
+</menu>

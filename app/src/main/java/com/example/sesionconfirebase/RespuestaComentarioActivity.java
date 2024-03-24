@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +33,7 @@ import java.util.HashMap;
 public class RespuestaComentarioActivity extends AppCompatActivity {
 
     EditText txt_respuesta;
-    Button btn_enviar_respuesta;
+    ImageButton btn_enviar_respuesta;
 
     ImageView image_profile;
 
@@ -58,7 +59,7 @@ public class RespuestaComentarioActivity extends AppCompatActivity {
 
         //********************************- Inicio carga del comentario a Responder -****************************************
         txt_respuesta=findViewById(R.id.txt_respuesta);
-        btn_enviar_respuesta=findViewById(R.id.btn_enviar_respuesta);
+        btn_enviar_respuesta=(ImageButton) findViewById(R.id.btn_enviar_respuesta);
         image_profile=findViewById(R.id.image_profile);
         tv_userName=findViewById(R.id.tv_userName);
         tv_comment=findViewById(R.id.tv_comment);

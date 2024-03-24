@@ -67,6 +67,7 @@ public class EventoPublicoAdapter extends RecyclerView.Adapter<EventoPublicoAdap
                 .into(holder.imvEvento); // Coloca la imagen en el Imag
 
         holder.tv_tituloEvento.setText(evento.getNombreEvento());
+        holder.tv_Ruta.setText(evento.getRuta());
         holder.tv_Descripcion.setText(evento.getDescripcion());
         holder.tv_FechaEncuentro.setText(evento.getFechaEncuentro());
         holder.tv_HoraEncuentro.setText(evento.getHoraEncuentro());

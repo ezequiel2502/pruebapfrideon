@@ -4,6 +4,252 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/cardborder">
+
+            <!-- Parte Izquierda (ImageView y Título "Ruta") -->
+
+
+            <!-- Parte Derecha (Otros Campos) -->
+
+            <LinearLayout
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingVertical="10dp">
+
+                <!-- ImageView -->
+                <ImageView
+                    android:id="@+id/imageViewRoute"
+                    android:layout_width="125dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/baseline_upload_file_24" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1.5dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+
+                <!-- TextView adicional "Ruta" en negro -->
+
+                <!--<ImageButton
+                    android:id="@+id/previewRoute"
+                    android:layout_width="24dp"
+                    android:layout_height="27dp"
+                    android:background="#00FFFFFF"
+                    app:srcCompat="@drawable/baseline_eye_24"
+                    android:layout_gravity="right" />-->
+
+                <!--                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:text="Ruta:"
+                                    android:textColor="@color/lavender"
+                                    android:textSize="14dp" />-->
+
+                <!-- Título "Ruta" -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Ruta"
+                    android:id="@+id/textViewName"
+                    android:textColor="@color/white"
+                    android:background="@color/my_primary"
+                    android:textSize="20sp" />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp">
+
+                    <!-- TextView adicional "Descripcion" en negro -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Distancia: "
+                        android:textColor="@android:color/black"
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:layout_gravity="bottom" />
+
+                    <!-- Título "Descripcion" subrayado -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textViewDistance"
+                        android:text="Distancia"
+                        android:textSize="14sp"
+                        android:layout_gravity="bottom"
+                        />
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp">
+
+                    <!-- TextView adicional "Fecha Encuentro" en negro -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nro Curvas:  "
+                        android:textColor="@android:color/black"
+                        android:textSize="13dp"
+                        android:layout_gravity="bottom"
+                        android:textStyle="bold" />
+
+                    <!-- Subtítulos "Fecha Encuentro" -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textViewCurves"
+                        android:text="Curvas"
+                        android:textSize="14sp"
+                        android:layout_gravity="bottom"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp">
+
+                    <!-- TextView adicional "Hora Encuentro" en negro -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Inicio:  "
+                        android:textColor="@android:color/black"
+                        android:textSize="13dp"
+                        android:layout_gravity="bottom"
+                        android:textStyle="bold"/>
+
+                    <!-- Subtítulo "Hora Encuentro" -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textViewStart"
+                        android:text="Partida"
+                        android:textSize="14sp"
+                        android:layout_gravity="bottom"
+                        />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp">
+
+                    <!-- TextView adicional "Cupo Mínimo" en negro -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Llegada:  "
+                        android:textColor="@android:color/black"
+                        android:textSize="13dp"
+                        android:layout_gravity="bottom"
+                        android:textStyle="bold" />
+
+                    <!-- Subtítulo "Cupo Mínimo" -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textViewFinish"
+                        android:text="Fín"
+                        android:textSize="14sp"
+                        android:layout_gravity="bottom"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginEnd="3dp">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_deleteRoute"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ELIMINAR"
+                        android:textSize="9sp"
+                        android:layout_weight="1"
+                        app:strokeColor="@color/my_primary"
+                        app:cornerRadius="2dp"
+                        style="@style/Widget.Material3.Button.IconButton.Outlined"
+                        app:icon="@drawable/delete"
+                        android:gravity="center"
+                        />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_ViewRoute"
+                        style="@style/Widget.MaterialComponents.Button.Icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/my_primary"
+                        android:text="VER RUTA"
+                        android:textSize="9sp"
+                        app:icon="@drawable/baseline_eye_24"
+                        app:elevation="10dp"
+                        app:cornerRadius="2dp"
+                        android:layout_weight="1" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
+<!--
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
 
     <androidx.cardview.widget.CardView
         android:layout_width="380dp"
@@ -22,10 +268,10 @@
             android:layout_height="297dp"
             android:orientation="horizontal">
 
-            <!-- Parte Izquierda (ImageView y Título "Ruta") -->
+            &lt;!&ndash; Parte Izquierda (ImageView y Título "Ruta") &ndash;&gt;
 
 
-            <!-- Parte Derecha (Otros Campos) -->
+            &lt;!&ndash; Parte Derecha (Otros Campos) &ndash;&gt;
 
             <LinearLayout
                 android:layout_width="1dp"
@@ -34,7 +280,7 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- TextView adicional "Evento" en negro -->
+                &lt;!&ndash; TextView adicional "Evento" en negro &ndash;&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -44,7 +290,7 @@
                     android:textColor="@color/lavender"
                     android:textSize="14dp" />
 
-                <!-- ImageView -->
+                &lt;!&ndash; ImageView &ndash;&gt;
                 <ImageView
                     android:id="@+id/imageViewRoute"
                     android:layout_width="178dp"
@@ -63,7 +309,7 @@
                 android:padding="16dp">
 
 
-                <!-- TextView adicional "Ruta" en negro -->
+                &lt;!&ndash; TextView adicional "Ruta" en negro &ndash;&gt;
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -100,7 +346,7 @@
                     android:textColor="@color/lavender"
                     android:textSize="14dp" />
 
-                <!-- Título "Ruta" -->
+                &lt;!&ndash; Título "Ruta" &ndash;&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -116,7 +362,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- TextView adicional "Descripcion" en negro -->
+                    &lt;!&ndash; TextView adicional "Descripcion" en negro &ndash;&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -127,7 +373,7 @@
                         android:textStyle="bold"
                         android:layout_gravity="bottom" />
 
-                    <!-- Título "Descripcion" subrayado -->
+                    &lt;!&ndash; Título "Descripcion" subrayado &ndash;&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -147,7 +393,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- TextView adicional "Fecha Encuentro" en negro -->
+                    &lt;!&ndash; TextView adicional "Fecha Encuentro" en negro &ndash;&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -158,7 +404,7 @@
                         android:layout_gravity="bottom"
                         android:textStyle="bold" />
 
-                    <!-- Subtítulos "Fecha Encuentro" -->
+                    &lt;!&ndash; Subtítulos "Fecha Encuentro" &ndash;&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -179,7 +425,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- TextView adicional "Hora Encuentro" en negro -->
+                    &lt;!&ndash; TextView adicional "Hora Encuentro" en negro &ndash;&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -190,7 +436,7 @@
                         android:layout_gravity="bottom"
                         android:textStyle="bold"/>
 
-                    <!-- Subtítulo "Hora Encuentro" -->
+                    &lt;!&ndash; Subtítulo "Hora Encuentro" &ndash;&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -209,7 +455,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- TextView adicional "Cupo Mínimo" en negro -->
+                    &lt;!&ndash; TextView adicional "Cupo Mínimo" en negro &ndash;&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -220,7 +466,7 @@
                         android:layout_gravity="bottom"
                         android:textStyle="bold" />
 
-                    <!-- Subtítulo "Cupo Mínimo" -->
+                    &lt;!&ndash; Subtítulo "Cupo Mínimo" &ndash;&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -243,4 +489,4 @@
 
 
 
-</RelativeLayout>
+</RelativeLayout>-->

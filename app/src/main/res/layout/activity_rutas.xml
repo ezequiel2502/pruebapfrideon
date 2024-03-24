@@ -1,29 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <RelativeLayout
-        android:id="@+id/main"
+    android:layout_height="match_parent"
+    android:id="@+id/relativeLayout"
+    android:paddingLeft="3dp"
+    android:paddingRight="3dp"
+    android:layout_gravity="center_vertical" >
+    <include layout="@layout/main_app_bar" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="25dp"
+        app:cardCornerRadius="8dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/my_primary"
+        app:cardElevation="5dp">
 
-        <Button
+        <TextView
+            android:id="@+id/txtRegisterYourAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/my_primary"
+            android:gravity="center"
+            android:text="Listado de rutas"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="7dp"
+            android:paddingVertical="20dp">
+
+<!--        <Button
             android:id="@+id/Agregar_Ruta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Nueva Ruta" />
+            android:text="Nueva Ruta" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lista_Rutas"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="25dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/Agregar_Ruta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="1dp"
-            tools:layout_editor_absoluteY="1dp"
-            android:layout_below="@id/Agregar_Ruta"
-            />
-
-
-    </RelativeLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
+            android:contentDescription="submit"
+            android:src="@drawable/add"
+            android:tint="@color/white" />
+</LinearLayout>
+    </androidx.cardview.widget.CardView>
+    <include layout="@layout/bottommenu"  />
+</RelativeLayout>

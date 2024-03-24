@@ -88,7 +88,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
                 .apply(RequestOptions.skipMemoryCacheOf(true))
                 .signature(new com.bumptech.glide.signature.ObjectKey(String.valueOf(System.currentTimeMillis())))
                 .into(holder.imageViewRoute);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.selectRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialogInstance.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -126,7 +126,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         public TextView textViewCurves;
         public TextView textViewStart;
         public TextView textViewFinish;
-        public ImageButton routePreview;
+        public Button routePreview, selectRoute;
         public ViewHolder(View itemView) {
             super(itemView);
             this.imageViewRoute = (ImageView) itemView.findViewById(R.id.imageViewRoute);
@@ -135,7 +135,8 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
             this.textViewCurves = (TextView) itemView.findViewById(R.id.textViewCurves);
             this.textViewStart = (TextView) itemView.findViewById(R.id.textViewStart);
             this.textViewFinish = (TextView) itemView.findViewById(R.id.textViewFinish);
-            this.routePreview = (ImageButton) itemView.findViewById(R.id.previewRoute);
+            this.routePreview = (Button) itemView.findViewById(R.id.previewRoute);
+            this.selectRoute =  (Button) itemView.findViewById(R.id.btn_SelectRoute);
         }
     }
 }

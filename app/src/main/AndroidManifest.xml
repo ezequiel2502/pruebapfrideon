@@ -32,7 +32,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SesionConFirebase"
+        android:theme="@style/Base.Theme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup"
         tools:targetApi="31">
@@ -103,10 +103,8 @@
             android:exported="false" />
         <activity
             android:name=".SingleEventoPublicoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SingleEventoActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Detalles del Evento Público" />
         <activity
             android:name=".CrearEvento"
             android:exported="false" />
@@ -133,7 +131,8 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.MyLogin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
